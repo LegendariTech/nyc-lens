@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141D2C;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+:where(.ag-filter-menu) .ag-set-filter-list {
+  min-width: 300px
+}
+
+:where(.ag-theme-quartz) .ag-paging-button-last {
+  display: none !important;
+}
+
+/* Hide the Last button in the paging summary panel */
+/* .ag-paging-page-summary-panel {
+  .ag-icon-last {
+    display: none !important;
+  }
+} */
+
+
+/* Reset Filters button styles */
+.reset-button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #556375;
+  background: #1f2836;
+  color: #fff;
+  transition: background-color 120ms ease, box-shadow 120ms ease, transform 60ms ease;
+}
+
+.reset-button:hover {
+  background: #253149;
+  /* slightly lighter */
+  box-shadow: 0 0 0 2px rgba(85, 99, 117, 0.35) inset;
+}
+
+.reset-button:active {
+  transform: translateY(1px);
+  background: #2b3a53;
+  /* pressed state */
+}
+
+.reset-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #6aa0ff;
+}
+
+.ag-cell {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+}

@@ -1,0 +1,94 @@
+import type { ColDef } from 'ag-grid-community';
+import type { AcrisParty } from '@/types/acris';
+import { DEFAULT_MATCH_TEXT_FILTER_PARAMS } from '../constants/filters';
+
+export const partyColDefs: ColDef<AcrisParty>[] = [
+  {
+    field: 'party_name',
+    headerName: 'Party Name',
+    minWidth: 220,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_party_type',
+    headerName: 'Type',
+    width: 180,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_party_type_description',
+    headerName: 'Type Description',
+    minWidth: 240,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_address_1',
+    headerName: 'Address 1',
+    minWidth: 300,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_address_2',
+    headerName: 'Address 2',
+    minWidth: 300,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_city',
+    headerName: 'City',
+    width: 140,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+    filterParams: { ...DEFAULT_MATCH_TEXT_FILTER_PARAMS },
+  },
+  {
+    field: 'party_state',
+    headerName: 'State',
+    width: 100,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+  },
+  {
+    field: 'party_zip',
+    headerName: 'Zip',
+    width: 120,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+  },
+  {
+    field: 'party_country',
+    headerName: 'Country',
+    width: 140,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+  },
+  {
+    field: 'party_record_type',
+    headerName: 'Record Type',
+    width: 160,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    sortable: false,
+  },
+];
+
+
