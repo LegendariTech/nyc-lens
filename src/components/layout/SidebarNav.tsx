@@ -101,7 +101,7 @@ export default function SidebarNav() {
                   "w-full text-left",
                   "px-3 py-2 rounded-md",
                   // Visual
-                  anyChildActive ? "bg-foreground/10 text-nav-item" : "text-nav-group",
+                  "text-nav-group",
                   "hover:bg-foreground/10",
                   // Focus
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
