@@ -38,7 +38,6 @@ export function AkaCell(props: Props) {
       <span
         ref={anchorRef}
         onClick={(e) => {
-          console.log('clicked');
           e.stopPropagation(); setOpen((v) => !v);
         }}
         role="button"

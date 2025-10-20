@@ -1,9 +1,58 @@
-import Table from "@/components/table/property/PropertyTable";
+'use client';
+
+import { useState } from "react";
+import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
+import PropertyTable from "@/components/table/property/PropertyTable";
+import { cn } from "@/lib/utils";
 
 export default function SearchPage() {
+  const [bulkMode, setBulkMode] = useState(false);
+
   return (
-    <div className="w-full h-full p-4">
-      <Table />
+    <div className="flex h-full w-full flex-col">
+      {/* Top bar with toggle */}
+      <div className="flex items-center justify-between border-b border-foreground/20 bg-background px-4 py-3">
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold">Search</h1>
+          <div className="h-4 w-px bg-foreground/20" />
+          <label className="flex cursor-pointer items-center gap-2">
+            <span className="text-sm text-foreground/70">Bulk</span>
+            <button
+              role="switch"
+              aria-checked={bulkMode}
+              onClick={() => setBulkMode(!bulkMode)}
+              className={cn(
+                'relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                bulkMode ? 'bg-foreground' : 'bg-foreground/20'
+              )}
+            >
+              <span
+                className={cn(
+                  'inline-block size-4 rounded-full bg-background transition-transform',
+                  bulkMode ? 'translate-x-6' : 'translate-x-1'
+                )}
+              />
+            </button>
+          </label>
+        </div>
+      </div>
+
+      {/* Content area */}
+      {bulkMode ? (
+        <div className="flex h-full flex-col overflow-hidden">
+          <div className="shrink-0 border-b border-foreground/10 px-4 py-3">
+            <PropertyAutocomplete compact />
+          </div>
+          <div className="flex-1 overflow-hidden p-4">
+            <PropertyTable />
+          </div>
+        </div>
+      ) : (
+        <div className="flex min-h-full items-start justify-center p-4 pt-[20vh]">
+          <PropertyAutocomplete />
+        </div>
+      )}
     </div>
   );
 }

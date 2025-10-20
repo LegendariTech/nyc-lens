@@ -24,8 +24,6 @@ export async function POST(req: NextRequest) {
       }
     };
 
-    console.log(JSON.stringify(constrained, null, 2));
-
     const res = await search(index, constrained);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];
     const total = (res as { hits?: { total?: { value: number } } })?.hits?.total?.value ?? hits.length;
