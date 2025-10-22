@@ -2,6 +2,7 @@
 
 import { createAutocomplete } from '@algolia/autocomplete-core';
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { AcrisRecord } from '@/types/acris';
 import { findMatchInText } from './textMatcher';
@@ -154,9 +155,12 @@ function getAddressDisplay(item: PropertyItem, query: string): {
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
+  initialValue?: string;
+  autoFocus?: boolean;
 }
 
-export function PropertyAutocomplete({ compact = false }: PropertyAutocompleteProps) {
+export function PropertyAutocomplete({ compact = false, initialValue = '', autoFocus = true }: PropertyAutocompleteProps) {
+  const router = useRouter();
   const [autocompleteState, setAutocompleteState] = useState<{
     collections: Array<{
       source: Record<string, unknown>;
@@ -167,7 +171,7 @@ export function PropertyAutocomplete({ compact = false }: PropertyAutocompletePr
   }>({
     collections: [],
     isOpen: false,
-    query: '',
+    query: initialValue,
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -176,7 +180,10 @@ export function PropertyAutocomplete({ compact = false }: PropertyAutocompletePr
 
   const autocomplete = useRef(
     createAutocomplete<PropertyItem>({
-      autoFocus: true,
+      autoFocus,
+      initialState: {
+        query: initialValue,
+      },
       onStateChange({ state }) {
         setAutocompleteState(state as typeof autocompleteState);
       },
@@ -192,6 +199,12 @@ export function PropertyAutocomplete({ compact = false }: PropertyAutocompletePr
             },
             getItemInputValue({ item }) {
               return item.address;
+            },
+            onSelect({ item }) {
+              // Navigate to property page with BBL format and address in query string
+              const bbl = `${item.borough}-${item.block}-${item.lot}`;
+              const address = encodeURIComponent(item.address);
+              router.push(`/property/${bbl}?address=${address}`);
             },
           },
         ];

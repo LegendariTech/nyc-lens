@@ -1,6 +1,7 @@
 import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import { AcrisRecord } from '@/types/acris';
 import { BOROUGH_CODE_MAP, BOROUGH_FILTER_VALUES } from '../constants/geo';
+import Link from 'next/link';
 import {
   DEFAULT_TEXT_FILTER_PARAMS,
   DEFAULT_MATCH_TEXT_FILTER_PARAMS,
@@ -76,6 +77,17 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     headerName: 'Address',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
+    cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
+      const address = encodeURIComponent(params.value || '');
+      return (
+        <Link
+          href={`/property/${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}?address=${address}`}
+          className="text-blue-400 hover:text-blue-300"
+        >
+          {params.value}
+        </Link>
+      );
+    },
     filterParams: {
       ...DEFAULT_TEXT_FILTER_PARAMS,
     }
