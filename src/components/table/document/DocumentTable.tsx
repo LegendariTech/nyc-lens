@@ -41,7 +41,7 @@ function DetailCellRenderer(props: CustomCellRendererProps<AcrisRecord>) {
   const defaultColDef = useMemo(() => ({ sortable: true, resizable: true }), []);
 
   return (
-    <div style={{ padding: 16, backgroundColor: 'rgb(54, 73, 104)' }}>
+    <div className='p-12 bg-background'>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 12 }}>
         <div>
           <b style={{}}>Recorded Documents:</b> {parent?.address}

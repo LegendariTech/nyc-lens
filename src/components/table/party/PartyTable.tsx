@@ -36,7 +36,7 @@ function PartiesDetailRenderer(props: CustomCellRendererProps<AcrisDoc>) {
   const defaultColDef = useMemo(() => ({ sortable: false, resizable: true }), []);
 
   return (
-    <div style={{ padding: 16, paddingBottom: 24, backgroundColor: 'rgb(54, 73, 104)' }}>
+    <div className='p-16 bg-background'>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 12 }}>
         <div>
           <b style={{}}>Parties: </b>

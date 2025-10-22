@@ -1,0 +1,138 @@
+[
+  {
+    "name": "DOB Certificate of Occupancy",
+    "socrata_id": "bs8b-p36w",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-Certificate-Of-Occupancy/bs8b-p36w/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/bs8b-p36w.json",
+    "source": "socrata",
+    "provided_by": "DOB"
+  },
+  {
+    "name": "DOB Complaints Received",
+    "socrata_id": "eabe-havv",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-Complaints-Received/eabe-havv/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/eabe-havv.json",
+    "source": "socrata",
+    "provided_by": "DOB"
+  },
+  {
+    "name": "DOB Permit Issuance",
+    "socrata_id": "ipu4-2q9a",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-Permit-Issuance/ipu4-2q9a/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/ipu4-2q9a.json",
+    "source": "socrata",
+    "provided_by": "DOB"
+  },
+  {
+    "name": "DOB Violations",
+    "socrata_id": "3h2n-5cm9",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-Violations/3h2n-5cm9/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/3h2n-5cm9.json",
+    "source": "socrata",
+    "provided_by": "DOB"
+  },
+  {
+    "name": "ECB Violations",
+    "socrata_id": "6bgk-3dad",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-ECB-Violations/6bgk-3dad/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/6bgk-3dad.json",
+    "source": "socrata",
+    "provided_by": "DOB"
+  },
+  {
+    "name": "Fee Charges",
+    "socrata_id": "cp6j-7bjj",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Fee-Charges/cp6j-7bjj/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/cp6j-7bjj.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "Housing Maintenance Code Complaints and Problems",
+    "socrata_id": "ygpa-z7cr",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Complaints-and-Problems/ygpa-z7cr/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/ygpa-z7cr.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "Housing Maintenance Code Violations",
+    "socrata_id": "wvxf-dwi5",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/wvxf-dwi5.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "Registration Contacts",
+    "socrata_id": "feu5-w2e2",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Registration-Contacts/feu5-w2e2/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/feu5-w2e2.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "Housing Litigations",
+    "socrata_id": "59kj-x8nc",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Housing-Litigations/59kj-x8nc/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/59kj-x8nc.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "Bedbug Reporting",
+    "socrata_id": "wz6d-d3jb",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Bedbug-Reporting/wz6d-d3jb/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/wz6d-d3jb.json",
+    "source": "socrata",
+    "provided_by": "HPD"
+  },
+  {
+    "name": "PLUTO",
+    "socrata_id": "64uk-42ks",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/64uk-42ks.json",
+    "source": "socrata",
+    "provided_by": "DCP"
+  },
+  {
+    "name": "PAD",
+    "socrata_id": "bc8t-ecyu",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/City-Government/Property-Address-Directory/bc8t-ecyu/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/bc8t-ecyu.json",
+    "data_dictionary_url": "https://data.cityofnewyork.us/api/views/bc8t-ecyu/files/f6c5d027-0f5b-4f1a-8562-32e0f5c396d8?download=true&filename=padlayout.pdf",
+    "source": "external-file-ingestions",
+    "provided_by": "DCP"
+  },
+  {
+    "name": "311 Service Requests from 2010 to Present",
+    "socrata_id": "erm2-nwe9",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/erm2-nwe9.json",
+    "source": "socrata",
+    "provided_by": "311"
+  },
+  {
+    "name": "DOB Job Application Filings",
+    "socrata_id": "ic3t-wcy2",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/DOB-Job-Application-Filings/ic3t-wcy2/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/ic3t-wcy2.json",
+    "source": "socrata",
+    "provided_by": "DOB",
+    "ingested": "no"
+  },
+  {
+    "name": "Building Complaint Disposition Codes",
+    "socrata_id": "6v9u-ndjg",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/Housing-Development/Building-Complaint-Disposition-Codes/6v9u-ndjg/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/6v9u-ndjg.json",
+    "source": "socrata",
+    "provided_by": "DOB",
+    "ingested": "no"
+  },
+  {
+    "name": "DOB Safety Violations",
+  },
+  // this is a new viol;ation listed on DOB now
+  // https://data.cityofnewyork.us/Housing-Development/DOB-Safety-Violations/855j-jady/about_data
+]

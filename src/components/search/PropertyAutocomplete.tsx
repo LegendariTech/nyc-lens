@@ -98,12 +98,22 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 // Find which AKA address matches the query and determine display strategy
 function getAddressDisplay(item: PropertyItem, query: string): {
   primaryAddress: string;
-  secondaryAddress: string;
+  secondaryAddress?: string;
   otherCount: number;
   isSwapped: boolean;
 } | null {
-  if (!query || !item.aka || item.aka.length === 0) {
+  if (!item.aka || item.aka.length === 0) {
     return null;
+  }
+
+  if (!query) {
+    // No query, show first AKA and remaining count
+    return {
+      primaryAddress: item.address,
+      secondaryAddress: item.aka[0],
+      otherCount: item.aka.length - 1,
+      isSwapped: false,
+    };
   }
 
   const normalizedQuery = query.toLowerCase().trim();
@@ -111,9 +121,14 @@ function getAddressDisplay(item: PropertyItem, query: string): {
   // Check if main address starts with query
   const mainAddressMatches = item.address.toLowerCase().startsWith(normalizedQuery);
 
-  // If main address matches, no need to swap or show AKA
+  // If main address matches, show first AKA and remaining count
   if (mainAddressMatches) {
-    return null;
+    return {
+      primaryAddress: item.address,
+      secondaryAddress: item.aka[0],
+      otherCount: item.aka.length - 1,
+      isSwapped: false,
+    };
   }
 
   // Find AKA address that matches the query
@@ -311,12 +326,28 @@ export function PropertyAutocomplete({ compact = false }: PropertyAutocompletePr
                               </div>
                               {hasSecondaryInfo && displayInfo && (
                                 <div className="mt-0.5 text-sm text-foreground/70">
-                                  Also known as: <HighlightedText
-                                    text={displayInfo.secondaryAddress}
-                                    query={autocompleteState.query}
-                                  />
-                                  {displayInfo.otherCount > 0 && (
-                                    <span> and {displayInfo.otherCount} other{displayInfo.otherCount !== 1 ? 's' : ''}</span>
+                                  {displayInfo.isSwapped ? (
+                                    // When swapped, show the official address + other count
+                                    <>
+                                      Also known as: <HighlightedText
+                                        text={displayInfo.secondaryAddress!}
+                                        query={autocompleteState.query}
+                                      />
+                                      {displayInfo.otherCount > 0 && (
+                                        <span> and {displayInfo.otherCount} other{displayInfo.otherCount !== 1 ? 's' : ''}</span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    // When not swapped, show first AKA + remaining count
+                                    <>
+                                      Also known as <HighlightedText
+                                        text={displayInfo.secondaryAddress!}
+                                        query={autocompleteState.query}
+                                      />
+                                      {displayInfo.otherCount > 0 && (
+                                        <span> and {displayInfo.otherCount} other address{displayInfo.otherCount !== 1 ? 'es' : ''}</span>
+                                      )}
+                                    </>
                                   )}
                                 </div>
                               )}

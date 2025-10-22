@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const base = buildEsQueryFromAgGrid(request);
     (base as Record<string, unknown>).track_total_hits = true;
 
-    console.log(JSON.stringify(request, null, 2));
+    console.log(JSON.stringify(base, null, 2));
 
     const res = await search(index, base);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];

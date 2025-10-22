@@ -4,6 +4,7 @@ import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { ICellRendererParams } from 'ag-grid-community';
 import type { AcrisRecord } from '@/types/acris';
+import { cn } from '@/lib/utils';
 
 type Props = ICellRendererParams<AcrisRecord>;
 
@@ -34,7 +35,7 @@ export function AkaCell(props: Props) {
   if (!hasAka) return null;
 
   return (
-    <span style={{ position: 'relative', display: 'inline-block' }}>
+    <span className="relative inline-block">
       <span
         ref={anchorRef}
         onClick={(e) => {
@@ -45,13 +46,7 @@ export function AkaCell(props: Props) {
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
         title={title}
-        style={{
-          color: '#2563eb',
-          cursor: 'pointer',
-          fontSize: '14px',
-          textDecoration: 'underline',
-          userSelect: 'none',
-        }}
+        className="cursor-pointer select-none text-sm text-blue-600 underline dark:text-blue-400"
       >
         aka
       </span>
@@ -63,47 +58,36 @@ export function AkaCell(props: Props) {
           <>
             <div
               onClick={() => setOpen(false)}
-              style={{ position: 'fixed', inset: 0, zIndex: 2147483646, background: 'transparent' }}
+              className="fixed inset-0 bg-transparent"
+              style={{ zIndex: 2147483646 }}
             />
             <div
               id={popoverId}
               role="dialog"
               aria-label="AKA addresses"
               onClick={(e) => e.stopPropagation()}
+              className={cn(
+                'fixed overflow-auto rounded-md border border-foreground/20 bg-background p-2 shadow-lg',
+                'max-h-[220px] min-w-[260px] max-w-[480px]'
+              )}
               style={{
-                position: 'fixed',
                 top,
                 left,
                 zIndex: 2147483647,
-                background: 'white',
-                border: '1px solid #e5e7eb',
-                borderRadius: '6px',
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)',
-                maxHeight: '220px',
-                minWidth: '260px',
-                maxWidth: '480px',
-                overflow: 'auto',
-                padding: '8px',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827' }}>AKA addresses</div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <div className="text-xs font-semibold text-foreground">AKA addresses</div>
                 <button
                   onClick={() => setOpen(false)}
-                  style={{
-                    border: 0,
-                    background: 'transparent',
-                    color: '#6b7280',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                  }}
+                  className="cursor-pointer border-0 bg-transparent text-xs text-foreground/60 hover:text-foreground"
                 >
                   close
                 </button>
               </div>
-              <ul style={{ listStyle: 'disc', paddingLeft: '18px', margin: 0 }}>
+              <ul className="m-0 list-disc pl-[18px]">
                 {list.map((item, idx) => (
-                  <li key={idx} style={{ fontSize: '12px', color: '#374151', marginBottom: '4px', lineHeight: 1.25 }}>
+                  <li key={idx} className="mb-1 text-xs leading-tight text-foreground/80">
                     {item}
                   </li>
                 ))}

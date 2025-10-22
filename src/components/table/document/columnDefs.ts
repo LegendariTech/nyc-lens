@@ -34,13 +34,13 @@ export const detailColDefs: ColDef<AcrisDoc>[] = [
   {
     field: 'document_type',
     headerName: 'Type',
-    width: 200,
+    width: 140,
     cellRenderer: 'agGroupCellRenderer',
     filter: 'agSetColumnFilter',
     floatingFilter: true,
     filterParams: {
       values: docTypeValues,
-      defaultToNothingSelected: false,
+      defaultToNothingSelected: true,
       treeList: true,
       comparator: (a: string | null, b: string | null) => {
         const A = a || '';
@@ -62,8 +62,6 @@ export const detailColDefs: ColDef<AcrisDoc>[] = [
       },
     },
   },
-  { field: 'doc_type_description', headerName: 'Description', minWidth: 280 },
-  { field: 'class_code_description', headerName: 'Class', minWidth: 280 },
   {
     field: 'document_amount',
     headerName: 'Amount',
@@ -98,6 +96,8 @@ export const detailColDefs: ColDef<AcrisDoc>[] = [
       p: ValueFormatterParams<AcrisDoc, string>
     ) => formatDateMMDDYYYY(p.value),
   },
+  { field: 'doc_type_description', headerName: 'Description', width: 280 },
+  { field: 'class_code_description', headerName: 'Class', width: 280, hide: true },
   {
     field: 'master_document_id',
     headerName: 'Link',
