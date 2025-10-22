@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { PropertyResultItem } from './PropertyResultItem';
 import type { PropertyItem } from './propertyService';
+import { ViewportProvider } from '@/components/layout/ViewportContext';
 
 /**
  * PropertyResultItem displays a single property search result with address,
@@ -21,9 +22,11 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <ul className="w-[600px] rounded-md border border-foreground/20 bg-background">
-        <Story />
-      </ul>
+      <ViewportProvider>
+        <ul className="w-[600px] rounded-md border border-foreground/20 bg-background">
+          <Story />
+        </ul>
+      </ViewportProvider>
     ),
   ],
 } satisfies Meta<typeof PropertyResultItem>;

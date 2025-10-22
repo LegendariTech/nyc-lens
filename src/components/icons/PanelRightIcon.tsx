@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import React, { type SVGProps } from "react";
 
 /**
  * Panel Right Icon - represents a collapsed sidebar/panel

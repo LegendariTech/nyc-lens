@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import React, { type SVGProps } from "react";
 
 /**
  * Menu Icon (Burger Menu) - represents a hamburger menu

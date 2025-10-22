@@ -1,10 +1,11 @@
 /// <reference types="vitest/globals" />
-import React, { useState } from "react";
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { SidebarProvider } from "@/components/layout/SidebarContext";
+import { ViewportProvider } from "@/components/layout/ViewportContext";
 
 let currentPathname = "/";
 let currentSearchParams = new URLSearchParams();
@@ -14,30 +15,13 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => currentSearchParams,
 }));
 
-// Helper to render with SidebarProvider
+// Helper to render with SidebarProvider and ViewportProvider
 function renderWithProvider(ui: React.ReactElement) {
-  return render(<SidebarProvider>{ui}</SidebarProvider>);
-}
-
-// Helper component to test with controlled collapsed state
-function CollapsedSidebarWrapper({ children }: { children: React.ReactNode }) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-
-  // Create a mock context value with collapsed state
-  return (
-    <div data-testid="collapsed-wrapper">
-      {children}
-    </div>
+  return render(
+    <ViewportProvider>
+      <SidebarProvider>{ui}</SidebarProvider>
+    </ViewportProvider>
   );
-}
-
-// Helper to render with collapsed sidebar
-function renderWithCollapsedSidebar(ui: React.ReactElement) {
-  // We'll render and then click the collapse button
-  const result = renderWithProvider(ui);
-  const collapseButton = screen.getByRole("button", { name: /Collapse sidebar/i });
-  userEvent.click(collapseButton);
-  return result;
 }
 
 describe("SidebarNav", () => {
