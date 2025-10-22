@@ -1,91 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: 0 0% 13%;
-  --foreground: 0 0% 93%;
+  --background: hsl(0 0% 13%);
+  --foreground: hsl(0 0% 93%);
 
-  --card: 0 0% 13%;
-  --card-foreground: 0 0% 93%;
+  --card: hsl(0 0% 13%);
+  --card-foreground: hsl(0 0% 93%);
 
-  --popover: 0 0% 15%;
-  --popover-foreground: 0 0% 93%;
+  --popover: hsl(0 0% 15%);
+  --popover-foreground: hsl(0 0% 93%);
 
-  --primary: 0 0% 93%;
-  --primary-foreground: 0 0% 13%;
+  --primary: hsl(0 0% 93%);
+  --primary-foreground: hsl(0 0% 13%);
 
-  --secondary: 0 0% 18%;
-  --secondary-foreground: 0 0% 93%;
+  --secondary: hsl(0 0% 18%);
+  --secondary-foreground: hsl(0 0% 93%);
 
-  --muted: 0 0% 18%;
-  --muted-foreground: 0 0% 60%;
+  --muted: hsl(0 0% 18%);
+  --muted-foreground: hsl(0 0% 60%);
 
-  --accent: 142 71% 45%;
-  --accent-foreground: 0 0% 100%;
+  --accent: hsl(142 71% 45%);
+  --accent-foreground: hsl(0 0% 100%);
 
-  --destructive: 0 63% 50%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive: hsl(0 63% 50%);
+  --destructive-foreground: hsl(0 0% 100%);
 
-  --border: 0 0% 22%;
-  --input: 0 0% 18%;
-  --ring: 142 71% 45%;
+  --border: hsl(0 0% 22%);
+  --input: hsl(0 0% 18%);
+  --ring: hsl(142 71% 45%);
 
   --radius: 0.5rem;
 
-  --sidebar-background: 0 0% 9.41%;
-  --sidebar-foreground: 0 0% 93%;
-  --sidebar-primary: 142 71% 45%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 15%;
-  --sidebar-accent-foreground: 0 0% 93%;
+  --sidebar-background: hsl(0 0% 9.41%);
+  --sidebar-foreground: hsl(0 0% 93%);
+  --sidebar-primary: hsl(142 71% 45%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(0 0% 15%);
+  --sidebar-accent-foreground: hsl(0 0% 93%);
   --sidebar-border: 0 0% 15%;
-  --sidebar-ring: 142 71% 45%;
+  --sidebar-ring: hsl(142 71% 45%);
 
   /* Navigation tokens */
-  --nav-item: 0 0% 100%;
-  --nav-group: 0 0% 68.63%;
+  --nav-item: hsl(0 0% 100%);
+  --nav-group: hsl(0 0% 68.63%);
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
 
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-foreground: var(--destructive-foreground);
 
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --color-sidebar-background: hsl(var(--sidebar-background));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  --color-sidebar-background: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
   /* Navigation mapped colors */
-  --color-nav-item: hsl(var(--nav-item));
-  --color-nav-group: hsl(var(--nav-group));
+  --color-nav-item: var(--nav-item);
+  --color-nav-group: var(--nav-group);
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
@@ -136,39 +136,6 @@ button {
 
 :where(.ag-theme-quartz) .ag-paging-button-last {
   display: none !important;
-}
-
-/* Hide the Last button in the paging summary panel */
-/* .ag-paging-page-summary-panel {
-  .ag-icon-last {
-    display: none !important;
-  }
-} */
-
-
-/* Reset Filters button styles */
-.reset-button {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  transition: background-color 120ms ease, box-shadow 120ms ease, transform 60ms ease;
-}
-
-.reset-button:hover {
-  background: hsl(var(--muted));
-  box-shadow: 0 0 0 2px hsl(var(--border)) inset;
-}
-
-.reset-button:active {
-  transform: translateY(1px);
-  background: hsl(var(--secondary));
-}
-
-.reset-button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--ring));
 }
 
 .ag-cell {

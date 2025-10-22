@@ -4,154 +4,8 @@ import { createAutocomplete } from '@algolia/autocomplete-core';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import type { AcrisRecord } from '@/types/acris';
-import { findMatchInText } from './textMatcher';
-
-interface PropertyItem {
-  id: string;
-  address: string;
-  borough: string;
-  block: string;
-  lot: string;
-  aka: string[];
-  [key: string]: string | string[]; // Index signature for BaseItem constraint
-}
-
-// Fetch properties from Elasticsearch
-async function fetchProperties(query: string): Promise<PropertyItem[]> {
-  if (!query || query.length < 2) {
-    return [];
-  }
-
-  try {
-    const payload = {
-      request: {
-        startRow: 0,
-        endRow: 10, // Limit to 10 results for autocomplete
-        rowGroupCols: [],
-        valueCols: [],
-        pivotCols: [],
-        pivotMode: false,
-        groupKeys: [],
-        filterModel: {
-          address: {
-            filterType: 'text',
-            type: 'startsWith',
-            filter: query,
-          },
-        },
-        sortModel: [],
-      },
-    };
-
-    const res = await fetch('/api/acris/properties', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch properties');
-    }
-
-    const data = (await res.json()) as { rows: AcrisRecord[]; total: number };
-
-    return data.rows.map((row) => ({
-      id: row.id,
-      address: row.address,
-      borough: row.borough,
-      block: row.block,
-      lot: row.lot,
-      aka: row.aka || [],
-    }));
-  } catch (error) {
-    console.error('Error fetching properties:', error);
-    return [];
-  }
-}
-
-// Highlight matching text in the address
-function HighlightedText({ text, query }: { text: string; query: string }) {
-  if (!query || !text) {
-    return <>{text}</>;
-  }
-
-  const match = findMatchInText(text, query);
-
-  // If no match found, return text as is (light)
-  if (!match) {
-    return <span className="font-light text-foreground/60">{text}</span>;
-  }
-
-  const beforeMatch = text.slice(0, match.start);
-  const matchedText = text.slice(match.start, match.start + match.length);
-  const afterMatch = text.slice(match.start + match.length);
-
-  return (
-    <>
-      <span className="font-light text-foreground/60">{beforeMatch}</span>
-      <span className="font-bold">{matchedText}</span>
-      <span className="font-light text-foreground/60">{afterMatch}</span>
-    </>
-  );
-}
-
-// Find which AKA address matches the query and determine display strategy
-function getAddressDisplay(item: PropertyItem, query: string): {
-  primaryAddress: string;
-  secondaryAddress?: string;
-  otherCount: number;
-  isSwapped: boolean;
-} | null {
-  if (!item.aka || item.aka.length === 0) {
-    return null;
-  }
-
-  if (!query) {
-    // No query, show first AKA and remaining count
-    return {
-      primaryAddress: item.address,
-      secondaryAddress: item.aka[0],
-      otherCount: item.aka.length - 1,
-      isSwapped: false,
-    };
-  }
-
-  const normalizedQuery = query.toLowerCase().trim();
-
-  // Check if main address starts with query
-  const mainAddressMatches = item.address.toLowerCase().startsWith(normalizedQuery);
-
-  // If main address matches, show first AKA and remaining count
-  if (mainAddressMatches) {
-    return {
-      primaryAddress: item.address,
-      secondaryAddress: item.aka[0],
-      otherCount: item.aka.length - 1,
-      isSwapped: false,
-    };
-  }
-
-  // Find AKA address that matches the query
-  const matchingAka = item.aka.find(aka =>
-    aka.toLowerCase().includes(normalizedQuery)
-  );
-
-  if (!matchingAka) {
-    return null;
-  }
-
-  // Swap: show matched AKA as primary, official address as secondary
-  const totalAkas = item.aka.length;
-  const otherCount = totalAkas - 1; // Subtract the matched one
-
-  return {
-    primaryAddress: matchingAka,
-    secondaryAddress: item.address,
-    otherCount,
-    isSwapped: true,
-  };
-}
+import { fetchProperties, type PropertyItem } from './propertyService';
+import { PropertyResultItem } from './PropertyResultItem';
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
@@ -213,7 +67,7 @@ export function PropertyAutocomplete({ compact = false, initialValue = '', autoF
   ).current;
 
   useEffect(() => {
-    if (!formRef.current || !panelRef.current || !inputRef.current) {
+    if (!formRef.current || !inputRef.current) {
       return;
     }
 
@@ -239,7 +93,7 @@ export function PropertyAutocomplete({ compact = false, initialValue = '', autoF
       {!compact && (
         <div className="mb-8">
           <p className="text-base text-foreground/70">
-            You can search by Address or BBL (Borough–Block–Lot)
+            Search by Address or BBL (Borough–Block–Lot)
           </p>
         </div>
       )}
@@ -262,13 +116,13 @@ export function PropertyAutocomplete({ compact = false, initialValue = '', autoF
                 }, 200);
               }}
               className={cn(
-                'rounded-lg border border-foreground/20 px-4 py-3',
-                'bg-background text-foreground text-base',
+                'rounded-full border border-foreground/20 px-6 py-3',
+                'text-foreground text-base',
                 'focus:outline-none focus:ring-2 focus:ring-foreground/50',
                 'placeholder:text-foreground/40',
                 compact ? 'w-96' : 'w-full'
               )}
-              placeholder='Try "45 Broadway" or "1-2469-22"'
+              placeholder='Try "1 Broadway" or "1 13 1"'
             />
 
           </div>
@@ -308,87 +162,20 @@ export function PropertyAutocomplete({ compact = false, initialValue = '', autoF
                   <ul
                     {...(autocomplete.getListProps() as unknown as React.HTMLAttributes<HTMLUListElement>)}
                   >
-                    {items.map((item) => {
-                      const displayInfo = getAddressDisplay(item, autocompleteState.query);
-
-                      // Determine what to show
-                      const primaryAddress = displayInfo?.primaryAddress || item.address;
-                      const hasSecondaryInfo = displayInfo !== null;
-
-                      return (
-                        <li
-                          key={item.id}
-                          {...(autocomplete.getItemProps({
+                    {items.map((item) => (
+                      <PropertyResultItem
+                        key={item.id}
+                        item={item}
+                        query={autocompleteState.query}
+                        compact={compact}
+                        itemProps={
+                          autocomplete.getItemProps({
                             item,
                             source: collection.source as never,
-                          }) as unknown as React.LiHTMLAttributes<HTMLLIElement>)}
-                          className={cn(
-                            'cursor-pointer border-b border-foreground/5 transition-colors last:border-b-0',
-                            'hover:bg-foreground/5',
-                            'aria-selected:bg-foreground/10',
-                            compact ? 'px-3 py-2' : 'px-4 py-3'
-                          )}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="text-foreground">
-                                <HighlightedText
-                                  text={primaryAddress}
-                                  query={autocompleteState.query}
-                                />
-                              </div>
-                              {hasSecondaryInfo && displayInfo && (
-                                <div className="mt-0.5 text-sm text-foreground/70">
-                                  {displayInfo.isSwapped ? (
-                                    // When swapped, show the official address + other count
-                                    <>
-                                      Also known as: <HighlightedText
-                                        text={displayInfo.secondaryAddress!}
-                                        query={autocompleteState.query}
-                                      />
-                                      {displayInfo.otherCount > 0 && (
-                                        <span> and {displayInfo.otherCount} other{displayInfo.otherCount !== 1 ? 's' : ''}</span>
-                                      )}
-                                    </>
-                                  ) : (
-                                    // When not swapped, show first AKA + remaining count
-                                    <>
-                                      Also known as <HighlightedText
-                                        text={displayInfo.secondaryAddress!}
-                                        query={autocompleteState.query}
-                                      />
-                                      {displayInfo.otherCount > 0 && (
-                                        <span> and {displayInfo.otherCount} other address{displayInfo.otherCount !== 1 ? 'es' : ''}</span>
-                                      )}
-                                    </>
-                                  )}
-                                </div>
-                              )}
-                              <div className="mt-1 text-sm text-foreground/60">
-                                BBL: {item.borough}-{item.block}-{item.lot}
-                              </div>
-                            </div>
-                            <div className="flex items-center">
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                className="text-foreground/30"
-                              >
-                                <path
-                                  d="M6 4l4 4-4 4"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        </li>
-                      );
-                    })}
+                          }) as unknown as React.LiHTMLAttributes<HTMLLIElement>
+                        }
+                      />
+                    ))}
                   </ul>
                 </div>
               );

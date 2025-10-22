@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { SidebarProvider, useSidebar } from "./SidebarContext";
 
 interface ResizableSidebarLayoutProps {
   sidebar: ReactNode;
@@ -16,7 +17,7 @@ interface ResizableSidebarLayoutProps {
   className?: string;
 }
 
-export default function ResizableSidebarLayout({
+function ResizableSidebarLayoutInner({
   sidebar,
   children,
   initialWidth = 280,
@@ -31,6 +32,11 @@ export default function ResizableSidebarLayout({
   const startWidthRef = useRef(initialWidth);
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(initialWidth);
+  const { isCollapsed } = useSidebar();
+
+  // Collapsed width (just enough for icons and padding)
+  const collapsedWidth = 80;
+  const effectiveWidth = isCollapsed ? collapsedWidth : sidebarWidth;
 
   const onMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingRef.current) return;
@@ -79,7 +85,7 @@ export default function ResizableSidebarLayout({
       )}
     >
       <aside
-        style={{ width: `${sidebarWidth}px` }}
+        style={{ width: `${effectiveWidth}px` }}
         className={cn(
           // Box
           "h-full shrink-0",
@@ -88,27 +94,31 @@ export default function ResizableSidebarLayout({
           // Scrolling behavior: allow internal scroll; not required by user but practical
           "overflow-auto",
           // Typography
-          "font-sans"
+          "font-sans",
+          // Smooth transition when collapsing/expanding (but not when dragging)
+          !isDragging && "transition-[width] duration-300 ease-in-out"
         )}
       >
         {sidebar}
       </aside>
 
-      <div
-        role="separator"
-        aria-orientation="vertical"
-        aria-label="Resize sidebar"
-        onMouseDown={onMouseDown}
-        className={cn(
-          // Size & hit area
-          "relative w-1",
-          "cursor-col-resize select-none",
-          // Visual handle hover affordance
-          "bg-foreground/10 hover:bg-foreground/20",
-          // Accessibility: allow keyboard focus styles if needed
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        )}
-      />
+      {!isCollapsed && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize sidebar"
+          onMouseDown={onMouseDown}
+          className={cn(
+            // Size & hit area
+            "relative w-1",
+            "cursor-col-resize select-none",
+            // Visual handle hover affordance
+            "bg-foreground/10 hover:bg-foreground/20",
+            // Accessibility: allow keyboard focus styles if needed
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          )}
+        />
+      )}
 
       <main
         className={cn(
@@ -126,4 +136,10 @@ export default function ResizableSidebarLayout({
   );
 }
 
-
+export default function ResizableSidebarLayout(props: ResizableSidebarLayoutProps) {
+  return (
+    <SidebarProvider>
+      <ResizableSidebarLayoutInner {...props} />
+    </SidebarProvider>
+  );
+}
