@@ -4,6 +4,7 @@ import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/lib/utils";
 import SidebarNav from "@/components/layout/SidebarNav";
+import { ViewportProvider } from "@/components/layout/ViewportContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
-        <ResizableSidebarLayout sidebar={<SidebarNav />}>
-          {children}
-        </ResizableSidebarLayout>
+        <ViewportProvider>
+          <ResizableSidebarLayout sidebar={<SidebarNav />}>
+            {children}
+          </ResizableSidebarLayout>
+        </ViewportProvider>
       </body>
     </html>
   );

@@ -6,12 +6,14 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "./SidebarContext";
+import { useViewport } from "./ViewportContext";
 import {
   HomeIcon,
-  ChevronLeftIcon,
   ChevronRightIcon,
   SearchIcon,
-  BellIcon
+  BellIcon,
+  PanelLeftIcon,
+  PanelRightIcon
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
@@ -46,13 +48,14 @@ const NAV_ITEMS: NavItem[] = [
 export default function SidebarNav() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { isCollapsed, setIsCollapsed } = useSidebar();
+  const { isCollapsed, setIsCollapsed, setIsMobileOpen } = useSidebar();
+  const { isMobile } = useViewport();
 
   // Check if bulk mode is active via URL param
   const isBulkMode = searchParams.get('bulk') === 'true';
 
-  // Show DOB and HPD only when bulk mode is ON or when on their own pages
-  const showBulkItems = isBulkMode || pathname.startsWith("/dob") || pathname.startsWith("/hpd");
+  // On mobile: never show bulk items. Desktop: show when bulk mode is ON or on their own pages
+  const showBulkItems = !isMobile && (isBulkMode || pathname.startsWith("/dob") || pathname.startsWith("/hpd"));
 
   // Filter nav items based on bulk mode
   const visibleNavItems = useMemo(() => {
@@ -82,47 +85,61 @@ export default function SidebarNav() {
       // Layout
       "flex flex-col h-full",
       // Spacing
-      "p-4 gap-2",
+      "p-2 gap-2",
       // Typography & colors
       "text-sm text-nav-item"
     )}>
       {/* Logo and Collapse Button */}
-      <div className={cn("mb-4 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
+      <div className={cn(
+        // Fixed header height to prevent vertical shift
+        "mb-2 flex h-12 shrink-0 items-center",
+        isCollapsed ? "justify-center" : "justify-between"
+      )}>
         {isCollapsed ? (
-          // When collapsed: show logo that becomes chevron on hover
-          <Button
-            variant="ghost"
-            size="sm"
+          // When collapsed: show logo button that reveals expand icon on hover
+          <button
+            type="button"
             onClick={() => setIsCollapsed(false)}
-            className="group relative"
+            className={cn(
+              "group relative flex h-12 w-12 shrink-0 items-center justify-center rounded-md",
+              "hover:bg-foreground/10 transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            )}
             title="Expand sidebar"
           >
-            <HomeIcon className="text-foreground shrink-0 group-hover:opacity-0 transition-opacity" />
-            <ChevronRightIcon className="absolute inset-0 m-auto text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-          </Button>
+            <HomeIcon className="text-foreground h-5 w-5 shrink-0 transition-opacity group-hover:opacity-0" />
+            <PanelRightIcon className="absolute inset-0 m-auto h-5 w-5 text-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+          </button>
         ) : (
-          // When expanded: show logo and separate chevron button
+          // When expanded: show logo link and separate collapse button
           <>
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-md",
+                // Keep header height stable and icon position consistent
+                "flex h-12 shrink-0 items-center rounded-md",
                 "hover:bg-foreground/10 transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               )}
+              onClick={() => setIsMobileOpen(false)}
             >
-              <HomeIcon className="text-foreground shrink-0" />
-              <span className="text-lg font-semibold text-nav-item whitespace-nowrap">NYC Lens</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center">
+                <HomeIcon className="text-foreground shrink-0 h-5 w-5" />
+              </span>
+              <span className="truncate whitespace-nowrap text-lg font-semibold text-nav-item">
+                NYC Lens
+              </span>
             </Link>
 
-            {/* Collapse Button */}
+            {/* Collapse Button - position stable on the right */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsCollapsed(true)}
               title="Collapse sidebar"
+              className="h-12 w-12 shrink-0"
             >
-              <ChevronLeftIcon />
+              <PanelLeftIcon className="h-5 w-5" />
             </Button>
           </>
         )}
@@ -137,9 +154,9 @@ export default function SidebarNav() {
                 <Link
                   href={item.href}
                   className={cn(
-                    // Layout & spacing
-                    "block w-full",
-                    "px-3 py-2 rounded-md",
+                    // Layout & spacing - consistent icon position
+                    "flex h-12 shrink-0 items-center rounded-md",
+                    isCollapsed ? "w-12 justify-center" : "w-full",
                     // Active / inactive
                     isActive
                       ? "bg-foreground/10 text-nav-item"
@@ -148,12 +165,18 @@ export default function SidebarNav() {
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   )}
                   aria-current={isActive ? "page" : undefined}
+                  onClick={() => setIsMobileOpen(false)}
+                  title={isCollapsed ? item.label : undefined}
                 >
-                  <span className={cn("flex items-center gap-2", isCollapsed && "justify-center")}>
-                    {item.label === "Search" && <SearchIcon className="shrink-0" />}
-                    {item.label === "Alerts" && <BellIcon className="shrink-0" />}
-                    {!isCollapsed && item.label}
+                  <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center")}>
+                    {item.label === "Search" && <SearchIcon className="shrink-0 h-5 w-5" />}
+                    {item.label === "Alerts" && <BellIcon className="shrink-0 h-5 w-5" />}
                   </span>
+                  {!isCollapsed && (
+                    <span className="truncate text-sm">
+                      {item.label}
+                    </span>
+                  )}
                 </Link>
               </li>
             );
@@ -204,16 +227,17 @@ export default function SidebarNav() {
                         <Link
                           href={child.href}
                           className={cn(
-                            "block w-full",
-                            "px-3 py-2 rounded-md",
+                            "flex h-12 w-full items-center",
+                            "px-3 rounded-md",
                             active
                               ? "bg-foreground/10 text-nav-item"
                               : "text-nav-item hover:bg-foreground/10",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                           )}
                           aria-current={active ? "page" : undefined}
+                          onClick={() => setIsMobileOpen(false)}
                         >
-                          {child.label}
+                          <span className="truncate text-sm">{child.label}</span>
                         </Link>
                       </li>
                     );

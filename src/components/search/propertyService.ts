@@ -10,6 +10,8 @@ export interface PropertyItem extends BaseAutocompleteItem {
   sale_document_date?: string;
   sale_document_amount?: number;
   buyer_name?: string;
+  /** The matched address (either main address or AKA) - set by UI layer */
+  matchedAddress?: string;
 }
 
 /**

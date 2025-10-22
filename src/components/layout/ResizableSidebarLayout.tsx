@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
+import { MenuIcon } from "@/components/icons";
 
 interface ResizableSidebarLayoutProps {
   sidebar: ReactNode;
@@ -32,10 +33,10 @@ function ResizableSidebarLayoutInner({
   const startWidthRef = useRef(initialWidth);
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(initialWidth);
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
 
   // Collapsed width (just enough for icons and padding)
-  const collapsedWidth = 80;
+  const collapsedWidth = 64;
   const effectiveWidth = isCollapsed ? collapsedWidth : sidebarWidth;
 
   const onMouseMove = useCallback((e: MouseEvent) => {
@@ -84,6 +85,41 @@ function ResizableSidebarLayoutInner({
         className
       )}
     >
+      {/* Mobile top bar with burger menu */}
+      <div
+        className={cn(
+          "md:hidden fixed top-0 left-0 right-0 z-30",
+          "h-12 flex items-center px-3",
+          "bg-background border-b border-foreground/20"
+        )}
+      >
+        <button
+          type="button"
+          aria-label="Open sidebar"
+          onClick={() => setIsMobileOpen(true)}
+          className={cn(
+            "inline-flex items-center justify-center",
+            "h-9 w-9 rounded-md",
+            "hover:bg-foreground/10",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          )}
+        >
+          <MenuIcon className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile backdrop */}
+      {isMobileOpen && (
+        <div
+          onClick={() => setIsMobileOpen(false)}
+          className={cn(
+            "md:hidden fixed inset-0 z-30",
+            "bg-foreground/20 backdrop-blur-[2px]"
+          )}
+          aria-hidden="true"
+        />
+      )}
+
       <aside
         style={{ width: `${effectiveWidth}px` }}
         className={cn(
@@ -96,7 +132,10 @@ function ResizableSidebarLayoutInner({
           // Typography
           "font-sans",
           // Smooth transition when collapsing/expanding (but not when dragging)
-          !isDragging && "transition-[width] duration-300 ease-in-out"
+          !isDragging && "transition-[width] duration-300 ease-in-out",
+          // Mobile: off-canvas drawer
+          "fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out md:static md:transform-none",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {sidebar}
@@ -115,7 +154,9 @@ function ResizableSidebarLayoutInner({
             // Visual handle hover affordance
             "bg-foreground/10 hover:bg-foreground/20",
             // Accessibility: allow keyboard focus styles if needed
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+            // Hide resizer on small screens
+            "hidden md:block"
           )}
         />
       )}
@@ -127,7 +168,9 @@ function ResizableSidebarLayoutInner({
           // Prevent vertical scroll in main content block per requirement
           "overflow-hidden",
           // Container spacing is up to page content; keep neutral here
-          "font-sans"
+          "font-sans",
+          // Ensure main content not hidden behind mobile top bar
+          "pt-12 md:pt-0"
         )}
       >
         {children}

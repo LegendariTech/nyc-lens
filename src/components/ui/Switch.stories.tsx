@@ -11,7 +11,7 @@ import { Switch } from './Switch';
  * - Theme-aware using HSL color tokens
  */
 const meta = {
-  title: 'UI/Switch',
+  title: 'Components/UI/Switch',
   component: Switch,
   parameters: {
     layout: 'centered',

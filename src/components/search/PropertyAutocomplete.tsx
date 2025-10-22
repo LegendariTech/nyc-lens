@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Autocomplete } from '@/components/ui/Autocomplete';
 import { fetchProperties, type PropertyItem } from './propertyService';
 import { PropertyResultItem } from './PropertyResultItem';
+import { findMatchInText } from './textMatcher';
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
@@ -25,6 +26,31 @@ export function PropertyAutocomplete({
 }: PropertyAutocompleteProps) {
   const router = useRouter();
 
+  // Helper to find the matched address (main or AKA)
+  const getMatchedAddress = (item: PropertyItem, query: string): string => {
+    // First check if main address matches
+    const mainAddressMatch = findMatchInText(item.address, query);
+    if (mainAddressMatch !== null) {
+      return item.address;
+    }
+
+    // Otherwise, check all AKA addresses for matches
+    const akaMatches = item.aka
+      .map(aka => ({
+        address: aka,
+        match: findMatchInText(aka, query)
+      }))
+      .filter(result => result.match !== null);
+
+    // If we have AKA matches, use the first one
+    if (akaMatches.length > 0) {
+      return akaMatches[0].address;
+    }
+
+    // Fallback to main address
+    return item.address;
+  };
+
   return (
     <Autocomplete<PropertyItem>
       compact={compact}
@@ -37,15 +63,20 @@ export function PropertyAutocomplete({
         {
           sourceId: 'properties',
           async getItems() {
-            return await fetchProperties(query);
+            const items = await fetchProperties(query);
+            // Add matched address to each item
+            return items.map(item => ({
+              ...item,
+              matchedAddress: getMatchedAddress(item, query)
+            }));
           },
           getItemInputValue({ item }) {
-            return item.address;
+            return item.matchedAddress || item.address;
           },
           onSelect({ item }) {
-            // Navigate to property page with BBL format and address in query string
+            // Navigate to property page with BBL format and matched address in query string
             const bbl = `${item.borough}-${item.block}-${item.lot}`;
-            const address = encodeURIComponent(item.address);
+            const address = encodeURIComponent(item.matchedAddress || item.address);
             router.push(`/property/${bbl}?address=${address}`);
           },
         },

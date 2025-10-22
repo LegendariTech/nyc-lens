@@ -12,7 +12,7 @@ import { Button } from './Button';
  * - Theme-aware using HSL color tokens
  */
 const meta = {
-  title: 'UI/Button',
+  title: 'Components/UI/Button',
   component: Button,
   parameters: {
     layout: 'centered',

@@ -2,6 +2,8 @@ import { cn } from '@/lib/utils';
 import type { PropertyItem } from './propertyService';
 import { HighlightedText } from './HighlightedText';
 import { formatCurrency, formatDate } from './formatters';
+import { useViewport } from '@/components/layout/ViewportContext';
+import { findMatchInText } from './textMatcher';
 
 interface PropertyResultItemProps {
   item: PropertyItem;
@@ -19,6 +21,35 @@ export function PropertyResultItem({
   compact = false,
   itemProps,
 }: PropertyResultItemProps) {
+  const { isMobile } = useViewport();
+
+  // Use pre-computed matched address if available, otherwise compute it
+  const displayAddress = item.matchedAddress || (() => {
+    // First check if main address matches
+    const mainAddressMatch = findMatchInText(item.address, query);
+
+    // If main address matches, use it
+    if (mainAddressMatch !== null) {
+      return item.address;
+    }
+
+    // Otherwise, check all AKA addresses for matches
+    const akaMatches = item.aka
+      .map(aka => ({
+        address: aka,
+        match: findMatchInText(aka, query)
+      }))
+      .filter(result => result.match !== null);
+
+    // If we have AKA matches, use the first one
+    if (akaMatches.length > 0) {
+      return akaMatches[0].address;
+    }
+
+    // Fallback to main address if nothing matched
+    return item.address;
+  })();
+
   return (
     <li
       {...itemProps}
@@ -32,19 +63,20 @@ export function PropertyResultItem({
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 space-y-1">
           <div className="text-base leading-5 text-foreground">
-            <HighlightedText text={item.address} query={query} />
+            <HighlightedText text={displayAddress} query={query} />
           </div>
           <div className="text-sm leading-5 text-foreground/60">
             BBL: {item.borough}-{item.block}-{item.lot}
           </div>
-          {/* Sale Information */}
-          {item.sale_document_date && item.sale_document_amount && (
+          {/* Sale Information - hidden on mobile */}
+          {!isMobile && item.sale_document_date && item.sale_document_amount && (
             <div className="text-sm leading-5 text-foreground/70">
               Sold {formatDate(item.sale_document_date)} for{' '}
               {formatCurrency(item.sale_document_amount)}
             </div>
           )}
-          {item.buyer_name && (
+          {/* Owner - hidden on mobile */}
+          {!isMobile && item.buyer_name && (
             <div className="text-sm leading-5 text-foreground/70">
               Owner: {item.buyer_name}
             </div>
