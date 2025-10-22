@@ -1,7 +1,7 @@
 import { fetchAcrisProperties } from '@/services/acrisProperties';
+import type { BaseAutocompleteItem } from '@/components/ui/Autocomplete';
 
-export interface PropertyItem {
-  id: string;
+export interface PropertyItem extends BaseAutocompleteItem {
   address: string;
   borough: string;
   block: string;
@@ -10,7 +10,6 @@ export interface PropertyItem {
   sale_document_date?: string;
   sale_document_amount?: number;
   buyer_name?: string;
-  [key: string]: string | string[] | number | undefined; // Index signature for BaseItem constraint
 }
 
 /**
