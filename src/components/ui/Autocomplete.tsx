@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { createAutocomplete, type AutocompleteSource } from '@algolia/autocomplete-core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -109,6 +109,9 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
   onInputChange,
   onOpenChange,
 }: AutocompleteProps<TItem>) {
+  // Use React's useId for stable SSR/client IDs
+  const id = useId();
+
   const [autocompleteState, setAutocompleteState] = useState<{
     collections: Array<{
       source: Record<string, unknown>;
@@ -128,6 +131,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
 
   const autocomplete = useRef(
     createAutocomplete<TItem>({
+      id,
       autoFocus,
       initialState: {
         query: initialValue,

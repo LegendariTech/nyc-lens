@@ -143,3 +143,10 @@ button {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
 }
+
+/* Hide ag-Grid watermark */
+.ag-watermark {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}

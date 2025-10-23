@@ -1,6 +1,10 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
+import { PlutoTab } from './components/PlutoTab';
+import { DobTab } from './components/DobTab';
+import { HpdTab } from './components/HpdTab';
 
 interface PropertyPageProps {
   params: Promise<{
@@ -43,45 +47,26 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
       {/* Content */}
       <div className="flex-1 p-6">
         <div className="mx-auto max-w-screen-xl space-y-6">
-          {/* Property Information Card */}
-          <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">
-              Property Information
-            </h2>
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <dt className="text-sm font-medium text-foreground/70">Borough</dt>
-                <dd className="mt-1 text-base text-foreground">{borough}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-foreground/70">Block</dt>
-                <dd className="mt-1 text-base text-foreground">{block}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-foreground/70">Lot</dt>
-                <dd className="mt-1 text-base text-foreground">{lot}</dd>
-              </div>
-            </dl>
-          </div>
+          {/* Tabs for different data sources */}
+          <Tabs defaultValue="pluto" className="w-full">
+            <TabsList>
+              <TabsTrigger value="pluto">PLUTO</TabsTrigger>
+              <TabsTrigger value="dob">DOB</TabsTrigger>
+              <TabsTrigger value="hpd">HPD</TabsTrigger>
+            </TabsList>
 
-          {/* Placeholder for additional sections */}
-          <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">
-              Documents & Transactions
-            </h2>
-            <p className="text-sm text-foreground/70">
-              Document history will be displayed here.
-            </p>
-          </div>
+            <TabsContent value="pluto">
+              <PlutoTab bbl={bbl} />
+            </TabsContent>
 
-          <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">
-              Parties
-            </h2>
-            <p className="text-sm text-foreground/70">
-              Associated parties will be displayed here.
-            </p>
-          </div>
+            <TabsContent value="dob">
+              <DobTab bbl={bbl} />
+            </TabsContent>
+
+            <TabsContent value="hpd">
+              <HpdTab bbl={bbl} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
