@@ -117,16 +117,17 @@ export default function SidebarNav() {
               href="/"
               className={cn(
                 // Keep header height stable and icon position consistent
-                "flex h-12 shrink-0 items-center rounded-md",
+                "flex h-12 flex-1 items-center rounded-md",
                 "hover:bg-foreground/10 transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               )}
               onClick={() => setIsMobileOpen(false)}
+              title="NYC Lens - Home"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center">
                 <HomeIcon className="text-foreground shrink-0 h-5 w-5" />
               </span>
-              <span className="truncate whitespace-nowrap text-lg font-semibold text-nav-item">
+              <span className="min-w-0 flex-1 whitespace-nowrap text-lg font-semibold text-nav-item">
                 NYC Lens
               </span>
             </Link>

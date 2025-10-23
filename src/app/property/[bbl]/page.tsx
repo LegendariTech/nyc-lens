@@ -2,9 +2,11 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
+import { OverviewTab } from './components/OverviewTab';
 import { PlutoTab } from './components/PlutoTab';
 import { DobTab } from './components/DobTab';
 import { HpdTab } from './components/HpdTab';
+import { fetchPlutoData } from '@/services/propertyData';
 
 interface PropertyPageProps {
   params: Promise<{
@@ -35,13 +37,18 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
     notFound();
   }
 
-  const [borough, block, lot] = bblParts;
+  // const [borough, block, lot] = bblParts; // TODO: Use these for dynamic data fetching
+
+  // Fetch PLUTO data
+  const { data, metadata, error } = await fetchPlutoData(bbl);
 
   return (
-    <div className="flex h-full w-full flex-col overflow-auto">
+    <div className="flex h-full w-full flex-col overflow-auto scroll-container">
       {/* Search Header */}
-      <div className="border-b border-foreground/20 bg-background px-6 py-3">
-        <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
+      <div className="sticky top-0 z-50 border-b border-foreground/20 bg-background py-3 px-6">
+        <div className="mx-auto max-w-screen-xl">
+          <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
+        </div>
       </div>
 
       {/* Content */}
@@ -50,13 +57,22 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
           {/* Tabs for different data sources */}
           <Tabs defaultValue="pluto" className="w-full">
             <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="pluto">PLUTO</TabsTrigger>
               <TabsTrigger value="dob">DOB</TabsTrigger>
               <TabsTrigger value="hpd">HPD</TabsTrigger>
             </TabsList>
 
+            <TabsContent value="overview">
+              <div className="relative">
+                <OverviewTab data={data} metadata={metadata} error={error} bbl={bbl} />
+              </div>
+            </TabsContent>
+
             <TabsContent value="pluto">
-              <PlutoTab bbl={bbl} />
+              <div className="relative">
+                <PlutoTab data={data} metadata={metadata} error={error} bbl={bbl} />
+              </div>
             </TabsContent>
 
             <TabsContent value="dob">

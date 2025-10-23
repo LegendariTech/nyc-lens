@@ -88,7 +88,7 @@ function ResizableSidebarLayoutInner({
       {/* Mobile top bar with burger menu */}
       <div
         className={cn(
-          "md:hidden fixed top-0 left-0 right-0 z-30",
+          "md:hidden fixed top-0 left-0 right-0 z-[60]",
           "h-12 flex items-center px-3",
           "bg-background border-b border-foreground/20"
         )}
@@ -113,7 +113,7 @@ function ResizableSidebarLayoutInner({
         <div
           onClick={() => setIsMobileOpen(false)}
           className={cn(
-            "md:hidden fixed inset-0 z-30",
+            "md:hidden fixed inset-0 z-[65]",
             "bg-foreground/20 backdrop-blur-[2px]"
           )}
           aria-hidden="true"
@@ -134,7 +134,7 @@ function ResizableSidebarLayoutInner({
           // Smooth transition when collapsing/expanding (but not when dragging)
           !isDragging && "transition-[width] duration-300 ease-in-out",
           // Mobile: off-canvas drawer
-          "fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out md:static md:transform-none",
+          "fixed inset-y-0 left-0 z-[70] transform transition-transform duration-300 ease-in-out md:static md:transform-none",
           isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
