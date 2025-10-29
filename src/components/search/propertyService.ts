@@ -10,6 +10,7 @@ export interface PropertyItem extends BaseAutocompleteItem {
   sale_document_date?: string;
   sale_document_amount?: number;
   buyer_name?: string;
+  avroll_building_class?: string;
   /** The matched address (either main address or AKA) - set by UI layer */
   matchedAddress?: string;
 }
@@ -96,6 +97,7 @@ export async function fetchProperties(query: string): Promise<PropertyItem[]> {
       sale_document_date: row.sale_document_date,
       sale_document_amount: row.sale_document_amount,
       buyer_name: row.buyer_name,
+      avroll_building_class: row.avroll_building_class,
     }));
   } catch (error) {
     console.error('Error fetching properties:', error);

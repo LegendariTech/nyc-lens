@@ -4,6 +4,7 @@ import { HighlightedText } from './HighlightedText';
 import { formatCurrency, formatDate } from './formatters';
 import { useViewport } from '@/components/layout/ViewportContext';
 import { findMatchInText } from './textMatcher';
+import { getBuildingClassCategory } from '@/services/propertyData';
 
 interface PropertyResultItemProps {
   item: PropertyItem;
@@ -75,10 +76,10 @@ export function PropertyResultItem({
               {formatCurrency(item.sale_document_amount)}
             </div>
           )}
-          {/* Owner - hidden on mobile */}
-          {!isMobile && item.buyer_name && (
+          {/* Building Class Category - hidden on mobile */}
+          {!isMobile && item.avroll_building_class && (
             <div className="text-sm leading-5 text-foreground/70">
-              Owner: {item.buyer_name}
+              {getBuildingClassCategory(item.avroll_building_class)}
             </div>
           )}
         </div>
