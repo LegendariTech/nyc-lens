@@ -1,17 +1,68 @@
-import { LAND_USE_CODES, BOROUGH_CODES, BUILDING_CLASS_CATEGORIES } from '@/types/pluto';
+/**
+ * NYC Geography Constants
+ * Comprehensive mappings for NYC boroughs and districts
+ */
 
 /**
- * Get human-readable land use description
+ * Borough names mapped by all common code formats
  */
-export function getLandUseDescription(landUseCode: number): string {
-  return LAND_USE_CODES[landUseCode] || `Unknown (${landUseCode})`;
+const boroughMap: Record<string, string> = {
+  // Numeric string keys (ACRIS filters)
+  '1': 'Manhattan',
+  '2': 'Bronx',
+  '3': 'Brooklyn',
+  '4': 'Queens',
+  '5': 'Staten Island',
+
+  // Letter codes (PLUTO format)
+  'MN': 'Manhattan',
+  'BX': 'Bronx',
+  'BK': 'Brooklyn',
+  'QN': 'Queens',
+  'SI': 'Staten Island',
+};
+
+/**
+ * Borough names - accepts string or number keys
+ * Handles all formats: numeric (1-5), string ('1'-'5'), letter codes ('MN', 'BX', etc.)
+ */
+export const BOROUGH_NAMES = new Proxy(boroughMap, {
+  get: (target, prop: string | symbol) => {
+    if (typeof prop === 'symbol') return undefined;
+    // Convert numbers to strings for lookup
+    const key = String(prop);
+    return target[key];
+  }
+}) as Record<string | number, string>;
+
+/**
+ * Borough slugs for URL generation
+ */
+export const BOROUGH_SLUGS: Record<number, string> = {
+  1: 'manhattan',
+  2: 'bronx',
+  3: 'brooklyn',
+  4: 'queens',
+  5: 'staten-island',
+};
+
+/**
+ * Borough filter values for AG Grid filters (ACRIS format)
+ */
+export const BOROUGH_FILTER_VALUES = ['1', '2', '3', '4', '5'];
+
+/**
+ * Get borough name from any code format
+ */
+export function getBoroughName(code: string | number): string {
+  return BOROUGH_NAMES[code] || String(code);
 }
 
 /**
- * Get borough name from code
+ * Get borough slug for URL generation
  */
-export function getBoroughName(boroughCode: string): string {
-  return BOROUGH_CODES[boroughCode] || boroughCode;
+export function getBoroughSlug(boroughCode: number): string | null {
+  return BOROUGH_SLUGS[boroughCode] || null;
 }
 
 /**
@@ -28,15 +79,7 @@ export function getCommunityDistrictName(cdCode: number): string {
   const boroughCode = parseInt(cdString.charAt(0));
   const districtNumber = parseInt(cdString.substring(1));
 
-  const boroughNames: Record<number, string> = {
-    1: 'Manhattan',
-    2: 'Bronx',
-    3: 'Brooklyn',
-    4: 'Queens',
-    5: 'Staten Island',
-  };
-
-  const boroughName = boroughNames[boroughCode] || 'Unknown Borough';
+  const boroughName = getBoroughName(boroughCode);
   return `${boroughName} Community District ${districtNumber}`;
 }
 
@@ -54,15 +97,7 @@ export function getCommunityDistrictUrl(cdCode: number): string | null {
   const boroughCode = parseInt(cdString.charAt(0));
   const districtNumber = parseInt(cdString.substring(1));
 
-  const boroughSlugs: Record<number, string> = {
-    1: 'manhattan',
-    2: 'bronx',
-    3: 'brooklyn',
-    4: 'queens',
-    5: 'staten-island',
-  };
-
-  const boroughSlug = boroughSlugs[boroughCode];
+  const boroughSlug = getBoroughSlug(boroughCode);
   if (!boroughSlug) return null;
 
   return `https://communityprofiles.planning.nyc.gov/${boroughSlug}/${districtNumber}`;
@@ -109,37 +144,26 @@ export function getZoningDistrictUrl(zoningDistrict: string | null): string | nu
 
       // Map to the appropriate anchor based on specific district rules
       if (districtNum === 1) {
-        // R1-1, R1-2, R1-2A (and any R1 sub-district)
         anchor = '#R1';
       } else if (districtNum === 2) {
-        // R2, R2A, R2X
         anchor = '#R2-R2A-R2X';
       } else if (districtNum === 3) {
-        // R3-1, R3-2, R3A, R3X
         anchor = '#R3-1-R3-2-R3A-R3X';
       } else if (districtNum === 4) {
-        // R4, R4 Infill, R4-1, R4A, R4B
         anchor = '#R4-R4Infill-R4-1-R4A-R4B';
       } else if (districtNum === 5) {
-        // R5, R5 Infill, R5A, R5B, R5D
         anchor = '#R5-R5Infill-R5A-R5B-R5D';
       } else if (districtNum === 6) {
-        // R6, R6A, R6B
         anchor = '#R6-R6A-R6B';
       } else if (districtNum === 7) {
-        // R7, R7A, R7B, R7D, R7X
         anchor = '#R7-R7A-R7B-R7D-R7X';
       } else if (districtNum === 8) {
-        // R8, R8A, R8B, R8X
         anchor = '#R8-R8A-R8B-R8X';
       } else if (districtNum === 9) {
-        // R9, R9A, R9D, R9X
         anchor = '#R9-R9A-R9D-R9X';
       } else if (districtNum === 10) {
-        // R10, R10A, R10X
         anchor = '#R10-R10A-R10X';
       } else {
-        // Default for unknown R districts
         anchor = '#R6-R6A-R6B';
       }
     }
@@ -162,7 +186,6 @@ export function getZoningDistrictUrl(zoningDistrict: string | null): string | nu
           if (subDistrict >= 1 && subDistrict <= 5) {
             anchor = '#C1-C2-overlays';
           } else if (subDistrict >= 6 && subDistrict <= 9) {
-            // C1-6 to C1-9 or C2-6 to C2-8
             anchor = '#C1-C2';
           } else {
             anchor = '#C1-C2';
@@ -171,25 +194,18 @@ export function getZoningDistrictUrl(zoningDistrict: string | null): string | nu
           anchor = '#C1-C2';
         }
       } else if (districtNum === 3) {
-        // C3 and C3A - waterfront recreational
         anchor = '#C3-C3A';
       } else if (districtNum === 4) {
-        // C4 districts (all variants)
         anchor = '#C4';
       } else if (districtNum === 5) {
-        // C5 districts (all variants)
         anchor = '#C5';
       } else if (districtNum === 6) {
-        // C6 districts (all variants)
         anchor = '#C6';
       } else if (districtNum === 7) {
-        // C7 - amusement parks
         anchor = '#C7';
       } else if (districtNum === 8) {
-        // C8 districts (C8-1 to C8-4)
         anchor = '#C8';
       } else {
-        // Default for unknown C districts
         anchor = '#C1-C2';
       }
     }
@@ -202,17 +218,11 @@ export function getZoningDistrictUrl(zoningDistrict: string | null): string | nu
     if (match) {
       const districtNum = parseInt(match[1]);
 
-      // Map to the appropriate anchor based on district number
-      // M1-1 through M1-6 (including special sub-districts like M1-5M, M1-6M)
       if (districtNum === 1) {
         anchor = '#M1';
-      }
-      // M2-1 through M2-4
-      else if (districtNum === 2) {
+      } else if (districtNum === 2) {
         anchor = '#M2';
-      }
-      // M3-1 and M3-2
-      else if (districtNum === 3) {
+      } else if (districtNum === 3) {
         anchor = '#M3';
       }
     }
@@ -224,12 +234,4 @@ export function getZoningDistrictUrl(zoningDistrict: string | null): string | nu
   return baseUrl + anchor;
 }
 
-/**
- * Get building class category description
- */
-export function getBuildingClassCategory(buildingClass: string): string {
-  if (!buildingClass) return 'Unknown';
-  const category = buildingClass.charAt(0).toUpperCase();
-  return BUILDING_CLASS_CATEGORIES[category] || 'Unknown';
-}
 

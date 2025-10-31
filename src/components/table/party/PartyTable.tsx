@@ -7,7 +7,7 @@ import type { AcrisDoc, AcrisParty } from '@/types/acris';
 import type { AcrisPartiesRequest, AcrisPartiesResponse } from '@/types/api';
 import { partyColDefs } from './columnDefs';
 import { myTheme } from '../theme';
-import { formatCurrency, formatDateMMDDYYYY } from '../utils/formatters';
+import { formatCurrency, formatDateMMDDYYYY } from '@/utils/formatters';
 
 function PartiesDetailRenderer(props: CustomCellRendererProps<AcrisDoc>) {
   const [rows, setRows] = useState<AcrisParty[]>([]);

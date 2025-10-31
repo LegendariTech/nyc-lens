@@ -1,7 +1,6 @@
 ---
-alwaysApply: true
+alwaysApply: false
 ---
-
 # Tailwind CSS & Component Markup Standards
 **Next.js App Router | Tailwind v4 | TypeScript**
 

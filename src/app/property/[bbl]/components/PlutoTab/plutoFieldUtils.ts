@@ -2,13 +2,10 @@ import {
   formatValue,
   getFieldMetadata,
   type DatasourceMetadata,
-} from '@/data/propertyData';
-import {
-  getBoroughName,
-  getBuildingClassCategory,
-  getCommunityDistrictName,
-  getLandUseDescription,
-} from '../../utils/pluto';
+} from '../../utils/propertyData';
+import { getBoroughName, getCommunityDistrictName } from '@/constants/nyc';
+import { getBuildingClassCategory } from '@/constants/building';
+import { getLandUseDescription } from '@/constants/landUse';
 import { type DataField } from '@/components/ui';
 
 /**

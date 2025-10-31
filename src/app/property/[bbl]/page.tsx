@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
 import { OverviewTab } from './components/OverviewTab';

@@ -4,7 +4,7 @@ import { HighlightedText } from './HighlightedText';
 import { formatCurrency, formatDate } from './formatters';
 import { useViewport } from '@/components/layout/ViewportContext';
 import { findMatchInText } from './textMatcher';
-import { getBuildingClassCategory } from '@/app/property/[bbl]/utils/pluto';
+import { getBuildingClassCategory } from '@/constants/building';
 
 interface PropertyResultItemProps {
   item: PropertyItem;

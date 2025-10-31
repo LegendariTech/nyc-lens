@@ -1,6 +1,6 @@
 import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import { AcrisRecord } from '@/types/acris';
-import { BOROUGH_CODE_MAP, BOROUGH_FILTER_VALUES } from '../constants/geo';
+import { BOROUGH_NAMES, BOROUGH_FILTER_VALUES } from '@/constants/nyc';
 import Link from 'next/link';
 import {
   DEFAULT_TEXT_FILTER_PARAMS,
@@ -11,8 +11,8 @@ import {
 import {
   BUILDING_CLASS_FILTER_VALUES,
   BUILDING_CLASS_CODE_MAP,
-} from '../constants/building';
-import { formatCurrency, formatDateMMDDYYYY } from '../utils/formatters';
+} from '@/constants/building';
+import { formatCurrency, formatDateMMDDYYYY } from '@/utils/formatters';
 import { AkaCell } from './AkaCell';
 
 export const colDefs: ColDef<AcrisRecord>[] = [
@@ -38,13 +38,13 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     headerName: 'Borough',
     filter: 'agSetColumnFilter',
     valueFormatter: (params: ValueFormatterParams<AcrisRecord, string>) => {
-      return (params.value || '') + ' - ' + BOROUGH_CODE_MAP[params.value || ''];
+      return (params.value || '') + ' - ' + BOROUGH_NAMES[params.value || ''];
     },
     filterParams: {
       values: BOROUGH_FILTER_VALUES,
       defaultToNothingSelected: true,
       valueFormatter: (params: ValueFormatterParams<AcrisRecord, string>) => {
-        return (params.value || '') + ' - ' + BOROUGH_CODE_MAP[params.value || ''];
+        return (params.value || '') + ' - ' + BOROUGH_NAMES[params.value || ''];
       },
     },
     floatingFilter: true,

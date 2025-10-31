@@ -2,10 +2,8 @@
 
 import { DataFieldCard, DatasetInfoCard } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
-import {
-  getBoroughName,
-  getBuildingClassCategory,
-} from '../utils/pluto';
+import { getBoroughName } from '@/constants/nyc';
+import { getBuildingClassCategory } from '@/constants/building';
 import { formatTimestamp } from '@/utils/formatters';
 
 interface OverviewTabProps {

@@ -1,10 +1,10 @@
-import { type SectionDefinition } from '@/data/propertyData';
+import { type SectionDefinition } from '../../utils/propertyData';
 import { type PlutoData } from '@/data/pluto';
 import {
   getCommunityDistrictUrl,
   getCouncilDistrictUrl,
   getZoningDistrictUrl,
-} from '../../utils/pluto';
+} from '@/constants/nyc';
 
 /**
  * PLUTO section definitions for data display

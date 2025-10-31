@@ -6,7 +6,7 @@ import {
   type DatasourceMetadata,
   type DatasourceColumnMetadata,
 } from '../propertyData';
-import { type PlutoData } from '../pluto';
+import { type PlutoData } from '@/data/pluto';
 import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
 import { formatTimestamp } from '@/utils/formatters';
 
@@ -194,4 +194,5 @@ describe('propertyData service', () => {
     });
   });
 });
+
 

@@ -1,3 +1,11 @@
+/**
+ * NYC Building Class Codes
+ * Building classification codes used in NYC property records
+ */
+
+/**
+ * Building class filter values for AG Grid filters
+ */
 export const BUILDING_CLASS_FILTER_VALUES = [
   'A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9',
   'B1', 'B2', 'B3', 'B9',
@@ -26,6 +34,9 @@ export const BUILDING_CLASS_FILTER_VALUES = [
   'Z0', 'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z7', 'Z8', 'Z9',
 ];
 
+/**
+ * Detailed building class code descriptions (full codes like 'A1', 'D4', etc.)
+ */
 export const BUILDING_CLASS_CODE_MAP: Record<string, string> = {
   A: 'ONE FAMILY DWELLINGS',
   A0: 'CAPE COD',
@@ -273,5 +284,49 @@ export const BUILDING_CLASS_CODE_MAP: Record<string, string> = {
   Z8: 'CEMETERY',
   Z9: 'OTHER MISCELLANEOUS',
 };
+
+/**
+ * Building class categories (letter prefixes only)
+ * Used for getting the general category of a building class
+ */
+export const BUILDING_CLASS_CATEGORIES: Record<string, string> = {
+  A: 'One Family Dwellings',
+  B: 'Two Family Dwellings',
+  C: 'Walk-Up Apartments',
+  D: 'Elevator Apartments',
+  E: 'Warehouses',
+  F: 'Factory and Industrial Buildings',
+  G: 'Garages and Gasoline Stations',
+  H: 'Hotels',
+  I: 'Hospitals and Health Facilities',
+  J: 'Theatres',
+  K: 'Store Buildings',
+  L: 'Loft Buildings',
+  M: 'Churches, Synagogues, etc.',
+  N: 'Asylums and Homes',
+  O: 'Office Buildings',
+  P: 'Places of Public Assembly, Indoor',
+  Q: 'Places of Public Assembly, Outdoor',
+  R: 'Condominiums',
+  S: 'Residence, Multiple Use',
+  T: 'Transportation Facilities',
+  U: 'Utility Bureau Properties',
+  V: 'Miscellaneous',
+  W: 'Educational Structures',
+  Y: 'Selected Government Installations',
+  Z: 'Miscellaneous',
+};
+
+/**
+ * Get building class category from a building class code
+ * @param buildingClass - Full building class code (e.g., 'A1', 'D4')
+ * @returns Category name or the code itself if not found
+ */
+export function getBuildingClassCategory(buildingClass: string): string {
+  if (!buildingClass) return 'Unknown';
+
+  const prefix = buildingClass.charAt(0).toUpperCase();
+  return BUILDING_CLASS_CATEGORIES[prefix] || buildingClass;
+}
 
 

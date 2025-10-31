@@ -1,12 +1,12 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { AcrisDoc } from '@/types/acris';
-import { formatCurrency, formatDateMMDDYYYY } from '../utils/formatters';
+import { formatCurrency, formatDateMMDDYYYY } from '@/utils/formatters';
 import {
   DEFAULT_DATE_FILTER_PARAMS,
   DEFAULT_NUMBER_FILTER_PARAMS,
 } from '../constants/filters';
 import { LinkCell } from './LinkCell';
-import CONTROL_CODES from '../constants/acris_control_code.json';
+import { ACRIS_CONTROL_CODES as CONTROL_CODES } from '@/constants/acris';
 
 // Build lookup maps and the full values list for the Set Filter tree list
 type ControlRow = { [k: string]: string | null };
@@ -19,7 +19,7 @@ const docTypeToClass: Record<string, string> = {};
 const docTypeValues: string[] = [];
 const classDescriptions = new Set<string>();
 
-(CONTROL_CODES as ControlRow[]).forEach((row) => {
+(CONTROL_CODES as unknown as ControlRow[]).forEach((row) => {
   const code = (row[DOC_TYPE_KEY] || '').trim();
   const desc = (row[DOC_TYPE_DESC_KEY] || '').trim();
   const cls = (row[CLASS_DESC_KEY] || '').trim();

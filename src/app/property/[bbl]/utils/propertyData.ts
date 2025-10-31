@@ -1,5 +1,3 @@
-import { fetchPlutoData } from './pluto';
-
 export interface DatasourceColumnMetadata {
   id: number;
   name: string;
