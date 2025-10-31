@@ -1,26 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  groupPlutoData,
-  formatValue,
-  getFieldMetadata,
-  getLandUseDescription,
-  getBoroughName,
-  getBuildingClassCategory,
-  getCommunityDistrictName,
-  type PlutoData,
-  type PlutoMetadata,
-} from '@/services/propertyData';
-import { DataFieldCard, DatasetInfoCard, type DataField } from '@/components/ui';
+import { getSections, type PlutoData, type DatasourceMetadata } from '@/services/propertyData';
+import { DataFieldCard, DatasetInfoCard } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
+import { plutoSections } from './plutoSections';
+import { formatPlutoField, isPlutoFieldEmpty } from './plutoFieldUtils';
 
 interface PlutoTabProps {
   data: PlutoData | null;
-  metadata: PlutoMetadata | null;
+  metadata: DatasourceMetadata | null;
   error?: string;
   showEmptyFields?: boolean;
-  bbl?: string; // Add BBL prop for ChatGPT URL
+  bbl?: string;
 }
 
 export function PlutoTab({ data, metadata, error, showEmptyFields = true }: PlutoTabProps) {
@@ -28,7 +20,7 @@ export function PlutoTab({ data, metadata, error, showEmptyFields = true }: Plut
   const [hideEmptyFields, setHideEmptyFields] = useState(!showEmptyFields);
 
   // Generate sections for "On This Page" sidebar based on actual data sections
-  const dataSections = groupPlutoData(data, metadata);
+  const dataSections = getSections(plutoSections, data, metadata);
   const sidebarSections = [
     { id: 'dataset-info', title: 'Dataset Information', level: 1 },
     ...dataSections.map((section, index) => ({
@@ -55,40 +47,7 @@ export function PlutoTab({ data, metadata, error, showEmptyFields = true }: Plut
     );
   }
 
-  const sections = groupPlutoData(data, metadata);
-
-  // Custom formatter for PLUTO-specific field formatting
-  const formatPlutoField = (field: DataField) => {
-    if (!metadata) return String(field.value || 'N/A');
-
-    // Format BBL to remove decimal places
-    if (field.fieldName === 'bbl' && typeof field.value === 'string') {
-      return parseFloat(field.value).toFixed(0);
-    }
-
-    const columnMetadata = getFieldMetadata(metadata, field.fieldName || '');
-    let formattedValue = formatValue(field.value as string | number | boolean | null, columnMetadata, field.format as "number" | "currency" | "percentage" | undefined);
-    let additionalInfo = '';
-
-    // Add human-readable descriptions for coded fields
-    if (field.fieldName === 'cd' && typeof field.value === 'number') {
-      additionalInfo = getCommunityDistrictName(field.value);
-      formattedValue = `${formattedValue} - ${additionalInfo}`;
-    } else if (field.fieldName === 'council' && typeof field.value === 'number') {
-      formattedValue = `${formattedValue} - Council District ${field.value}`;
-    } else if (field.fieldName === 'landuse' && typeof field.value === 'number') {
-      additionalInfo = getLandUseDescription(field.value);
-      formattedValue = `${formattedValue} - ${additionalInfo}`;
-    } else if (field.fieldName === 'borough' && typeof field.value === 'string') {
-      additionalInfo = getBoroughName(field.value);
-      formattedValue = `${field.value} (${additionalInfo})`;
-    } else if (field.fieldName === 'bldgclass' && typeof field.value === 'string') {
-      additionalInfo = getBuildingClassCategory(field.value);
-      formattedValue = `${formattedValue} - ${additionalInfo}`;
-    }
-
-    return formattedValue;
-  };
+  const sections = getSections(plutoSections, data, metadata);
 
   return (
     <DataTabLayout sections={sidebarSections}>
@@ -126,7 +85,8 @@ export function PlutoTab({ data, metadata, error, showEmptyFields = true }: Plut
             fields={section.fields}
             hideEmptyFields={hideEmptyFields}
             id={`section-${index}`}
-            customFormatter={formatPlutoField}
+            customFormatter={(field) => formatPlutoField(field, metadata)}
+            customEmptyCheck={isPlutoFieldEmpty}
           />
         ))}
       </div>

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
 import { OverviewTab } from './components/OverviewTab';
-import { PlutoTab } from './components/PlutoTab';
+import { PlutoTab } from './components/PlutoTab/PlutoTab';
 import { DobTab } from './components/DobTab';
 import { HpdTab } from './components/HpdTab';
 import { fetchPlutoData } from '@/services/propertyData';
@@ -15,15 +15,6 @@ interface PropertyPageProps {
   searchParams: Promise<{
     address?: string;
   }>;
-}
-
-export async function generateMetadata({ params }: PropertyPageProps): Promise<Metadata> {
-  const { bbl } = await params;
-
-  return {
-    title: `Property ${bbl} | NYC Lens`,
-    description: `View property details, documents, and transaction history for BBL ${bbl}`,
-  };
 }
 
 export default async function PropertyPage({ params, searchParams }: PropertyPageProps) {

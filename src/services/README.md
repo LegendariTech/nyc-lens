@@ -4,7 +4,15 @@ This directory contains services for fetching and processing property data from 
 
 ## Overview
 
-The property data service provides a unified interface for accessing property information from different sources (PLUTO, DOB, HPD, etc.) with consistent error handling and data formatting.
+The property data services provide a unified interface for accessing property information from different sources (PLUTO, DOB, HPD, etc.) with consistent error handling and data formatting.
+
+### Files
+
+- **`propertyData.ts`** - Generic data fetching and formatting utilities that work across all data sources
+- **`plutoData.ts`** - PLUTO-specific data fetching and helper functions
+- **`acrisDocuments.ts`** - ACRIS document data fetching
+- **`acrisParties.ts`** - ACRIS party data fetching
+- **`acrisProperties.ts`** - ACRIS property data fetching
 
 ## Usage
 
@@ -60,27 +68,20 @@ interface PropertyDataResult {
 }
 ```
 
-### Helper Functions
+### Generic Helper Functions (from `propertyData.ts`)
 
-#### `groupPlutoData(data, metadata)`
+#### `getSections(sections, data, metadata)`
 
-Groups PLUTO data into logical sections for display.
+Generates display-ready data sections using a section definition array and dataset metadata.
 
-**Returns:** `PlutoSection[]`
+**Parameters:**
+- `sections` - Array of section definitions (for example `plutoSections`)
+- `data` - Source data object (typed generically)
+- `metadata` - Metadata object for the dataset (typed generically)
 
-```typescript
-interface PlutoSection {
-  title: string;
-  fields: Array<{
-    label: string;
-    fieldName: string;
-    value: string | number | boolean | null;
-    description?: string;
-  }>;
-}
-```
+**Returns:** `DataSection<TData>[]`
 
-#### `formatValue(value, column?)`
+#### `formatValue(value, column?, fieldFormat?)`
 
 Formats a value based on its metadata and type.
 
@@ -90,7 +91,25 @@ formatValue(null)           // "N/A"
 formatValue(true)           // "Yes"
 formatValue(1000)           // "1,000"
 formatValue(1000, { format: { noCommas: 'true' } }) // "1000"
+formatValue(50000, undefined, 'currency') // "$50,000"
 ```
+
+#### `formatTimestamp(timestamp)`
+
+Formats a Unix timestamp to a readable date string.
+
+**Example:**
+```typescript
+formatTimestamp(1704067200) // "January 1, 2024"
+```
+
+### PLUTO-Specific Helper Functions (from `plutoData.ts`)
+
+#### `fetchPlutoData(bbl)`
+
+Fetches PLUTO data for a specific property by BBL.
+
+**Returns:** `Promise<PlutoDataResult>`
 
 #### `getLandUseDescription(landUseCode)`
 
@@ -108,6 +127,42 @@ Converts a borough code to its full name.
 **Example:**
 ```typescript
 getBoroughName('MN') // "Manhattan"
+```
+
+#### `getCommunityDistrictName(cdCode)`
+
+Converts a 3-digit community district code to a descriptive name.
+
+**Example:**
+```typescript
+getCommunityDistrictName(101) // "Manhattan Community District 1"
+```
+
+#### `getCommunityDistrictUrl(cdCode)`
+
+Generates a URL to the NYC Planning community district profile.
+
+**Example:**
+```typescript
+getCommunityDistrictUrl(101) // "https://communityprofiles.planning.nyc.gov/manhattan/1"
+```
+
+#### `getCouncilDistrictUrl(councilDistrict)`
+
+Generates a URL to the NYC Council district page.
+
+**Example:**
+```typescript
+getCouncilDistrictUrl(1) // "https://council.nyc.gov/district-1/"
+```
+
+#### `getZoningDistrictUrl(zoningDistrict)`
+
+Generates a URL to the NYC Planning zoning district guide with appropriate anchor.
+
+**Example:**
+```typescript
+getZoningDistrictUrl("R7A") // "https://www.nyc.gov/content/planning/pages/zoning/zoning-districts-guide/residence-districts/#R7-R7A-R7B-R7D-R7X"
 ```
 
 #### `getBuildingClassCategory(buildingClass)`
@@ -130,7 +185,7 @@ PLUTO data is provided by the NYC Department of City Planning and contains exten
 - This is a fixed path containing test data for development purposes
 - Files included:
   - `data.json` - Sample property data (1 Broadway, Manhattan)
-  - `metadata.json` - Column definitions and descriptions from Socrata
+  - `metadata.json` - Column definitions and descriptions from Socrata (consumed via `PlutoTab/metadata.json`)
 - The `bbl` parameter is currently ignored; all requests return the same sample data
 
 **Future Enhancement:**
@@ -187,7 +242,8 @@ npm test -- src/services/__tests__/propertyData.test.ts
 
 ```typescript
 import { use } from 'react';
-import { usePropertyData, groupPlutoData } from '@/services/propertyData';
+import { usePropertyData, getSections } from '@/services/propertyData';
+import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
 
 export function PropertyDetails({ bbl }: { bbl: string }) {
   const propertyDataPromise = usePropertyData(bbl, 'pluto');
@@ -201,7 +257,7 @@ export function PropertyDetails({ bbl }: { bbl: string }) {
     return <EmptyState />;
   }
 
-  const sections = groupPlutoData(data, metadata);
+  const sections = getSections(plutoSections, data, metadata);
 
   return (
     <div>
@@ -217,6 +273,28 @@ export function PropertyDetails({ bbl }: { bbl: string }) {
           ))}
         </Section>
       ))}
+    </div>
+  );
+}
+```
+
+### Using PLUTO-Specific Functions
+
+```typescript
+import { fetchPlutoData, getBoroughName, getLandUseDescription } from '@/services/plutoData';
+
+export async function PlutoDisplay({ bbl }: { bbl: string }) {
+  const { data, error } = await fetchPlutoData(bbl);
+  
+  if (error || !data) {
+    return <div>Error loading data</div>;
+  }
+
+  return (
+    <div>
+      <h2>{data.address}</h2>
+      <p>Borough: {getBoroughName(data.borough as string)}</p>
+      <p>Land Use: {getLandUseDescription(data.landuse as number)}</p>
     </div>
   );
 }

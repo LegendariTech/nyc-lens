@@ -19,6 +19,7 @@ interface DataFieldCardProps {
   className?: string;
   id?: string;
   customFormatter?: (field: DataField) => string;
+  customEmptyCheck?: (field: DataField) => boolean;
 }
 
 export function DataFieldCard({
@@ -27,7 +28,8 @@ export function DataFieldCard({
   hideEmptyFields = false,
   className,
   id,
-  customFormatter
+  customFormatter,
+  customEmptyCheck
 }: DataFieldCardProps) {
   const [openTooltip, setOpenTooltip] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<Record<string, 'top' | 'bottom'>>({});
@@ -36,9 +38,14 @@ export function DataFieldCard({
   // Filter out fields with no value based on hideEmptyFields prop
   const fieldsToShow = !hideEmptyFields
     ? fields
-    : fields.filter(
-      (field) => field.value !== null && field.value !== '' && field.value !== undefined
-    );
+    : fields.filter((field) => {
+      // Use custom empty check if provided
+      if (customEmptyCheck) {
+        return !customEmptyCheck(field);
+      }
+      // Default empty check
+      return field.value !== null && field.value !== '' && field.value !== undefined;
+    });
 
   // Hide section completely if no fields to show
   if (fieldsToShow.length === 0) {

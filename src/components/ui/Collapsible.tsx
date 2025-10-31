@@ -16,6 +16,7 @@ const CollapsibleTrigger = React.forwardRef<
       ref={ref}
       className={cn(
         'group flex w-full items-center justify-between rounded-md px-4 py-3 text-left font-medium transition-colors',
+        'cursor-pointer',
         'hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50',
         'disabled:pointer-events-none disabled:opacity-50',
         className

@@ -131,8 +131,17 @@
     "ingested": "no"
   },
   {
-    "name": "DOB Safety Violations",
+    "name": "DOB Safety Violations"
+    // this is a new viol;ation listed on DOB now
+    // https://data.cityofnewyork.us/Housing-Development/DOB-Safety-Violations/855j-jady/about_data
   },
-  // this is a new viol;ation listed on DOB now
-  // https://data.cityofnewyork.us/Housing-Development/DOB-Safety-Violations/855j-jady/about_data
+  {
+    "name": "Property Valuation and Assessment Data Tax Classes 1,2,3,4",
+    "socrata_id": "8y4t-faws",
+    "nyc_open_data_url": "https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data-Tax-Classes/8y4t-faws/about_data",
+    "doc_api_url": "https://data.cityofnewyork.us/api/views/8y4t-faws.json",
+    "source": "socrata",
+    "provided_by": "DOF",
+    "ingested": "no"
+  }
 ]

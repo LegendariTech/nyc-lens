@@ -2,11 +2,11 @@
 
 import { DataFieldCard, DatasetInfoCard } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
+import { formatTimestamp } from '@/services/propertyData';
 import {
   getBoroughName,
   getBuildingClassCategory,
-  formatTimestamp
-} from '@/services/propertyData';
+} from '@/services/plutoData';
 
 interface OverviewTabProps {
   data: any; // TODO: Add proper typing

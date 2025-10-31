@@ -2,15 +2,16 @@ import { describe, it, expect } from 'vitest';
 import {
   formatValue,
   getFieldMetadata,
-  groupPlutoData,
+  getSections,
   formatTimestamp,
-  type PlutoMetadata,
-  type PlutoData,
-  type PlutoColumn,
+  type DatasourceMetadata,
+  type DatasourceColumnMetadata,
 } from '../propertyData';
+import { type PlutoData } from '../plutoData';
+import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
 
 describe('propertyData service', () => {
-  const mockColumn: PlutoColumn = {
+  const mockColumn: DatasourceColumnMetadata = {
     id: 1,
     name: 'Test Field',
     dataTypeName: 'number',
@@ -22,7 +23,7 @@ describe('propertyData service', () => {
     format: {},
   };
 
-  const mockMetadata: PlutoMetadata = {
+  const mockMetadata: DatasourceMetadata = {
     id: 'test-id',
     name: 'Test Dataset',
     description: 'Test description',
@@ -63,7 +64,7 @@ describe('propertyData service', () => {
     });
 
     it('formats numeric values without commas when specified', () => {
-      const columnWithNoCommas: PlutoColumn = {
+      const columnWithNoCommas: DatasourceColumnMetadata = {
         ...mockColumn,
         format: { noCommas: 'true' },
       };
@@ -107,7 +108,7 @@ describe('propertyData service', () => {
     });
   });
 
-  describe('groupPlutoData', () => {
+  describe('getSections', () => {
     const mockData: PlutoData = {
       address: '123 Main St',
       borough: 'MN',
@@ -161,32 +162,32 @@ describe('propertyData service', () => {
     };
 
     it('returns empty array when data is null', () => {
-      const result = groupPlutoData(null, mockMetadata);
+      const result = getSections(plutoSections, null, mockMetadata);
       expect(result).toEqual([]);
     });
 
     it('groups data into sections', () => {
-      const result = groupPlutoData(mockData, mockMetadata);
+      const result = getSections(plutoSections, mockData, mockMetadata);
       expect(result).toBeInstanceOf(Array);
       expect(result.length).toBeGreaterThan(0);
     });
 
     it('includes basic information section', () => {
-      const result = groupPlutoData(mockData, mockMetadata);
+      const result = getSections(plutoSections, mockData, mockMetadata);
       const basicInfo = result.find((s) => s.title === 'Basic Information');
       expect(basicInfo).toBeDefined();
       expect(basicInfo?.fields.some((f) => f.fieldName === 'address')).toBe(true);
     });
 
     it('includes building information section', () => {
-      const result = groupPlutoData(mockData, mockMetadata);
+      const result = getSections(plutoSections, mockData, mockMetadata);
       const buildingInfo = result.find((s) => s.title === 'Building Information');
       expect(buildingInfo).toBeDefined();
       expect(buildingInfo?.fields.some((f) => f.fieldName === 'yearbuilt')).toBe(true);
     });
 
     it('includes field descriptions from metadata', () => {
-      const result = groupPlutoData(mockData, mockMetadata);
+      const result = getSections(plutoSections, mockData, mockMetadata);
       const basicInfo = result.find((s) => s.title === 'Basic Information');
       const addressField = basicInfo?.fields.find((f) => f.fieldName === 'address');
       expect(addressField?.description).toBeDefined();
