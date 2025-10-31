@@ -8,7 +8,7 @@ import {
   getBuildingClassCategory,
   getCommunityDistrictName,
   getLandUseDescription,
-} from '@/services/plutoData';
+} from '@/lib/plutoUtils';
 import { type DataField } from '@/components/ui';
 
 /**

@@ -1,4 +1,5 @@
 // elasticClient.mjs
+import 'server-only';
 import { Client } from '@elastic/elasticsearch';
 import { AcrisRecord } from '@/types/acris';
 

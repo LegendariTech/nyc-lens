@@ -30,35 +30,6 @@ export interface PropertyDataResult<TData = Record<string, string | number | boo
 }
 
 /**
- * Fetch property data from different sources
- * @param bbl - Borough-Block-Lot identifier (e.g., "1-13-1")
- * @param source - Data source ('pluto', 'dob', 'hpd')
- */
-export async function usePropertyData(
-  bbl: string,
-  source: 'pluto' | 'dob' | 'hpd'
-): Promise<PropertyDataResult> {
-  try {
-    if (source === 'pluto') {
-      return await fetchPlutoData(bbl);
-    }
-
-    // TODO: Implement other sources
-    return {
-      data: null,
-      metadata: null,
-      error: `Source "${source}" not yet implemented`,
-    };
-  } catch (error) {
-    return {
-      data: null,
-      metadata: null,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
-  }
-}
-
-/**
  * Get metadata for a specific field
  */
 export function getFieldMetadata(
@@ -137,20 +108,6 @@ export function formatValue(
   }
 
   return String(value);
-}
-
-/**
- * Format Unix timestamp to readable date
- */
-export function formatTimestamp(timestamp: number | undefined): string {
-  if (!timestamp) return 'Unknown';
-
-  const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 }
 
 type SectionFieldFormat = 'currency' | 'number' | 'percentage';

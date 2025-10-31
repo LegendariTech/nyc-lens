@@ -181,17 +181,22 @@ getBuildingClassCategory('O6') // "Office Buildings"
 PLUTO data is provided by the NYC Department of City Planning and contains extensive land use and geographic data at the tax lot level.
 
 **Current Implementation:**
-- Data is loaded from static sample JSON files located at `/app/property/[bbl]/data/pluto/`
-- This is a fixed path containing test data for development purposes
-- Files included:
-  - `data.json` - Sample property data (1 Broadway, Manhattan)
-  - `metadata.json` - Column definitions and descriptions from Socrata (consumed via `PlutoTab/metadata.json`)
-- The `bbl` parameter is currently ignored; all requests return the same sample data
+- Data is fetched from PostgreSQL database (`silver.pluto` table)
+- BBL is parsed to extract borough code, block, and lot for database lookup
+- Supports both hyphenated format (e.g., "1-13-1") and 10-digit format (e.g., "1013000001")
+- Returns the most recent version based on `[:updated_at]` timestamp
+- Metadata (column definitions and descriptions) is loaded from static JSON file at `/app/property/[bbl]/components/PlutoTab/metadata.json`
 
-**Future Enhancement:**
-- Replace static file loading with API calls to Elasticsearch or Socrata
-- Use the `bbl` parameter to fetch actual property-specific data
-- Implement caching for improved performance
+**Database Schema:**
+- Schema: `silver`
+- Table: `pluto`
+- Key columns for lookup: `borocode`, `block`, `lot`
+- Indexed on: `(borocode, block, lot)` for efficient queries
+- Additional metadata columns: `[:id]`, `[:version]`, `[:created_at]`, `[:updated_at]`
+
+**BBL Format:**
+- Hyphenated: "1-13-1" (borough-block-lot)
+- Concatenated: "1013000001" (1 digit borough + 5 digit block + 4 digit lot)
 
 ### DOB (Department of Buildings)
 

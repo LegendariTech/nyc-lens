@@ -1,42 +1,69 @@
-import { Pool, QueryResult, QueryResultRow } from 'pg';
+import 'server-only';
+import sql, { config as SqlConfig, IResult } from 'mssql';
 
-// Create a connection pool for PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // Alternative: individual connection parameters if DATABASE_URL is not set
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  // Connection pool settings
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return error after 2 seconds if connection not established
-});
+// Azure SQL Database connection configuration
+const config: SqlConfig = {
+  server: process.env.DB_HOST || '',
+  port: parseInt(process.env.DB_PORT || '1433'),
+  database: process.env.DB_NAME || '',
+  user: process.env.DB_USER || '',
+  password: process.env.DB_PASSWORD || '',
+  options: {
+    encrypt: true, // Required for Azure SQL
+    trustServerCertificate: false, // Set to true for local dev only
+  },
+  pool: {
+    max: 20,
+    min: 0,
+    idleTimeoutMillis: 30000,
+  },
+};
 
-// Handle pool errors
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle database client', err);
-  process.exit(-1);
-});
+// Create a connection pool for Azure SQL
+let pool: sql.ConnectionPool | null = null;
+
+/**
+ * Get or create the connection pool
+ */
+async function getPool(): Promise<sql.ConnectionPool> {
+  if (!pool) {
+    pool = await new sql.ConnectionPool(config).connect();
+    console.log('Azure SQL connection pool created');
+
+    pool.on('error', (err) => {
+      console.error('Azure SQL pool error:', err);
+      pool = null; // Reset pool on error
+    });
+  }
+  return pool;
+}
 
 /**
  * Execute a SQL query against the database.
  * @param {string} text - The SQL query string.
- * @param {unknown[]} params - The query parameters (for parameterized queries).
- * @returns {Promise<QueryResult<T>>} - The query results.
+ * @param {Record<string, unknown>} params - Named parameters for the query.
+ * @returns {Promise<IResult<T>>} - The query results.
  * @template T - The type of the row data returned by the query.
  */
-export async function query<T extends QueryResultRow = QueryResultRow>(
+export async function query<T = unknown>(
   text: string,
-  params?: unknown[]
-): Promise<QueryResult<T>> {
+  params?: Record<string, unknown>
+): Promise<IResult<T>> {
   const start = Date.now();
   try {
-    const result = await pool.query<T>(text, params);
+    const pool = await getPool();
+    const request = pool.request();
+
+    // Add parameters if provided
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        request.input(key, value);
+      }
+    }
+
+    const result = await request.query<T>(text);
     const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: result.rowCount });
+    console.log('Executed query', { text, duration, rows: result.rowsAffected[0] });
     return result;
   } catch (err) {
     console.error('Database query error:', err);
@@ -47,17 +74,17 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
 /**
  * Execute a query and return the first row, or null if no rows found.
  * @param {string} text - The SQL query string.
- * @param {unknown[]} params - The query parameters.
+ * @param {Record<string, unknown>} params - Named parameters for the query.
  * @returns {Promise<T | null>} - The first row or null.
  * @template T - The type of the row data.
  */
-export async function queryOne<T extends QueryResultRow = QueryResultRow>(
+export async function queryOne<T = unknown>(
   text: string,
-  params?: unknown[]
+  params?: Record<string, unknown>
 ): Promise<T | null> {
   try {
     const result = await query<T>(text, params);
-    return result.rows[0] || null;
+    return result.recordset[0] || null;
   } catch (err) {
     console.error('Database queryOne error:', err);
     throw err;
@@ -67,17 +94,17 @@ export async function queryOne<T extends QueryResultRow = QueryResultRow>(
 /**
  * Execute a query and return all rows.
  * @param {string} text - The SQL query string.
- * @param {unknown[]} params - The query parameters.
+ * @param {Record<string, unknown>} params - Named parameters for the query.
  * @returns {Promise<T[]>} - Array of rows.
  * @template T - The type of the row data.
  */
-export async function queryMany<T extends QueryResultRow = QueryResultRow>(
+export async function queryMany<T = unknown>(
   text: string,
-  params?: unknown[]
+  params?: Record<string, unknown>
 ): Promise<T[]> {
   try {
     const result = await query<T>(text, params);
-    return result.rows;
+    return result.recordset;
   } catch (err) {
     console.error('Database queryMany error:', err);
     throw err;
@@ -86,57 +113,65 @@ export async function queryMany<T extends QueryResultRow = QueryResultRow>(
 
 /**
  * Execute a transaction with multiple queries.
- * @param {Function} callback - Async function that receives a client and executes queries.
+ * @param {Function} callback - Async function that receives a transaction and executes queries.
  * @returns {Promise<T>} - The result of the transaction.
  * @template T - The return type of the callback.
  */
 export async function transaction<T>(
-  callback: (client: {
+  callback: (tx: {
     query: typeof query;
     queryOne: typeof queryOne;
     queryMany: typeof queryMany;
   }) => Promise<T>
 ): Promise<T> {
-  const client = await pool.connect();
+  const pool = await getPool();
+  const tx = pool.transaction();
+
   try {
-    await client.query('BEGIN');
+    await tx.begin();
 
-    // Create wrapper functions that use this specific client
-    const clientQuery = <R extends QueryResultRow = QueryResultRow>(
+    // Create wrapper functions that use this specific transaction
+    const txQuery = async <R = unknown>(
       text: string,
-      params?: unknown[]
-    ): Promise<QueryResult<R>> => client.query<R>(text, params);
-
-    const clientQueryOne = async <R extends QueryResultRow = QueryResultRow>(
-      text: string,
-      params?: unknown[]
-    ): Promise<R | null> => {
-      const result = await client.query<R>(text, params);
-      return result.rows[0] || null;
+      params?: Record<string, unknown>
+    ): Promise<IResult<R>> => {
+      const request = tx.request();
+      if (params) {
+        for (const [key, value] of Object.entries(params)) {
+          request.input(key, value);
+        }
+      }
+      return await request.query<R>(text);
     };
 
-    const clientQueryMany = async <R extends QueryResultRow = QueryResultRow>(
+    const txQueryOne = async <R = unknown>(
       text: string,
-      params?: unknown[]
+      params?: Record<string, unknown>
+    ): Promise<R | null> => {
+      const result = await txQuery<R>(text, params);
+      return result.recordset[0] || null;
+    };
+
+    const txQueryMany = async <R = unknown>(
+      text: string,
+      params?: Record<string, unknown>
     ): Promise<R[]> => {
-      const result = await client.query<R>(text, params);
-      return result.rows;
+      const result = await txQuery<R>(text, params);
+      return result.recordset;
     };
 
     const result = await callback({
-      query: clientQuery,
-      queryOne: clientQueryOne,
-      queryMany: clientQueryMany,
+      query: txQuery,
+      queryOne: txQueryOne,
+      queryMany: txQueryMany,
     });
 
-    await client.query('COMMIT');
+    await tx.commit();
     return result;
   } catch (err) {
-    await client.query('ROLLBACK');
+    await tx.rollback();
     console.error('Transaction error:', err);
     throw err;
-  } finally {
-    client.release();
   }
 }
 
@@ -146,11 +181,11 @@ export async function transaction<T>(
  */
 export async function testConnection(): Promise<boolean> {
   try {
-    const result = await query('SELECT NOW()');
-    console.log('Database connection successful:', result.rows[0]);
+    const result = await query('SELECT GETDATE() as now');
+    console.log('Azure SQL connection successful:', result.recordset[0]);
     return true;
   } catch (err) {
-    console.error('Database connection failed:', err);
+    console.error('Azure SQL connection failed:', err);
     return false;
   }
 }
@@ -160,9 +195,11 @@ export async function testConnection(): Promise<boolean> {
  * Call this when shutting down the application.
  */
 export async function closePool(): Promise<void> {
-  await pool.end();
+  if (pool) {
+    await pool.close();
+    pool = null;
+  }
 }
 
-// Export the pool for advanced use cases
-export { pool };
-
+// Export the pool getter for advanced use cases
+export { getPool };

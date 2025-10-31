@@ -6,7 +6,7 @@ import { OverviewTab } from './components/OverviewTab';
 import { PlutoTab } from './components/PlutoTab/PlutoTab';
 import { DobTab } from './components/DobTab';
 import { HpdTab } from './components/HpdTab';
-import { fetchPlutoData } from '@/services/propertyData';
+import { fetchPlutoData } from '@/services/plutoData';
 
 interface PropertyPageProps {
   params: Promise<{

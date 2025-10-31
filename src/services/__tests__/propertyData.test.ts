@@ -3,12 +3,12 @@ import {
   formatValue,
   getFieldMetadata,
   getSections,
-  formatTimestamp,
   type DatasourceMetadata,
   type DatasourceColumnMetadata,
 } from '../propertyData';
 import { type PlutoData } from '../plutoData';
 import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
+import { formatTimestamp } from '@/lib/formatters';
 
 describe('propertyData service', () => {
   const mockColumn: DatasourceColumnMetadata = {

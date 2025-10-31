@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { getSections, type PlutoData, type DatasourceMetadata } from '@/services/propertyData';
+import { getSections, type DatasourceMetadata } from '@/services/propertyData';
+import { type PlutoData } from '@/services/plutoData';
 import { DataFieldCard, DatasetInfoCard } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
 import { plutoSections } from './plutoSections';
