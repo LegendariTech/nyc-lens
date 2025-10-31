@@ -2,7 +2,7 @@ import {
   formatValue,
   getFieldMetadata,
   type DatasourceMetadata,
-} from '../../utils/propertyData';
+} from '../../utils/datasourceDisplay';
 import { getBoroughName, getCommunityDistrictName } from '@/constants/nyc';
 import { getBuildingClassCategory } from '@/constants/building';
 import { getLandUseDescription } from '@/constants/landUse';

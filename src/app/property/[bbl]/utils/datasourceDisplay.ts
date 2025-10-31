@@ -1,14 +1,19 @@
-export interface DatasourceColumnMetadata {
-  id: number;
-  name: string;
-  dataTypeName: string;
-  description: string;
-  fieldName: string;
-  position: number;
-  renderTypeName: string;
-  tableColumnId: number;
-  format?: Record<string, string | undefined>;
-}
+/**
+ * Datasource Display Utilities
+ * 
+ * Generic utilities for displaying structured data from NYC Open Data datasources.
+ * This module provides:
+ * - Type definitions for datasource metadata (columns, descriptions, attribution)
+ * - Section builder utilities to transform data + definitions into UI sections
+ * - Field metadata lookup helpers
+ * 
+ * These utilities are datasource-agnostic and can be used with any structured data
+ * (PLUTO, DOB permits, HPD violations, etc.)
+ */
+
+import { formatValue, type DatasourceColumnMetadata } from '@/utils/formatters';
+
+export type { DatasourceColumnMetadata };
 
 export interface DatasourceMetadata {
   id: string;
@@ -37,76 +42,8 @@ export function getFieldMetadata(
   return metadata?.columns.find((col) => col.fieldName === fieldName);
 }
 
-/**
- * Format a value based on its metadata and field format
- */
-export function formatValue(
-  value: string | number | boolean | null | undefined,
-  column?: DatasourceColumnMetadata,
-  fieldFormat?: 'currency' | 'number' | 'percentage'
-): string {
-  if (value === null || value === undefined || value === '') {
-    return 'N/A';
-  }
-
-  // Handle boolean values
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No';
-  }
-
-  // Handle numeric values with formatting
-  if (typeof value === 'number') {
-    // Check for currency formatting first
-    if (fieldFormat === 'currency') {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(value);
-    }
-
-    // Check for number formatting
-    if (fieldFormat === 'number') {
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(value);
-    }
-
-    // Check if the column has a format specification
-    if (column?.format?.noCommas === 'true') {
-      return value.toString();
-    }
-    return value.toLocaleString();
-  }
-
-  // Handle string values that should be formatted as currency
-  if (typeof value === 'string' && fieldFormat === 'currency') {
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(numericValue);
-    }
-  }
-
-  // Handle string values that should be formatted as numbers
-  if (typeof value === 'string' && fieldFormat === 'number') {
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(numericValue);
-    }
-  }
-
-  return String(value);
-}
+// Re-export formatValue for backwards compatibility
+export { formatValue };
 
 type SectionFieldFormat = 'currency' | 'number' | 'percentage';
 

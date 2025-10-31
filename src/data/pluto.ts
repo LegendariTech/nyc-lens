@@ -1,4 +1,4 @@
-import type { DatasourceMetadata } from './propertyData';
+import type { DatasourceMetadata } from '@/app/property/[bbl]/utils/datasourceDisplay';
 import { queryOne } from './db';
 
 

@@ -128,6 +128,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const autocomplete = useRef(
     createAutocomplete<TItem>({
@@ -180,6 +181,15 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
     };
   }, [autocomplete]);
 
+  // Cleanup blur timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const totalItems = autocompleteState.collections.reduce(
     (sum, collection) => sum + collection.items.length,
     0
@@ -202,12 +212,17 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                 inputElement: inputRef.current,
               }) as unknown as React.InputHTMLAttributes<HTMLInputElement>)}
               onBlur={() => {
+                // Clear any existing blur timeout
+                if (blurTimeoutRef.current) {
+                  clearTimeout(blurTimeoutRef.current);
+                }
                 // Delay closing to allow clicks on panel items to register
-                setTimeout(() => {
+                blurTimeoutRef.current = setTimeout(() => {
                   // Only close if focus hasn't moved to panel
                   if (!panelRef.current?.contains(document.activeElement)) {
                     autocomplete.setIsOpen(false);
                   }
+                  blurTimeoutRef.current = null;
                 }, 200);
               }}
               className={cn(

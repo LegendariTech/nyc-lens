@@ -1,4 +1,4 @@
-import { type SectionDefinition } from '../../utils/propertyData';
+import { type SectionDefinition } from '../../utils/datasourceDisplay';
 import { type PlutoData } from '@/data/pluto';
 import {
   getCommunityDistrictUrl,

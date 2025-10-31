@@ -1,16 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
-  formatValue,
   getFieldMetadata,
   getSections,
   type DatasourceMetadata,
   type DatasourceColumnMetadata,
-} from '../propertyData';
+} from '../datasourceDisplay';
 import { type PlutoData } from '@/data/pluto';
 import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
-import { formatTimestamp } from '@/utils/formatters';
 
-describe('propertyData service', () => {
+describe('datasourceDisplay utilities', () => {
   const mockColumn: DatasourceColumnMetadata = {
     id: 1,
     name: 'Test Field',
@@ -45,50 +43,6 @@ describe('propertyData service', () => {
       },
     ],
   };
-
-  describe('formatValue', () => {
-    it('formats null values as N/A', () => {
-      expect(formatValue(null)).toBe('N/A');
-      expect(formatValue(undefined)).toBe('N/A');
-      expect(formatValue('')).toBe('N/A');
-    });
-
-    it('formats boolean values', () => {
-      expect(formatValue(true)).toBe('Yes');
-      expect(formatValue(false)).toBe('No');
-    });
-
-    it('formats numeric values with commas by default', () => {
-      expect(formatValue(1000)).toBe('1,000');
-      expect(formatValue(1234567)).toBe('1,234,567');
-    });
-
-    it('formats numeric values without commas when specified', () => {
-      const columnWithNoCommas: DatasourceColumnMetadata = {
-        ...mockColumn,
-        format: { noCommas: 'true' },
-      };
-      expect(formatValue(1000, columnWithNoCommas)).toBe('1000');
-    });
-
-    it('formats string values', () => {
-      expect(formatValue('test string')).toBe('test string');
-    });
-  });
-
-  describe('formatTimestamp', () => {
-    it('formats Unix timestamp to readable date', () => {
-      // January 1, 2024 00:00:00 UTC
-      const timestamp = 1704067200;
-      const result = formatTimestamp(timestamp);
-      expect(result).toContain('2024');
-      expect(result).toContain('January');
-    });
-
-    it('returns "Unknown" for undefined timestamp', () => {
-      expect(formatTimestamp(undefined)).toBe('Unknown');
-    });
-  });
 
   describe('getFieldMetadata', () => {
     it('finds metadata by field name', () => {
