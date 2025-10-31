@@ -1,4 +1,4 @@
-import { fetchPlutoData } from './plutoData';
+import { fetchPlutoData } from './pluto';
 
 export interface DatasourceColumnMetadata {
   id: number;

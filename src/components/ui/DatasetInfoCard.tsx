@@ -1,8 +1,8 @@
 'use client';
 
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsible';
-import { formatTimestamp } from '@/lib/formatters';
-import { cn } from '@/lib/utils';
+import { formatTimestamp } from '@/utils/formatters';
+import { cn } from '@/utils/cn';
 
 interface DatasetMetadata {
   name: string;

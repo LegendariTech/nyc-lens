@@ -2,7 +2,7 @@
 
 import { ButtonGroup, Switch } from '@/components/ui';
 import { OpenAIIcon, AnthropicIcon, PerplexityIcon, ExternalLinkIcon } from '@/components/icons';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface TabControlsBarProps {
   showAIServices?: boolean;

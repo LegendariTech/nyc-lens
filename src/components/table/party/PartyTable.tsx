@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import type { AcrisDoc, AcrisParty } from '@/types/acris';
+import type { AcrisPartiesRequest, AcrisPartiesResponse } from '@/types/api';
 import { partyColDefs } from './columnDefs';
 import { myTheme } from '../theme';
-import { fetchAcrisParties } from '@/services/acrisParties';
 import { formatCurrency, formatDateMMDDYYYY } from '../utils/formatters';
 
 function PartiesDetailRenderer(props: CustomCellRendererProps<AcrisDoc>) {
@@ -24,7 +24,22 @@ function PartiesDetailRenderer(props: CustomCellRendererProps<AcrisDoc>) {
           if (!cancelled) setRows([]);
           return;
         }
-        const res = await fetchAcrisParties({ documentId });
+
+        // Call API directly - defaults handle everything
+        const payload: AcrisPartiesRequest = {
+          documentId,
+          // request is optional - will use sensible defaults
+        };
+
+        const response = await fetch('/api/acris/parties', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch parties');
+        const res = (await response.json()) as AcrisPartiesResponse;
+
         if (!cancelled) setRows(res.rows || []);
       } finally {
         if (!cancelled) setLoading(false);

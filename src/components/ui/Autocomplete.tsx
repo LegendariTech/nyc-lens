@@ -3,7 +3,7 @@
 import React from 'react';
 import { createAutocomplete, type AutocompleteSource } from '@algolia/autocomplete-core';
 import { useEffect, useId, useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 /**
  * Base item interface that all autocomplete items must extend

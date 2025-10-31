@@ -5,8 +5,8 @@ import { TabControlsBar, DataTabLayout } from '@/components/layout';
 import {
   getBoroughName,
   getBuildingClassCategory,
-} from '@/lib/plutoUtils';
-import { formatTimestamp } from '@/lib/formatters';
+} from '../utils/pluto';
+import { formatTimestamp } from '@/utils/formatters';
 
 interface OverviewTabProps {
   data: any; // TODO: Add proper typing

@@ -1,7 +1,7 @@
 'use client';
 
 import { OnThisPageSidebar } from './OnThisPageSidebar';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface Section {
   id: string;

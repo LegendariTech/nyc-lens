@@ -1,5 +1,5 @@
-import { fetchAcrisProperties } from '@/services/acrisProperties';
 import type { BaseAutocompleteItem } from '@/components/ui/Autocomplete';
+import type { AcrisPropertiesRequest, AcrisPropertiesResponse } from '@/types/api';
 
 export interface PropertyItem extends BaseAutocompleteItem {
   address: string;
@@ -73,19 +73,23 @@ export async function fetchProperties(query: string): Promise<PropertyItem[]> {
         },
       };
 
-    const data = await fetchAcrisProperties({
+    // Call API directly - only pass what we need to override defaults
+    const payload: AcrisPropertiesRequest = {
       request: {
-        startRow: 0,
         endRow: 10, // Limit to 10 results for autocomplete
-        rowGroupCols: [],
-        valueCols: [],
-        pivotCols: [],
-        pivotMode: false,
-        groupKeys: [],
         filterModel,
-        sortModel: [],
+        sortModel: [], // Sort by relevance, not by date
       },
+    };
+
+    const res = await fetch('/api/acris/properties', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
     });
+
+    if (!res.ok) throw new Error('Failed to fetch properties');
+    const data = (await res.json()) as AcrisPropertiesResponse;
 
     return data.rows.map((row) => ({
       id: row.id,

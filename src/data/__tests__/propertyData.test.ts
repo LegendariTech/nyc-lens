@@ -6,9 +6,9 @@ import {
   type DatasourceMetadata,
   type DatasourceColumnMetadata,
 } from '../propertyData';
-import { type PlutoData } from '../plutoData';
+import { type PlutoData } from '../pluto';
 import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
-import { formatTimestamp } from '@/lib/formatters';
+import { formatTimestamp } from '@/utils/formatters';
 
 describe('propertyData service', () => {
   const mockColumn: DatasourceColumnMetadata = {

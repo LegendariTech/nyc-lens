@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 

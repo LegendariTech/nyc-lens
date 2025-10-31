@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import type { AcrisRecord, AcrisDoc } from '@/types/acris';
+import type { AcrisDocumentsRequest, AcrisDocumentsResponse } from '@/types/api';
 import { detailColDefs } from './columnDefs';
 import { myTheme } from '../theme';
-import { fetchAcrisDocuments } from '@/services/acrisDocuments';
 import PartiesDetailRenderer from '../party/PartyTable';
 
 function DetailCellRenderer(props: CustomCellRendererProps<AcrisRecord>) {
@@ -21,11 +21,24 @@ function DetailCellRenderer(props: CustomCellRendererProps<AcrisRecord>) {
       try {
         if (!parent) return;
         setLoading(true);
-        const { rows } = await fetchAcrisDocuments({
+
+        // Call API directly - defaults handle everything
+        const payload: AcrisDocumentsRequest = {
           borough: parent.borough,
           block: parent.block,
           lot: parent.lot,
+          // request is optional - will use sensible defaults
+        };
+
+        const res = await fetch('/api/acris/documents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
         });
+
+        if (!res.ok) throw new Error('Failed to fetch documents');
+        const { rows } = (await res.json()) as AcrisDocumentsResponse;
+
         if (!cancelled) setRows(rows || []);
       } catch (e) {
         console.error(e);

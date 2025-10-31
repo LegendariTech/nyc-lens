@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { MenuIcon } from "@/components/icons";
 

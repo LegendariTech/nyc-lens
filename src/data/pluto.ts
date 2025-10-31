@@ -1,5 +1,5 @@
 import type { DatasourceMetadata } from './propertyData';
-import { queryOne } from './dbClient';
+import { queryOne } from './db';
 
 
 export interface PlutoData {

@@ -1,10 +1,10 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import type { PropertyItem } from './propertyService';
 import { HighlightedText } from './HighlightedText';
 import { formatCurrency, formatDate } from './formatters';
 import { useViewport } from '@/components/layout/ViewportContext';
 import { findMatchInText } from './textMatcher';
-import { getBuildingClassCategory } from '@/lib/plutoUtils';
+import { getBuildingClassCategory } from '@/app/property/[bbl]/utils/pluto';
 
 interface PropertyResultItemProps {
   item: PropertyItem;

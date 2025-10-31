@@ -19,7 +19,7 @@ The property data services provide a unified interface for accessing property in
 ### Basic Usage
 
 ```typescript
-import { usePropertyData } from '@/services/propertyData';
+import { usePropertyData } from '@/data/propertyData';
 
 // In a React Server Component
 async function MyComponent({ bbl }: { bbl: string }) {
@@ -39,7 +39,7 @@ async function MyComponent({ bbl }: { bbl: string }) {
 'use client';
 
 import { use } from 'react';
-import { usePropertyData } from '@/services/propertyData';
+import { usePropertyData } from '@/data/propertyData';
 
 function MyClientComponent({ bbl }: { bbl: string }) {
   const propertyDataPromise = usePropertyData(bbl, 'pluto');
@@ -247,7 +247,7 @@ npm test -- src/services/__tests__/propertyData.test.ts
 
 ```typescript
 import { use } from 'react';
-import { usePropertyData, getSections } from '@/services/propertyData';
+import { usePropertyData, getSections } from '@/data/propertyData';
 import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
 
 export function PropertyDetails({ bbl }: { bbl: string }) {
@@ -286,7 +286,7 @@ export function PropertyDetails({ bbl }: { bbl: string }) {
 ### Using PLUTO-Specific Functions
 
 ```typescript
-import { fetchPlutoData, getBoroughName, getLandUseDescription } from '@/services/plutoData';
+import { fetchPlutoData, getBoroughName, getLandUseDescription } from '@/data/pluto';
 
 export async function PlutoDisplay({ bbl }: { bbl: string }) {
   const { data, error } = await fetchPlutoData(bbl);

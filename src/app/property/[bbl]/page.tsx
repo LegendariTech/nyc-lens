@@ -6,7 +6,7 @@ import { OverviewTab } from './components/OverviewTab';
 import { PlutoTab } from './components/PlutoTab/PlutoTab';
 import { DobTab } from './components/DobTab';
 import { HpdTab } from './components/HpdTab';
-import { fetchPlutoData } from '@/services/plutoData';
+import { fetchPlutoData } from '@/data/pluto';
 
 interface PropertyPageProps {
   params: Promise<{
@@ -34,7 +34,7 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
   const { data, metadata, error } = await fetchPlutoData(bbl);
 
   return (
-    <div className="flex h-full w-full flex-col overflow-auto scroll-container">
+    <div className="flex h-full w-full flex-col overflow-auto scroll-container focus:outline-none" tabIndex={-1}>
       {/* Search Header */}
       <div className="sticky top-0 z-50 border-b border-foreground/20 bg-background py-3 px-6">
         <div className="mx-auto max-w-screen-xl">

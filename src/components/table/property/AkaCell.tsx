@@ -4,7 +4,7 @@ import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { ICellRendererParams } from 'ag-grid-community';
 import type { AcrisRecord } from '@/types/acris';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 type Props = ICellRendererParams<AcrisRecord>;
 

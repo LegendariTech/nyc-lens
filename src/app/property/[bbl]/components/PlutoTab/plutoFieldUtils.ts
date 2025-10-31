@@ -2,13 +2,13 @@ import {
   formatValue,
   getFieldMetadata,
   type DatasourceMetadata,
-} from '@/services/propertyData';
+} from '@/data/propertyData';
 import {
   getBoroughName,
   getBuildingClassCategory,
   getCommunityDistrictName,
   getLandUseDescription,
-} from '@/lib/plutoUtils';
+} from '../../utils/pluto';
 import { type DataField } from '@/components/ui';
 
 /**
