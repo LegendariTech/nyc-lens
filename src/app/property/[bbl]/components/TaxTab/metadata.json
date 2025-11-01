@@ -1,0 +1,1674 @@
+{
+  "id": "8y4t-faws",
+  "name": "Property Valuation and Assessment Data Tax Classes 1,2,3,4",
+  "assetType": "dataset",
+  "attribution": "Department of Finance",
+  "averageRating": 0,
+  "category": "City Government",
+  "createdAt": 1562336446,
+  "description": "Real Estate Assessment Property data. Data represent NYC properties assessments for purpose to calculate Property Tax, Grant eligible properties Exemptions and/or Abatements. Data collected and entered into the system by various City employee, like Property Assessors, Property Exemption specialists, ACRIS reporting, Department of Building reporting, etc..",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 9059,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "indexUpdatedAt": 1563129306,
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 0,
+  "oid": 31904786,
+  "provenance": "official",
+  "publicationAppendEnabled": false,
+  "publicationDate": 1562774562,
+  "publicationGroup": 16336159,
+  "publicationStage": "published",
+  "rowClass": "",
+  "rowsUpdatedAt": 1748548005,
+  "tableId": 16348726,
+  "totalTimesRated": 0,
+  "viewCount": 48146,
+  "viewLastModified": 1748451438,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1562786404,
+      "reviewedAutomatically": true,
+      "state": "approved",
+      "submissionId": 1079407,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1562786404,
+      "targetAudience": "public",
+      "workflowId": 2285,
+      "submissionDetails": {
+        "permissionType": "READ"
+      },
+      "submissionOutcomeApplication": {
+        "failureCount": 0,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "5fuc-pqz2",
+        "displayName": "NYC OpenData"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 417177145,
+      "name": "PARID",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "parid",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 83707872,
+      "format": {}
+    },
+    {
+      "id": 417177146,
+      "name": "BORO",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "boro",
+      "position": 2,
+      "renderTypeName": "number",
+      "tableColumnId": 83707950,
+      "format": {}
+    },
+    {
+      "id": 417177147,
+      "name": "BLOCK",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "block",
+      "position": 3,
+      "renderTypeName": "number",
+      "tableColumnId": 83707856,
+      "format": {}
+    },
+    {
+      "id": 417177148,
+      "name": "LOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "lot",
+      "position": 4,
+      "renderTypeName": "number",
+      "tableColumnId": 83707910,
+      "format": {}
+    },
+    {
+      "id": 417177149,
+      "name": "EASEMENT",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "easement",
+      "position": 5,
+      "renderTypeName": "text",
+      "tableColumnId": 83707944,
+      "format": {}
+    },
+    {
+      "id": 417177150,
+      "name": "SUBIDENT-REUC",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "subident_reuc",
+      "position": 6,
+      "renderTypeName": "text",
+      "tableColumnId": 83707883,
+      "format": {}
+    },
+    {
+      "id": 417177151,
+      "name": "RECTYPE",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "rectype",
+      "position": 7,
+      "renderTypeName": "number",
+      "tableColumnId": 83707880,
+      "format": {}
+    },
+    {
+      "id": 417177152,
+      "name": "YEAR",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "year",
+      "position": 8,
+      "renderTypeName": "text",
+      "tableColumnId": 83709767,
+      "format": {}
+    },
+    {
+      "id": 417177153,
+      "name": "IDENT",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "ident",
+      "position": 9,
+      "renderTypeName": "text",
+      "tableColumnId": 83707879,
+      "format": {}
+    },
+    {
+      "id": 417177154,
+      "name": "SUBIDENT",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "subident",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 83707965,
+      "format": {}
+    },
+    {
+      "id": 417177155,
+      "name": "ROLL_SECTION",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "roll_section",
+      "position": 11,
+      "renderTypeName": "text",
+      "tableColumnId": 83707933,
+      "format": {}
+    },
+    {
+      "id": 417177156,
+      "name": "SECVOL",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "secvol",
+      "position": 12,
+      "renderTypeName": "number",
+      "tableColumnId": 83707846,
+      "format": {}
+    },
+    {
+      "id": 417177157,
+      "name": "PYMKTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pymktland",
+      "position": 13,
+      "renderTypeName": "number",
+      "tableColumnId": 83707900,
+      "format": {}
+    },
+    {
+      "id": 417177158,
+      "name": "PYMKTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pymkttot",
+      "position": 14,
+      "renderTypeName": "number",
+      "tableColumnId": 83707887,
+      "format": {}
+    },
+    {
+      "id": 417177159,
+      "name": "PYACTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pyactland",
+      "position": 15,
+      "renderTypeName": "number",
+      "tableColumnId": 83707953,
+      "format": {}
+    },
+    {
+      "id": 417177160,
+      "name": "PYACTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pyacttot",
+      "position": 16,
+      "renderTypeName": "number",
+      "tableColumnId": 83707957,
+      "format": {}
+    },
+    {
+      "id": 417177161,
+      "name": "PYACTEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pyactextot",
+      "position": 17,
+      "renderTypeName": "number",
+      "tableColumnId": 83707884,
+      "format": {}
+    },
+    {
+      "id": 417177162,
+      "name": "PYTRNLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pytrnland",
+      "position": 18,
+      "renderTypeName": "number",
+      "tableColumnId": 83707892,
+      "format": {}
+    },
+    {
+      "id": 417177163,
+      "name": "PYTRNTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pytrntot",
+      "position": 19,
+      "renderTypeName": "number",
+      "tableColumnId": 83707946,
+      "format": {}
+    },
+    {
+      "id": 417177164,
+      "name": "PYTRNEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pytrnextot",
+      "position": 20,
+      "renderTypeName": "number",
+      "tableColumnId": 83707876,
+      "format": {}
+    },
+    {
+      "id": 417177165,
+      "name": "PYTXBTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pytxbtot",
+      "position": 21,
+      "renderTypeName": "number",
+      "tableColumnId": 83707912,
+      "format": {}
+    },
+    {
+      "id": 417177166,
+      "name": "PYTXBEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "pytxbextot",
+      "position": 22,
+      "renderTypeName": "number",
+      "tableColumnId": 83707955,
+      "format": {}
+    },
+    {
+      "id": 417177167,
+      "name": "PYTAXCLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "pytaxclass",
+      "position": 23,
+      "renderTypeName": "text",
+      "tableColumnId": 83707871,
+      "format": {}
+    },
+    {
+      "id": 417177168,
+      "name": "TENMKTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tenmktland",
+      "position": 24,
+      "renderTypeName": "number",
+      "tableColumnId": 83707858,
+      "format": {}
+    },
+    {
+      "id": 417177169,
+      "name": "TENMKTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tenmkttot",
+      "position": 25,
+      "renderTypeName": "number",
+      "tableColumnId": 83707954,
+      "format": {}
+    },
+    {
+      "id": 417177170,
+      "name": "TENACTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tenactland",
+      "position": 26,
+      "renderTypeName": "number",
+      "tableColumnId": 83707832,
+      "format": {}
+    },
+    {
+      "id": 417177171,
+      "name": "TENACTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tenacttot",
+      "position": 27,
+      "renderTypeName": "number",
+      "tableColumnId": 83707888,
+      "format": {}
+    },
+    {
+      "id": 417177172,
+      "name": "TENACTEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tenactextot",
+      "position": 28,
+      "renderTypeName": "number",
+      "tableColumnId": 83707945,
+      "format": {}
+    },
+    {
+      "id": 417177173,
+      "name": "TENTRNLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tentrnland",
+      "position": 29,
+      "renderTypeName": "number",
+      "tableColumnId": 83707961,
+      "format": {}
+    },
+    {
+      "id": 417177174,
+      "name": "TENTRNTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tentrntot",
+      "position": 30,
+      "renderTypeName": "number",
+      "tableColumnId": 83707896,
+      "format": {}
+    },
+    {
+      "id": 417177175,
+      "name": "TENTRNEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tentrnextot",
+      "position": 31,
+      "renderTypeName": "number",
+      "tableColumnId": 83707964,
+      "format": {}
+    },
+    {
+      "id": 417177176,
+      "name": "TENTXBTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tentxbtot",
+      "position": 32,
+      "renderTypeName": "number",
+      "tableColumnId": 83707848,
+      "format": {}
+    },
+    {
+      "id": 417177177,
+      "name": "TENTXBEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "tentxbextot",
+      "position": 33,
+      "renderTypeName": "number",
+      "tableColumnId": 83707903,
+      "format": {}
+    },
+    {
+      "id": 417177178,
+      "name": "TENTAXCLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "tentaxclass",
+      "position": 34,
+      "renderTypeName": "text",
+      "tableColumnId": 83707943,
+      "format": {}
+    },
+    {
+      "id": 417177179,
+      "name": "CBNMKTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbnmktland",
+      "position": 35,
+      "renderTypeName": "number",
+      "tableColumnId": 83707938,
+      "format": {}
+    },
+    {
+      "id": 417177180,
+      "name": "CBNMKTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbnmkttot",
+      "position": 36,
+      "renderTypeName": "number",
+      "tableColumnId": 83707959,
+      "format": {}
+    },
+    {
+      "id": 417177181,
+      "name": "CBNACTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbnactland",
+      "position": 37,
+      "renderTypeName": "number",
+      "tableColumnId": 83707930,
+      "format": {}
+    },
+    {
+      "id": 417177182,
+      "name": "CBNACTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbnacttot",
+      "position": 38,
+      "renderTypeName": "number",
+      "tableColumnId": 83707967,
+      "format": {}
+    },
+    {
+      "id": 417177183,
+      "name": "CBNACTEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbnactextot",
+      "position": 39,
+      "renderTypeName": "number",
+      "tableColumnId": 83707895,
+      "format": {}
+    },
+    {
+      "id": 417177184,
+      "name": "CBNTRNLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbntrnland",
+      "position": 40,
+      "renderTypeName": "number",
+      "tableColumnId": 83707908,
+      "format": {}
+    },
+    {
+      "id": 417177185,
+      "name": "CBNTRNTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbntrntot",
+      "position": 41,
+      "renderTypeName": "number",
+      "tableColumnId": 83707942,
+      "format": {}
+    },
+    {
+      "id": 417177186,
+      "name": "CBNTRNEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbntrnextot",
+      "position": 42,
+      "renderTypeName": "number",
+      "tableColumnId": 83707940,
+      "format": {}
+    },
+    {
+      "id": 417177187,
+      "name": "CBNTXBTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbntxbtot",
+      "position": 43,
+      "renderTypeName": "number",
+      "tableColumnId": 83707875,
+      "format": {}
+    },
+    {
+      "id": 417177188,
+      "name": "CBNTXBEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cbntxbextot",
+      "position": 44,
+      "renderTypeName": "number",
+      "tableColumnId": 83707873,
+      "format": {}
+    },
+    {
+      "id": 417177189,
+      "name": "CBNTAXCLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "cbntaxclass",
+      "position": 45,
+      "renderTypeName": "text",
+      "tableColumnId": 83707850,
+      "format": {}
+    },
+    {
+      "id": 417177190,
+      "name": "FINMKTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "finmktland",
+      "position": 46,
+      "renderTypeName": "number",
+      "tableColumnId": 83707947,
+      "format": {}
+    },
+    {
+      "id": 417177191,
+      "name": "FINMKTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "finmkttot",
+      "position": 47,
+      "renderTypeName": "number",
+      "tableColumnId": 83707852,
+      "format": {}
+    },
+    {
+      "id": 417177192,
+      "name": "FINACTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "finactland",
+      "position": 48,
+      "renderTypeName": "number",
+      "tableColumnId": 83707854,
+      "format": {}
+    },
+    {
+      "id": 417177193,
+      "name": "FINACTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "finacttot",
+      "position": 49,
+      "renderTypeName": "number",
+      "tableColumnId": 83707948,
+      "format": {}
+    },
+    {
+      "id": 417177194,
+      "name": "FINACTEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "finactextot",
+      "position": 50,
+      "renderTypeName": "number",
+      "tableColumnId": 83707926,
+      "format": {}
+    },
+    {
+      "id": 417177195,
+      "name": "FINTRNLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "fintrnland",
+      "position": 51,
+      "renderTypeName": "number",
+      "tableColumnId": 83707835,
+      "format": {}
+    },
+    {
+      "id": 417177196,
+      "name": "FINTRNTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "fintrntot",
+      "position": 52,
+      "renderTypeName": "number",
+      "tableColumnId": 83707906,
+      "format": {}
+    },
+    {
+      "id": 417177197,
+      "name": "FINTRNEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "fintrnextot",
+      "position": 53,
+      "renderTypeName": "number",
+      "tableColumnId": 83707863,
+      "format": {}
+    },
+    {
+      "id": 417177198,
+      "name": "FINTXBTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "fintxbtot",
+      "position": 54,
+      "renderTypeName": "number",
+      "tableColumnId": 83707855,
+      "format": {}
+    },
+    {
+      "id": 417177199,
+      "name": "FINTXBEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "fintxbextot",
+      "position": 55,
+      "renderTypeName": "number",
+      "tableColumnId": 83707839,
+      "format": {}
+    },
+    {
+      "id": 417177200,
+      "name": "FINTAXCLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "fintaxclass",
+      "position": 56,
+      "renderTypeName": "text",
+      "tableColumnId": 83707853,
+      "format": {}
+    },
+    {
+      "id": 417177201,
+      "name": "CURMKTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curmktland",
+      "position": 57,
+      "renderTypeName": "number",
+      "tableColumnId": 83707937,
+      "format": {}
+    },
+    {
+      "id": 417177202,
+      "name": "CURMKTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curmkttot",
+      "position": 58,
+      "renderTypeName": "number",
+      "tableColumnId": 83707956,
+      "format": {}
+    },
+    {
+      "id": 417177203,
+      "name": "CURACTLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curactland",
+      "position": 59,
+      "renderTypeName": "number",
+      "tableColumnId": 83707907,
+      "format": {}
+    },
+    {
+      "id": 417177204,
+      "name": "CURACTTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curacttot",
+      "position": 60,
+      "renderTypeName": "number",
+      "tableColumnId": 83707881,
+      "format": {}
+    },
+    {
+      "id": 417177205,
+      "name": "CURACTEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curactextot",
+      "position": 61,
+      "renderTypeName": "number",
+      "tableColumnId": 83707922,
+      "format": {}
+    },
+    {
+      "id": 417177206,
+      "name": "CURTRNLAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curtrnland",
+      "position": 62,
+      "renderTypeName": "number",
+      "tableColumnId": 83707905,
+      "format": {}
+    },
+    {
+      "id": 417177207,
+      "name": "CURTRNTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curtrntot",
+      "position": 63,
+      "renderTypeName": "number",
+      "tableColumnId": 83707949,
+      "format": {}
+    },
+    {
+      "id": 417177208,
+      "name": "CURTRNEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curtrnextot",
+      "position": 64,
+      "renderTypeName": "number",
+      "tableColumnId": 83707851,
+      "format": {}
+    },
+    {
+      "id": 417177209,
+      "name": "CURTXBTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curtxbtot",
+      "position": 65,
+      "renderTypeName": "number",
+      "tableColumnId": 83707911,
+      "format": {}
+    },
+    {
+      "id": 417177210,
+      "name": "CURTXBEXTOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "curtxbextot",
+      "position": 66,
+      "renderTypeName": "number",
+      "tableColumnId": 83707962,
+      "format": {}
+    },
+    {
+      "id": 417177211,
+      "name": "CURTAXCLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "curtaxclass",
+      "position": 67,
+      "renderTypeName": "text",
+      "tableColumnId": 83707857,
+      "format": {}
+    },
+    {
+      "id": 417177212,
+      "name": "PERIOD",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "period",
+      "position": 68,
+      "renderTypeName": "number",
+      "tableColumnId": 83707834,
+      "format": {}
+    },
+    {
+      "id": 417177213,
+      "name": "NEWDROP",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "newdrop",
+      "position": 69,
+      "renderTypeName": "number",
+      "tableColumnId": 83707915,
+      "format": {}
+    },
+    {
+      "id": 417177214,
+      "name": "NOAV",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "noav",
+      "position": 70,
+      "renderTypeName": "text",
+      "tableColumnId": 83707913,
+      "format": {}
+    },
+    {
+      "id": 417177215,
+      "name": "VALREF",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "valref",
+      "position": 71,
+      "renderTypeName": "text",
+      "tableColumnId": 83707894,
+      "format": {}
+    },
+    {
+      "id": 417177216,
+      "name": "BLDG_CLASS",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "bldg_class",
+      "position": 72,
+      "renderTypeName": "text",
+      "tableColumnId": 83707939,
+      "format": {}
+    },
+    {
+      "id": 417177217,
+      "name": "OWNER",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "owner",
+      "position": 73,
+      "renderTypeName": "text",
+      "tableColumnId": 83707927,
+      "format": {}
+    },
+    {
+      "id": 417177218,
+      "name": "ZONING",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "zoning",
+      "position": 74,
+      "renderTypeName": "text",
+      "tableColumnId": 83707914,
+      "format": {}
+    },
+    {
+      "id": 417177219,
+      "name": "HOUSENUM_LO",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "housenum_lo",
+      "position": 75,
+      "renderTypeName": "text",
+      "tableColumnId": 83707878,
+      "format": {}
+    },
+    {
+      "id": 417177220,
+      "name": "HOUSENUM_HI",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "housenum_hi",
+      "position": 76,
+      "renderTypeName": "text",
+      "tableColumnId": 83707931,
+      "format": {}
+    },
+    {
+      "id": 417177221,
+      "name": "STREET_NAME",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "street_name",
+      "position": 77,
+      "renderTypeName": "text",
+      "tableColumnId": 83707935,
+      "format": {}
+    },
+    {
+      "id": 417177284,
+      "name": "ZIP_CODE",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "zip_code",
+      "position": 78,
+      "renderTypeName": "text",
+      "tableColumnId": 83966620,
+      "format": {}
+    },
+    {
+      "id": 417177223,
+      "name": "GEPSUPPORT_RC",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "gepsupport_rc",
+      "position": 79,
+      "renderTypeName": "text",
+      "tableColumnId": 83707925,
+      "format": {}
+    },
+    {
+      "id": 417177224,
+      "name": "STCODE",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "stcode",
+      "position": 80,
+      "renderTypeName": "number",
+      "tableColumnId": 83707923,
+      "format": {}
+    },
+    {
+      "id": 417177225,
+      "name": "LOT_FRT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "lot_frt",
+      "position": 81,
+      "renderTypeName": "number",
+      "tableColumnId": 83707897,
+      "format": {}
+    },
+    {
+      "id": 417177226,
+      "name": "LOT_DEP",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "lot_dep",
+      "position": 82,
+      "renderTypeName": "number",
+      "tableColumnId": 83707917,
+      "format": {}
+    },
+    {
+      "id": 417177227,
+      "name": "LOT_IRREG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "lot_irreg",
+      "position": 83,
+      "renderTypeName": "text",
+      "tableColumnId": 83707891,
+      "format": {}
+    },
+    {
+      "id": 417177228,
+      "name": "BLD_FRT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "bld_frt",
+      "position": 84,
+      "renderTypeName": "number",
+      "tableColumnId": 83707901,
+      "format": {}
+    },
+    {
+      "id": 417177229,
+      "name": "BLD_DEP",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "bld_dep",
+      "position": 85,
+      "renderTypeName": "number",
+      "tableColumnId": 83707928,
+      "format": {}
+    },
+    {
+      "id": 417177230,
+      "name": "BLD_EXT",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "bld_ext",
+      "position": 86,
+      "renderTypeName": "text",
+      "tableColumnId": 83707874,
+      "format": {}
+    },
+    {
+      "id": 417177231,
+      "name": "BLD_STORY",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "bld_story",
+      "position": 87,
+      "renderTypeName": "number",
+      "tableColumnId": 83707833,
+      "format": {}
+    },
+    {
+      "id": 417177232,
+      "name": "CORNER",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "corner",
+      "position": 88,
+      "renderTypeName": "text",
+      "tableColumnId": 83707886,
+      "format": {}
+    },
+    {
+      "id": 417177233,
+      "name": "LAND_AREA",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "land_area",
+      "position": 89,
+      "renderTypeName": "number",
+      "tableColumnId": 83707916,
+      "format": {}
+    },
+    {
+      "id": 417177234,
+      "name": "NUM_BLDGS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "num_bldgs",
+      "position": 90,
+      "renderTypeName": "number",
+      "tableColumnId": 83707951,
+      "format": {}
+    },
+    {
+      "id": 417177235,
+      "name": "YRBUILT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yrbuilt",
+      "position": 91,
+      "renderTypeName": "number",
+      "tableColumnId": 83707844,
+      "format": {}
+    },
+    {
+      "id": 417177236,
+      "name": "YRBUILT_RANGE",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yrbuilt_range",
+      "position": 92,
+      "renderTypeName": "number",
+      "tableColumnId": 83707958,
+      "format": {}
+    },
+    {
+      "id": 417177237,
+      "name": "YRBUILT_FLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "yrbuilt_flag",
+      "position": 93,
+      "renderTypeName": "text",
+      "tableColumnId": 83707859,
+      "format": {}
+    },
+    {
+      "id": 417177238,
+      "name": "YRALT1",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yralt1",
+      "position": 94,
+      "renderTypeName": "number",
+      "tableColumnId": 83707847,
+      "format": {}
+    },
+    {
+      "id": 417177239,
+      "name": "YRALT1_RANGE",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yralt1_range",
+      "position": 95,
+      "renderTypeName": "number",
+      "tableColumnId": 83707860,
+      "format": {}
+    },
+    {
+      "id": 417177240,
+      "name": "YRALT2",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yralt2",
+      "position": 96,
+      "renderTypeName": "number",
+      "tableColumnId": 83707869,
+      "format": {}
+    },
+    {
+      "id": 417177241,
+      "name": "YRALT2_RANGE",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "yralt2_range",
+      "position": 97,
+      "renderTypeName": "number",
+      "tableColumnId": 83707963,
+      "format": {}
+    },
+    {
+      "id": 417177242,
+      "name": "COOP_APTS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "coop_apts",
+      "position": 98,
+      "renderTypeName": "number",
+      "tableColumnId": 83707831,
+      "format": {}
+    },
+    {
+      "id": 417177243,
+      "name": "UNITS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "units",
+      "position": 99,
+      "renderTypeName": "number",
+      "tableColumnId": 83707924,
+      "format": {}
+    },
+    {
+      "id": 417177244,
+      "name": "REUC_REF",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "reuc_ref",
+      "position": 100,
+      "renderTypeName": "text",
+      "tableColumnId": 83707960,
+      "format": {}
+    },
+    {
+      "id": 417177245,
+      "name": "APTNO",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "aptno",
+      "position": 101,
+      "renderTypeName": "text",
+      "tableColumnId": 83707934,
+      "format": {}
+    },
+    {
+      "id": 417177246,
+      "name": "COOP_NUM",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "coop_num",
+      "position": 102,
+      "renderTypeName": "number",
+      "tableColumnId": 83707864,
+      "format": {}
+    },
+    {
+      "id": 417177247,
+      "name": "CPB_BORO",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cpb_boro",
+      "position": 103,
+      "renderTypeName": "number",
+      "tableColumnId": 83707936,
+      "format": {}
+    },
+    {
+      "id": 417177248,
+      "name": "CPB_DIST",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "cpb_dist",
+      "position": 104,
+      "renderTypeName": "number",
+      "tableColumnId": 83707838,
+      "format": {}
+    },
+    {
+      "id": 417177249,
+      "name": "APPT_DATE",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "appt_date",
+      "position": 105,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 83707845,
+      "format": {}
+    },
+    {
+      "id": 417177250,
+      "name": "APPT_BORO",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "appt_boro",
+      "position": 106,
+      "renderTypeName": "number",
+      "tableColumnId": 83707849,
+      "format": {}
+    },
+    {
+      "id": 417177251,
+      "name": "APPT_BLOCK",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "appt_block",
+      "position": 107,
+      "renderTypeName": "number",
+      "tableColumnId": 83707841,
+      "format": {}
+    },
+    {
+      "id": 417177252,
+      "name": "APPT_LOT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "appt_lot",
+      "position": 108,
+      "renderTypeName": "number",
+      "tableColumnId": 83707902,
+      "format": {}
+    },
+    {
+      "id": 417177253,
+      "name": "APPT_EASE",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "appt_ease",
+      "position": 109,
+      "renderTypeName": "text",
+      "tableColumnId": 83707885,
+      "format": {}
+    },
+    {
+      "id": 417177254,
+      "name": "CONDO_Number",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "condo_number",
+      "position": 110,
+      "renderTypeName": "number",
+      "tableColumnId": 83707889,
+      "format": {}
+    },
+    {
+      "id": 417177255,
+      "name": "CONDO_SFX1",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "condo_sfx1",
+      "position": 111,
+      "renderTypeName": "text",
+      "tableColumnId": 83707890,
+      "format": {}
+    },
+    {
+      "id": 417177256,
+      "name": "CONDO_SFX2",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "condo_sfx2",
+      "position": 112,
+      "renderTypeName": "number",
+      "tableColumnId": 83707918,
+      "format": {}
+    },
+    {
+      "id": 417177257,
+      "name": "CONDO_SFX3",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "condo_sfx3",
+      "position": 113,
+      "renderTypeName": "text",
+      "tableColumnId": 83707898,
+      "format": {}
+    },
+    {
+      "id": 417177258,
+      "name": "UAF_LAND",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "uaf_land",
+      "position": 114,
+      "renderTypeName": "number",
+      "tableColumnId": 83707861,
+      "format": {}
+    },
+    {
+      "id": 417177259,
+      "name": "UAF_BLDG",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "uaf_bldg",
+      "position": 115,
+      "renderTypeName": "number",
+      "tableColumnId": 83707843,
+      "format": {}
+    },
+    {
+      "id": 417177260,
+      "name": "PROTEST_1",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "protest_1",
+      "position": 116,
+      "renderTypeName": "text",
+      "tableColumnId": 83707929,
+      "format": {}
+    },
+    {
+      "id": 417177261,
+      "name": "PROTEST_2",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "protest_2",
+      "position": 117,
+      "renderTypeName": "text",
+      "tableColumnId": 83707868,
+      "format": {}
+    },
+    {
+      "id": 417177262,
+      "name": "PROTEST_OLD",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "protest_old",
+      "position": 118,
+      "renderTypeName": "text",
+      "tableColumnId": 83707909,
+      "format": {}
+    },
+    {
+      "id": 417177263,
+      "name": "ATTORNEY_GROUP1",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "attorney_group1",
+      "position": 119,
+      "renderTypeName": "number",
+      "tableColumnId": 83707966,
+      "format": {}
+    },
+    {
+      "id": 417177264,
+      "name": "ATTORNEY_GROUP2",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "attorney_group2",
+      "position": 120,
+      "renderTypeName": "text",
+      "tableColumnId": 83707919,
+      "format": {}
+    },
+    {
+      "id": 417177265,
+      "name": "ATTORNEY_GROUP_OLD",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "attorney_group_old",
+      "position": 121,
+      "renderTypeName": "number",
+      "tableColumnId": 83707921,
+      "format": {}
+    },
+    {
+      "id": 417177266,
+      "name": "GROSS_SQFT",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "gross_sqft",
+      "position": 122,
+      "renderTypeName": "number",
+      "tableColumnId": 83707862,
+      "format": {}
+    },
+    {
+      "id": 417177267,
+      "name": "HOTEL_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "hotel_area_gross",
+      "position": 123,
+      "renderTypeName": "number",
+      "tableColumnId": 83707920,
+      "format": {}
+    },
+    {
+      "id": 417177268,
+      "name": "OFFICE_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "office_area_gross",
+      "position": 124,
+      "renderTypeName": "number",
+      "tableColumnId": 83707837,
+      "format": {}
+    },
+    {
+      "id": 417177269,
+      "name": "RESIDENTIAL_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "residential_area_gross",
+      "position": 125,
+      "renderTypeName": "number",
+      "tableColumnId": 83707932,
+      "format": {}
+    },
+    {
+      "id": 417177270,
+      "name": "RETAIL_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "retail_area_gross",
+      "position": 126,
+      "renderTypeName": "number",
+      "tableColumnId": 83707882,
+      "format": {}
+    },
+    {
+      "id": 417177271,
+      "name": "LOFT_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "loft_area_gross",
+      "position": 127,
+      "renderTypeName": "number",
+      "tableColumnId": 83707840,
+      "format": {}
+    },
+    {
+      "id": 417177272,
+      "name": "FACTORY_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "factory_area_gross",
+      "position": 128,
+      "renderTypeName": "number",
+      "tableColumnId": 83707952,
+      "format": {}
+    },
+    {
+      "id": 417177273,
+      "name": "WAREHOUSE_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "warehouse_area_gross",
+      "position": 129,
+      "renderTypeName": "number",
+      "tableColumnId": 83707842,
+      "format": {}
+    },
+    {
+      "id": 417177274,
+      "name": "STORAGE_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "storage_area_gross",
+      "position": 130,
+      "renderTypeName": "number",
+      "tableColumnId": 83707866,
+      "format": {}
+    },
+    {
+      "id": 417177275,
+      "name": "GARAGE_AREA",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "garage_area",
+      "position": 131,
+      "renderTypeName": "number",
+      "tableColumnId": 83707836,
+      "format": {}
+    },
+    {
+      "id": 417177276,
+      "name": "OTHER_AREA_GROSS",
+      "dataTypeName": "number",
+      "description": "",
+      "fieldName": "other_area_gross",
+      "position": 132,
+      "renderTypeName": "number",
+      "tableColumnId": 83707829,
+      "format": {}
+    },
+    {
+      "id": 417177277,
+      "name": "REUC_DESCRIPTION",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "reuc_description",
+      "position": 133,
+      "renderTypeName": "text",
+      "tableColumnId": 83707899,
+      "format": {}
+    },
+    {
+      "id": 417177278,
+      "name": "EXTRACRDT",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "extracrdt",
+      "position": 134,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 83712979,
+      "format": {
+        "view": "date"
+      }
+    },
+    {
+      "id": 417177279,
+      "name": "PYTAXFLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "pytaxflag",
+      "position": 135,
+      "renderTypeName": "text",
+      "tableColumnId": 83707877,
+      "format": {}
+    },
+    {
+      "id": 417177280,
+      "name": "TENTAXFLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "tentaxflag",
+      "position": 136,
+      "renderTypeName": "text",
+      "tableColumnId": 83707941,
+      "format": {}
+    },
+    {
+      "id": 417177281,
+      "name": "CBNTAXFLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "cbntaxflag",
+      "position": 137,
+      "renderTypeName": "text",
+      "tableColumnId": 83707870,
+      "format": {}
+    },
+    {
+      "id": 417177282,
+      "name": "FINTAXFLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "fintaxflag",
+      "position": 138,
+      "renderTypeName": "text",
+      "tableColumnId": 83707865,
+      "format": {}
+    },
+    {
+      "id": 417177283,
+      "name": "CURTAXFLAG",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "curtaxflag",
+      "position": 139,
+      "renderTypeName": "text",
+      "tableColumnId": 83707830,
+      "format": {}
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "metadata": {
+    "rdfSubject": "0",
+    "rdfClass": "",
+    "attachments": [
+      {
+        "filename": "Property_Assessment_Data_Dictionary.xlsx",
+        "assetId": "2e925830-8a86-453a-9072-1e6045ed92a4",
+        "name": "Property_Assessment_Data_Dictionary.xlsx"
+      }
+    ],
+    "custom_fields": {
+      "Update": {
+        "Automation": "No",
+        "Update Frequency": "Annually"
+      },
+      "Dataset Information": {
+        "Agency": "Department of Finance (DOF)"
+      }
+    },
+    "rowLabel": "Property Valuation and Assessment",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ],
+    "renderTypeConfig": {
+      "visible": {
+        "table": true
+      }
+    }
+  },
+  "owner": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {},
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "property",
+    "assessment",
+    "evaluation"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

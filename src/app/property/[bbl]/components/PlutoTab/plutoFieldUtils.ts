@@ -1,5 +1,4 @@
 import {
-  formatValue,
   getFieldMetadata,
   type DatasourceMetadata,
 } from '../../utils/datasourceDisplay';
@@ -7,6 +6,7 @@ import { getBoroughName, getCommunityDistrictName } from '@/constants/nyc';
 import { getBuildingClassCategory } from '@/constants/building';
 import { getLandUseDescription } from '@/constants/landUse';
 import { type DataField } from '@/components/ui';
+import { formatValue } from '@/utils/formatters';
 
 /**
  * Determine whether a PLUTO field should be considered empty.

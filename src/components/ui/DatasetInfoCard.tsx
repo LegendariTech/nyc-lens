@@ -4,10 +4,19 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsib
 import { formatTimestamp } from '@/utils/formatters';
 import { cn } from '@/utils/cn';
 
+interface DatasetAttachment {
+  filename: string;
+  assetId: string;
+  name: string;
+}
+
 interface DatasetMetadata {
   name: string;
   attributionLink?: string;
   rowsUpdatedAt?: string;
+  agency?: string;
+  attachments?: DatasetAttachment[];
+  sourceId?: string;
 }
 
 interface DatasetInfoCardProps {
@@ -79,44 +88,40 @@ export function DatasetInfoCard({
                     rel="noopener noreferrer"
                     className="text-sm text-foreground underline hover:text-foreground/80"
                   >
-                    View on NYC Open Data
+                    View Source Data
                   </a>
                 </dd>
               </div>
             )}
 
-            <div>
-              <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Agency</dt>
-              <dd className="mt-1 text-sm text-foreground">Department of City Planning (DCP)</dd>
-            </div>
+            {metadata.agency && (
+              <div>
+                <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Agency</dt>
+                <dd className="mt-1 text-sm text-foreground">{metadata.agency}</dd>
+              </div>
+            )}
 
-            <div>
-              <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Attachments</dt>
-              <dd className="mt-1 text-xs text-foreground">
-                <div className="space-y-1">
-                  <div>
-                    <a
-                      href="https://data.cityofnewyork.us/api/views/64uk-42ks/files/6c2721bc-bf0a-496c-8cfa-80183b7c4bd5?download=true&filename=pluto_datadictionary.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground underline hover:text-foreground/80"
-                    >
-                      PLUTO Data Dictionary (PDF)
-                    </a>
+            {metadata.attachments && metadata.attachments.length > 0 && metadata.sourceId && (
+              <div>
+                <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Attachments</dt>
+                <dd className="mt-1 text-xs text-foreground">
+                  <div className="space-y-1">
+                    {metadata.attachments.map((attachment) => (
+                      <div key={attachment.assetId}>
+                        <a
+                          href={`https://data.cityofnewyork.us/api/views/${metadata.sourceId}/files/${attachment.assetId}?download=true&filename=${attachment.filename}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-foreground underline hover:text-foreground/80"
+                        >
+                          {attachment.name}
+                        </a>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <a
-                      href="https://data.cityofnewyork.us/api/views/64uk-42ks/files/25d91358-f511-4bb8-9d35-daf5b3fd4303?download=true&filename=pluto_readme.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground underline hover:text-foreground/80"
-                    >
-                      PLUTO README (PDF)
-                    </a>
-                  </div>
-                </div>
-              </dd>
-            </div>
+                </dd>
+              </div>
+            )}
 
             {/* Custom metadata items */}
             {customMetadataItems}

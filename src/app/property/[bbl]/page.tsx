@@ -2,9 +2,10 @@ import { notFound } from 'next/navigation';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui';
 import { OverviewTab } from './components/OverviewTab';
-import { PlutoTab } from './components/PlutoTab/PlutoTab';
+import { PlutoTab } from './components/PlutoTab';
 import { DobTab } from './components/DobTab';
 import { HpdTab } from './components/HpdTab';
+import { TaxTab } from './components/TaxTab/TaxTab';
 import { fetchPlutoData } from '@/data/pluto';
 
 interface PropertyPageProps {
@@ -29,7 +30,8 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
 
   // const [borough, block, lot] = bblParts; // TODO: Use these for dynamic data fetching
 
-  // Fetch PLUTO data
+  // Fetch PLUTO data for OverviewTab
+  // Note: PlutoTab now fetches its own data via PlutoTabWrapper
   const { data, metadata, error } = await fetchPlutoData(bbl);
 
   return (
@@ -49,6 +51,7 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="pluto">PLUTO</TabsTrigger>
+              <TabsTrigger value="tax">Tax</TabsTrigger>
               <TabsTrigger value="dob">DOB</TabsTrigger>
               <TabsTrigger value="hpd">HPD</TabsTrigger>
             </TabsList>
@@ -61,8 +64,12 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
 
             <TabsContent value="pluto">
               <div className="relative">
-                <PlutoTab data={data} metadata={metadata} error={error} bbl={bbl} />
+                <PlutoTab bbl={bbl} />
               </div>
+            </TabsContent>
+
+            <TabsContent value="tax">
+              <TaxTab bbl={bbl} />
             </TabsContent>
 
             <TabsContent value="dob">

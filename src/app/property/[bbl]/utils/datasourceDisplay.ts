@@ -11,9 +11,15 @@
  * (PLUTO, DOB permits, HPD violations, etc.)
  */
 
-import { formatValue, type DatasourceColumnMetadata } from '@/utils/formatters';
+import { type DatasourceColumnMetadata } from '@/utils/formatters';
 
 export type { DatasourceColumnMetadata };
+
+export interface DatasourceAttachment {
+  filename: string;
+  assetId: string;
+  name: string;
+}
 
 export interface DatasourceMetadata {
   id: string;
@@ -24,6 +30,9 @@ export interface DatasourceMetadata {
   rowsUpdatedAt?: number; // Unix timestamp
   viewLastModified?: number; // Unix timestamp
   columns: DatasourceColumnMetadata[];
+  metadata?: {
+    attachments?: DatasourceAttachment[];
+  };
 }
 
 export interface PropertyDataResult<TData = Record<string, string | number | boolean | null>> {
@@ -41,9 +50,6 @@ export function getFieldMetadata(
 ): DatasourceColumnMetadata | undefined {
   return metadata?.columns.find((col) => col.fieldName === fieldName);
 }
-
-// Re-export formatValue for backwards compatibility
-export { formatValue };
 
 type SectionFieldFormat = 'currency' | 'number' | 'percentage';
 
