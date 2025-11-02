@@ -329,4 +329,14 @@ export function getBuildingClassCategory(buildingClass: string): string {
   return BUILDING_CLASS_CATEGORIES[prefix] || buildingClass;
 }
 
+/**
+ * Get building class description from NYC building class codes
+ * @param buildingClass - Full building class code (e.g., 'O6', 'D1')
+ * @returns Full description of the building class or the code itself if not found
+ */
+export function getBuildingClassDescription(buildingClass: string | null): string {
+  if (!buildingClass) return 'N/A';
+  return BUILDING_CLASS_CODE_MAP[buildingClass.toUpperCase()] || buildingClass;
+}
+
 

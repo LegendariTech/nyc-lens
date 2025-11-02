@@ -10,4 +10,6 @@ export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsib
 export { DataFieldCard } from './DataFieldCard';
 export type { DataField } from './DataFieldCard';
 export { DatasetInfoCard } from './DatasetInfoCard';
+export { FieldTooltip } from './FieldTooltip';
+export type { FieldTooltipProps } from './FieldTooltip';
 

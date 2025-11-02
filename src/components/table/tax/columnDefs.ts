@@ -71,14 +71,6 @@ export const taxColumnDefs: ColDef<TaxRow>[] = [
     cellClass: 'ag-right-aligned-cell',
   },
   {
-    field: 'baseTax',
-    headerName: 'Base Tax',
-    width: 140,
-    sortable: true,
-    valueFormatter: (p: ValueFormatterParams<TaxRow, number>) => formatCurrency(p.value),
-    cellClass: 'ag-right-aligned-cell',
-  },
-  {
     field: 'propertyTax',
     headerName: 'Property Tax',
     width: 150,

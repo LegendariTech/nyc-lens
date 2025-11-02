@@ -9,6 +9,9 @@ interface TabControlsBarProps {
   showEmptyFieldsToggle?: boolean;
   hideEmptyFields?: boolean;
   onEmptyFieldsChange?: (hide: boolean) => void;
+  showRawViewToggle?: boolean;
+  rawView?: boolean;
+  onRawViewChange?: (raw: boolean) => void;
   className?: string;
   children?: React.ReactNode;
 }
@@ -18,6 +21,9 @@ export function TabControlsBar({
   showEmptyFieldsToggle = false,
   hideEmptyFields = false,
   onEmptyFieldsChange,
+  showRawViewToggle = false,
+  rawView = false,
+  onRawViewChange,
   className,
   children
 }: TabControlsBarProps) {
@@ -102,16 +108,28 @@ export function TabControlsBar({
         {children}
       </div>
 
-      {/* Right side - Empty Fields Toggle */}
-      {showEmptyFieldsToggle && onEmptyFieldsChange && (
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-foreground/70">Hide empty fields</span>
-          <Switch
-            checked={hideEmptyFields}
-            onCheckedChange={onEmptyFieldsChange}
-          />
-        </div>
-      )}
+      {/* Right side - Toggles */}
+      <div className="flex items-center gap-6">
+        {showEmptyFieldsToggle && onEmptyFieldsChange && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground/70">Hide empty fields</span>
+            <Switch
+              checked={hideEmptyFields}
+              onCheckedChange={onEmptyFieldsChange}
+            />
+          </div>
+        )}
+
+        {showRawViewToggle && onRawViewChange && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground/70">Raw View</span>
+            <Switch
+              checked={rawView}
+              onCheckedChange={onRawViewChange}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

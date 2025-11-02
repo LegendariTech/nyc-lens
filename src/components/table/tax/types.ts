@@ -8,10 +8,9 @@ export interface TaxRow {
   assessedValue: number | null;
   taxable: number | null;
   taxRate: number | null; // as percentage
-  baseTax: number | null;
   propertyTax: number | null;
   yoyChange: number | null; // as decimal (0.0679 = 6.79%)
-  
+
   // Raw year for sorting
   rawYear: string;
 }

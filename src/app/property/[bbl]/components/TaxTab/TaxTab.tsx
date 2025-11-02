@@ -1,6 +1,6 @@
 import { fetchPropertyValuation } from '@/data/valuation';
-import { TaxTable, transformValuationToTaxRows } from '@/components/table/tax';
 import { DatasetInfoCard } from '@/components/ui';
+import { TaxTabDisplay } from './TaxTabDisplay';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
 
 /**
@@ -45,9 +45,6 @@ export async function TaxTab({ bbl }: TaxTabProps) {
     );
   }
 
-  // Transform valuation data to tax rows
-  const taxRows = transformValuationToTaxRows(valuationData);
-
   return (
     <div className="space-y-6">
       {/* Dataset Information */}
@@ -68,15 +65,8 @@ export async function TaxTab({ bbl }: TaxTabProps) {
         }
       />
 
-      {/* Tax History Table */}
-      <h3 className="mb-4 text-lg font-semibold text-foreground">
-        Property Tax History
-      </h3>
-      <p className="text-sm text-foreground/70 mb-4">
-        Historical property valuation and tax data for BBL {bbl} ({taxRows.length} years).
-      </p>
-
-      <TaxTable data={taxRows} />
+      {/* Tax Table and Assessment Detail */}
+      <TaxTabDisplay valuationData={valuationData} bbl={bbl} />
     </div>
   );
 }

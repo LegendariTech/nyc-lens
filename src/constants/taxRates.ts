@@ -3,6 +3,13 @@
  * Source: NYC Department of Finance
  */
 
+/**
+ * NYC Taxable Status Date
+ * The date used to determine property assessments for the fiscal year
+ * Format: "Month Day"
+ */
+export const NYC_TAXABLE_STATUS_DATE = 'January 5';
+
 export interface TaxRatesByClass {
   year: string;
   fiscalYear: number;
@@ -104,5 +111,18 @@ export function getTaxRate(fiscalYear: number | string | null, taxClass: number 
  */
 export function getTaxRatesForYear(fiscalYear: number): TaxRatesByClass | null {
   return NYC_TAX_RATES.find(r => r.fiscalYear === fiscalYear) || null;
+}
+
+/**
+ * Get the taxable status date for a given fiscal year
+ * @param year - Fiscal year (e.g., "2026" for fiscal year 2025-2026)
+ * @returns Formatted taxable status date (e.g., "January 5, 2025")
+ */
+export function getTaxableStatusDate(year: string | null): string {
+  if (!year) return 'N/A';
+  const yearNum = parseInt(year, 10);
+  if (isNaN(yearNum)) return 'N/A';
+  const assessmentYear = yearNum - 1;
+  return `${NYC_TAXABLE_STATUS_DATE}, ${assessmentYear}`;
 }
 
