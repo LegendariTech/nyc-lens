@@ -33,7 +33,7 @@ export function TaxTable({ data, onRowClick }: TaxTableProps) {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div className="ag-theme-quartz-dark" style={{ width: '100%' }}>
         <AgGridReact<TaxRow>
           theme={myTheme}

@@ -87,8 +87,8 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
               className="px-3 py-1.5 text-sm border border-foreground/20 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {valuationData.map((v) => (
-                <option key={v.year} value={v.year}>
-                  Year {v.year}
+                <option key={v.year} value={v.year || ''}>
+                  Year {v.year || 'N/A'}
                 </option>
               ))}
             </select>

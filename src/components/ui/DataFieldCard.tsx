@@ -72,7 +72,7 @@ export function DataFieldCard({
                 <dt className="flex min-w-[140px] items-center text-sm font-medium text-foreground/70">
                   {field.description ? (
                     <FieldTooltip description={field.description} fieldKey={fieldKey}>
-                      {field.label}
+                    {field.label}
                     </FieldTooltip>
                   ) : (
                     field.label
