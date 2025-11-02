@@ -2,6 +2,12 @@
 
 import type { PropertyValuation } from '@/types/valuation';
 import { VALUATION_FIELD_DESCRIPTIONS } from './valuationFieldDescriptions';
+import {
+  resolveTaxableFlag,
+  resolveCondoSuffix,
+  resolveBuildingExtension,
+  resolveEasement,
+} from '@/utils/taxCodes';
 
 interface RawDataViewProps {
   data: PropertyValuation[];
@@ -34,7 +40,7 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
       const description = VALUATION_FIELD_DESCRIPTIONS[field];
       const fieldName = (description || field).toLowerCase();
       const fieldValue = String(value || '').toLowerCase();
-      
+
       return fieldName.includes(query) || fieldValue.includes(query);
     });
   };
@@ -43,7 +49,7 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
     <div className="space-y-8 overflow-visible">
       {data.map((valuation, index) => {
         const filteredFields = getFilteredFields(valuation);
-        
+
         // Skip year if no fields match the search
         if (filteredFields.length === 0) {
           return null;
@@ -54,19 +60,34 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
             <h4 className="text-base font-semibold text-foreground border-b border-foreground/10 pb-2">
               Year: {valuation.year}
             </h4>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-3 overflow-visible">
               {filteredFields.map(field => {
                 const value = valuation[field as keyof PropertyValuation];
                 const description = VALUATION_FIELD_DESCRIPTIONS[field];
-                
+
                 // Skip if value is null or undefined
                 if (value === null || value === undefined) {
                   return null;
                 }
 
+                // Format value based on field type
+                let displayValue = String(value);
+
+                // Apply code resolution for specific fields
+                if (field === 'pytaxflag' || field === 'tentaxflag' || field === 'cbntaxflag' ||
+                  field === 'fintaxflag' || field === 'curtaxflag') {
+                  displayValue = `${value} (${resolveTaxableFlag(String(value))})`;
+                } else if (field === 'condo_sfx1') {
+                  displayValue = `${value} (${resolveCondoSuffix(String(value))})`;
+                } else if (field === 'bld_ext') {
+                  displayValue = `${value} (${resolveBuildingExtension(String(value))})`;
+                } else if (field === 'easement') {
+                  displayValue = `${value} (${resolveEasement(String(value))})`;
+                }
+
                 return (
-                  <div 
+                  <div
                     key={field}
                     className="flex flex-col gap-1 py-2 border-b border-foreground/5"
                   >
@@ -77,7 +98,7 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
                     </div>
                     <div>
                       <span className="text-sm text-foreground/70 break-all">
-                        {String(value)}
+                        {displayValue}
                       </span>
                     </div>
                   </div>

@@ -34,16 +34,18 @@ export function TaxTable({ data, onRowClick }: TaxTableProps) {
 
   return (
     <div className="w-full">
-      <AgGridReact<TaxRow>
-        theme={myTheme}
-        domLayout="autoHeight"
-        defaultColDef={defaultColDef}
-        columnDefs={taxColumnDefs}
-        rowData={data}
-        suppressCellFocus={true}
-        rowSelection="single"
-        onRowClicked={handleRowClicked}
-      />
+      <div className="ag-theme-quartz-dark" style={{ width: '100%' }}>
+        <AgGridReact<TaxRow>
+          theme={myTheme}
+          domLayout="autoHeight"
+          defaultColDef={defaultColDef}
+          columnDefs={taxColumnDefs}
+          rowData={data}
+          suppressCellFocus={true}
+          rowSelection="single"
+          onRowClicked={handleRowClicked}
+        />
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { getBuildingClassDescription } from '@/constants/building';
 import { formatAssessmentYear, formatTaxYear } from '@/components/table/tax';
 import { getTaxableStatusDate } from '@/constants/taxRates';
+import { resolveBuildingExtension } from '@/utils/taxCodes';
 import type { PropertyValuation } from '@/types/valuation';
 import {
   AssessmentHeader,
@@ -164,7 +165,7 @@ export function AssessmentDetail({ valuation, bbl }: AssessmentDetailProps) {
             />
             <InfoRow
               label="Extension"
-              value={valuation.bld_ext || 'N'}
+              value={resolveBuildingExtension(valuation.bld_ext)}
               description={ASSESSMENT_FIELD_DESCRIPTIONS.extension}
             />
           </InfoSection>
@@ -186,7 +187,7 @@ export function AssessmentDetail({ valuation, bbl }: AssessmentDetailProps) {
       {/* Note */}
       <div className="border-t border-foreground/10 pt-4">
         <p className="text-xs text-foreground/60 italic">
-          Note: For more information about how your property taxes are calculated, visit{' '}
+          Note: For more information about how property taxes are calculated, visit{' '}
           <a
             href="http://nyc.gov/assessments"
             target="_blank"

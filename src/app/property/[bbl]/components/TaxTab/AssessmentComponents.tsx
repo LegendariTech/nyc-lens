@@ -51,7 +51,7 @@ export function InfoRow({ label, value, format = 'text', description }: InfoRowP
   } else if (format === 'currency') {
     displayValue = formatCurrency(typeof value === 'number' ? value : null);
   } else if (format === 'number' && typeof value === 'number') {
-    displayValue = value.toLocaleString();
+    displayValue = value % 1 === 0 ? Math.round(value).toLocaleString() : value.toLocaleString();
   } else {
     displayValue = String(value);
   }
@@ -184,7 +184,7 @@ export function TaxableAssessmentCard({ taxYear, amount }: TaxableAssessmentCard
     <div className="mt-6 bg-foreground/5 rounded-lg p-4">
       <div className="flex justify-between items-baseline">
         <span className="text-sm text-foreground/80">
-          Subject To Adjustments, Your {taxYear} Taxes Will Be Based On
+          Subject To Adjustments, {taxYear} Taxes Will Be Based On
         </span>
         <span className="text-xl font-bold text-foreground">{formatCurrency(amount)}</span>
       </div>
