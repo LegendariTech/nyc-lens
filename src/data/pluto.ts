@@ -73,7 +73,7 @@ export async function fetchPlutoData(bbl: string): Promise<PlutoDataResult> {
     }
 
     // Load metadata (static file with field descriptions)
-    const metadataModule = await import('@/app/property/[bbl]/components/PlutoTab/metadata.json');
+    const metadataModule = await import('@/app/property/[bbl]/pluto/components/metadata.json');
     const metadata = metadataModule.default as DatasourceMetadata;
 
     return {

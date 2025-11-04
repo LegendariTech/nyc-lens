@@ -6,7 +6,7 @@ import {
   type DatasourceColumnMetadata,
 } from '../datasourceDisplay';
 import { type PlutoData } from '@/data/pluto';
-import { plutoSections } from '@/app/property/[bbl]/components/PlutoTab';
+import { plutoSections } from '@/app/property/[bbl]/pluto/components/plutoSections';
 
 describe('datasourceDisplay utilities', () => {
   const mockColumn: DatasourceColumnMetadata = {

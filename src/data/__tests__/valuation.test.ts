@@ -9,7 +9,7 @@ vi.mock('../db', () => ({
 }));
 
 // Mock the metadata.json file
-vi.mock('@/app/property/[bbl]/components/TaxTab/metadata.json', () => ({
+vi.mock('@/app/property/[bbl]/tax/components/metadata.json', () => ({
   default: {
     id: 'test-dataset-id',
     name: 'Property Valuation',

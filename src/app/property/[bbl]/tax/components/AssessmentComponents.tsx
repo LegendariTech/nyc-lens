@@ -51,7 +51,7 @@ export function InfoRow({ label, value, format = 'text', description }: InfoRowP
   } else if (format === 'currency') {
     displayValue = formatCurrency(typeof value === 'number' ? value : null);
   } else if (format === 'number' && typeof value === 'number') {
-    displayValue = value % 1 === 0 ? Math.round(value).toLocaleString() : value.toLocaleString();
+    displayValue = 'kek'
   } else {
     displayValue = String(value);
   }

@@ -55,7 +55,7 @@ export async function fetchPropertyValuation(bbl: string): Promise<PropertyValua
     // Fetch all records for this BBL, ordered by year descending (most recent first)
     const query = `
       SELECT *
-      FROM bronze.dof_property_valuation
+      FROM silver.dof_property_valuation
       WHERE boro = @boro
         AND block = @block
         AND lot = @lot
@@ -69,17 +69,17 @@ export async function fetchPropertyValuation(bbl: string): Promise<PropertyValua
       lot: parsed.lot,
     });
 
+    // Load metadata (static file with field descriptions)
+    const metadataModule = await import('@/app/property/[bbl]/tax/components/metadata.json');
+    const metadata = metadataModule.default as any as DatasourceMetadata;
+
     if (!rows || rows.length === 0) {
       return {
         data: null,
-        metadata: null,
+        metadata,
         error: `No valuation data found for BBL ${bbl}`,
       };
     }
-
-    // Load metadata (static file with field descriptions)
-    const metadataModule = await import('@/app/property/[bbl]/components/TaxTab/metadata.json');
-    const metadata = metadataModule.default as any as DatasourceMetadata;
 
     return {
       data: rows,

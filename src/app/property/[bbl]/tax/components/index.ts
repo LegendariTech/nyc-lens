@@ -1,4 +1,3 @@
-export { TaxTab } from './TaxTab';
 export { TaxTabDisplay } from './TaxTabDisplay';
 export { AssessmentDetail } from './AssessmentDetail';
 export { RawDataView } from './RawDataView';
