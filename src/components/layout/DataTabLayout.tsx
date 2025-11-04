@@ -10,7 +10,7 @@ interface Section {
 }
 
 interface DataTabLayoutProps {
-  sections: Section[];
+  sections?: Section[];
   children: React.ReactNode;
   showSidebar?: boolean;
   className?: string;
@@ -23,12 +23,18 @@ export function DataTabLayout({
   className
 }: DataTabLayoutProps) {
   return (
-    <div className={cn('space-y-6 xl:pr-64 pb-[100vh]', className)}>
-      {/* On This Page Sidebar */}
-      {showSidebar && <OnThisPageSidebar sections={sections} />}
-
+    <div className={cn(
+      'grid gap-6 pb-[100vh]',
+      showSidebar && sections ? 'xl:grid-cols-[1fr_256px]' : 'grid-cols-1',
+      className
+    )}>
       {/* Tab Content */}
-      {children}
+      <div className="space-y-4 min-w-0">
+        {children}
+      </div>
+
+      {/* On This Page Sidebar */}
+      {showSidebar && sections && <OnThisPageSidebar sections={sections} />}
     </div>
   );
 }

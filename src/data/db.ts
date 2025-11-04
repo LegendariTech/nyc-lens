@@ -63,7 +63,7 @@ export async function query<T = unknown>(
 
     const result = await request.query<T>(text);
     const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: result.rowsAffected[0] });
+    console.log('Executed query', { text, params, duration, rows: result.rowsAffected[0] });
     return result;
   } catch (err) {
     console.error('Database query error:', err);

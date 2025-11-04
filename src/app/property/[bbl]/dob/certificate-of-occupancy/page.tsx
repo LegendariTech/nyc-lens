@@ -28,7 +28,7 @@ export default async function DobCertificatePage({ params, searchParams }: DobCe
   const error = undefined;
 
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="dob" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
       <DobTabNav bbl={bbl} activeSubTab="certificate-of-occupancy" />
       <CertificateOfOccupancyDisplay bbl={bbl} data={data} metadata={metadata} error={error} />
     </PropertyPageLayout>

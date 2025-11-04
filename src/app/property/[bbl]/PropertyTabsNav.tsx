@@ -83,7 +83,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   ];
 
   return (
-    <div className="flex items-center justify-between gap-4 xl:pr-64">
+    <div className="flex items-center justify-between gap-4">
       {/* Tabs */}
       <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1">
         {tabs.map((tab) => (

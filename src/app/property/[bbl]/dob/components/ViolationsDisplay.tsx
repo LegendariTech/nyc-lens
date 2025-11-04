@@ -1,12 +1,15 @@
 'use client';
 
 import { DatasetInfoCard } from '@/components/ui';
-import { TabControlsBar, DataTabLayout } from '@/components/layout';
+import { DataTabLayout } from '@/components/layout';
+import { DobViolationsTable } from '@/components/table/dob-violations';
+import type { DobViolation } from '@/types/dob';
+import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
 
 interface ViolationsDisplayProps {
   bbl: string;
-  data: any; // TODO: Add proper typing
-  metadata: any; // TODO: Add proper typing
+  data: DobViolation[] | null;
+  metadata: DatasourceMetadata | null;
   error?: string;
 }
 
@@ -26,44 +29,9 @@ export function ViolationsDisplay({ bbl, data, metadata, error }: ViolationsDisp
     );
   }
 
-  if (!data) {
-    return (
-      <DataTabLayout sections={sidebarSections}>
-        {/* Dataset Attribution - Placeholder */}
-        <DatasetInfoCard
-          metadata={{
-            name: 'DOB Violations',
-            attributionLink: 'https://data.cityofnewyork.us/',
-            agency: 'Department of Buildings',
-          }}
-          id="dataset-info"
-          description={
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              Department of Buildings violations data will be displayed here.
-            </p>
-          }
-        />
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawMetadata = metadata as any;
 
-        {/* Controls Row */}
-        <TabControlsBar
-          showAIServices={true}
-          showEmptyFieldsToggle={false}
-        />
-
-        {/* Placeholder Content */}
-        <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm" id="violations-data">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">
-            DOB Violations
-          </h3>
-          <p className="text-sm text-foreground/70">
-            Department of Buildings violations for BBL {bbl} will be displayed here.
-          </p>
-        </div>
-      </DataTabLayout>
-    );
-  }
-
-  // TODO: Implement actual data display when data is available
   return (
     <DataTabLayout sections={sidebarSections}>
       {/* Dataset Attribution */}
@@ -74,7 +42,7 @@ export function ViolationsDisplay({ bbl, data, metadata, error }: ViolationsDisp
             attributionLink: metadata.attributionLink,
             rowsUpdatedAt: metadata.rowsUpdatedAt?.toString(),
             agency: metadata.attribution,
-            attachments: metadata.metadata?.attachments,
+            attachments: rawMetadata.metadata?.attachments,
             sourceId: metadata.id,
           }}
           id="dataset-info"
@@ -86,15 +54,25 @@ export function ViolationsDisplay({ bbl, data, metadata, error }: ViolationsDisp
         />
       )}
 
-      {/* Controls Row */}
-      <TabControlsBar
-        showAIServices={true}
-        showEmptyFieldsToggle={true}
-      />
-
       {/* Data Display */}
       <div id="violations-data">
-        {/* TODO: Add actual violations data display */}
+        {!data || data.length === 0 ? (
+          <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
+            <h3 className="mb-2 text-lg font-semibold text-foreground">No Violations Found</h3>
+            <p className="text-sm text-foreground/70">
+              No DOB violations found for BBL {bbl}.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-foreground">
+                Violations ({data.length})
+              </h3>
+            </div>
+            <DobViolationsTable data={data} />
+          </div>
+        )}
       </div>
     </DataTabLayout>
   );

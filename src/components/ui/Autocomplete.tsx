@@ -226,7 +226,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                 }, 200);
               }}
               className={cn(
-                'rounded-full border border-foreground/20 px-6 py-3',
+                'rounded-md border border-foreground/20 px-6 py-3',
                 'text-foreground text-base',
                 'focus:outline-none focus:ring-2 focus:ring-foreground/50',
                 'placeholder:text-foreground/40',

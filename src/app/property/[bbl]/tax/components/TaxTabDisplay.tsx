@@ -43,7 +43,7 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Tab Controls */}
       <TabControlsBar
         showRawViewToggle
@@ -51,13 +51,13 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
         onRawViewChange={setRawView}
       >
         {rawView && (
-          <div className="relative">
+          <div className="relative flex items-center h-full">
             <input
               type="text"
               placeholder="Search by field name or value..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64 px-3 py-1.5 text-sm border border-foreground/20 rounded-md bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-64 h-8 px-3 py-0 text-sm border border-foreground/20 rounded-md bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
             {searchQuery && (
               <button

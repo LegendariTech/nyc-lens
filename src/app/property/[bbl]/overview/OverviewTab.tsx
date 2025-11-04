@@ -61,7 +61,7 @@ export function OverviewTab({ data, metadata, error, bbl }: OverviewTabProps) {
   return (
     <DataTabLayout sections={sidebarSections}>
       {/* AI Services Controls */}
-      <TabControlsBar showAIServices={true} showEmptyFieldsToggle={false} />
+      <TabControlsBar showEmptyFieldsToggle={false} />
 
       {/* Property Summary */}
       <DataFieldCard

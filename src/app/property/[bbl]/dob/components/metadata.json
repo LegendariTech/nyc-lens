@@ -1,0 +1,343 @@
+{
+  "id": "3h2n-5cm9",
+  "name": "DOB Violations",
+  "assetType": "dataset",
+  "attribution": "Department of Buildings (DOB)",
+  "averageRating": 0,
+  "category": "Housing & Development",
+  "createdAt": 1448398203,
+  "description": "This data set includes older civil penalties (commonly referred to as ‘DOB Violations’) that were issued by the Department of Buildings (DOB) in the Buildings Information System (BIS).  For newer civil penalties, see the <a href=\"https://data.cityofnewyork.us/d/855j-jady\">DOB Safety Violations </a> data set (note: some violations are duplicated in both data sets).  Separately, summonses that are issued by DOB but adjudicated by OATH/ECB are in the  <a href=\"https://data.cityofnewyork.us/d/6bgk-3dad\">DOB ECB Violations</a> data set.",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 29177,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "indexUpdatedAt": 1567117602,
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 0,
+  "oid": 15047940,
+  "provenance": "official",
+  "publicationAppendEnabled": true,
+  "publicationDate": 1448398300,
+  "publicationGroup": 5736804,
+  "publicationStage": "published",
+  "rowClass": "",
+  "rowsUpdatedAt": 1762195568,
+  "rowsUpdatedBy": "5fuc-pqz2",
+  "tableId": 5736804,
+  "totalTimesRated": 0,
+  "viewCount": 148620,
+  "viewLastModified": 1762194644,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1449850224,
+      "reviewedAutomatically": true,
+      "state": "approved",
+      "submissionId": 1065570,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1449850224,
+      "targetAudience": "public",
+      "workflowId": 2285,
+      "submissionDetails": {
+        "permissionType": "READ"
+      },
+      "submissionOutcomeApplication": {
+        "failureCount": 0,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "5fuc-pqz2",
+        "displayName": "NYC OpenData"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 231234322,
+      "name": "ISN_DOB_BIS_VIOL",
+      "dataTypeName": "text",
+      "fieldName": "isn_dob_bis_viol",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 32843407,
+      "width": 292,
+      "format": {}
+    },
+    {
+      "id": 231234325,
+      "name": "BORO",
+      "dataTypeName": "text",
+      "fieldName": "boro",
+      "position": 2,
+      "renderTypeName": "text",
+      "tableColumnId": 32843410,
+      "width": 148,
+      "format": {}
+    },
+    {
+      "id": 231234327,
+      "name": "BIN",
+      "dataTypeName": "text",
+      "fieldName": "bin",
+      "position": 3,
+      "renderTypeName": "text",
+      "tableColumnId": 32843412,
+      "width": 136,
+      "format": {}
+    },
+    {
+      "id": 231234329,
+      "name": "BLOCK",
+      "dataTypeName": "text",
+      "fieldName": "block",
+      "position": 4,
+      "renderTypeName": "text",
+      "tableColumnId": 32843414,
+      "width": 160,
+      "format": {}
+    },
+    {
+      "id": 231234331,
+      "name": "LOT",
+      "dataTypeName": "text",
+      "fieldName": "lot",
+      "position": 5,
+      "renderTypeName": "text",
+      "tableColumnId": 32843416,
+      "width": 136,
+      "format": {}
+    },
+    {
+      "id": 231234333,
+      "name": "ISSUE_DATE",
+      "dataTypeName": "text",
+      "fieldName": "issue_date",
+      "position": 6,
+      "renderTypeName": "text",
+      "tableColumnId": 32843418,
+      "width": 220,
+      "format": {}
+    },
+    {
+      "id": 231234335,
+      "name": "VIOLATION_TYPE_CODE",
+      "dataTypeName": "text",
+      "fieldName": "violation_type_code",
+      "position": 7,
+      "renderTypeName": "text",
+      "tableColumnId": 32843420,
+      "width": 328,
+      "format": {}
+    },
+    {
+      "id": 231234337,
+      "name": "VIOLATION_NUMBER",
+      "dataTypeName": "text",
+      "fieldName": "violation_number",
+      "position": 8,
+      "renderTypeName": "text",
+      "tableColumnId": 32843422,
+      "width": 292,
+      "format": {}
+    },
+    {
+      "id": 231234339,
+      "name": "HOUSE_NUMBER",
+      "dataTypeName": "text",
+      "fieldName": "house_number",
+      "position": 9,
+      "renderTypeName": "text",
+      "tableColumnId": 32843424,
+      "width": 244,
+      "format": {}
+    },
+    {
+      "id": 231234341,
+      "name": "STREET",
+      "dataTypeName": "text",
+      "fieldName": "street",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 32843426,
+      "width": 172,
+      "format": {}
+    },
+    {
+      "id": 231234343,
+      "name": "DISPOSITION_DATE",
+      "dataTypeName": "text",
+      "fieldName": "disposition_date",
+      "position": 11,
+      "renderTypeName": "text",
+      "tableColumnId": 32843428,
+      "width": 292,
+      "format": {}
+    },
+    {
+      "id": 231234344,
+      "name": "DISPOSITION_COMMENTS",
+      "dataTypeName": "text",
+      "fieldName": "disposition_comments",
+      "position": 12,
+      "renderTypeName": "text",
+      "tableColumnId": 32843429,
+      "width": 340,
+      "format": {}
+    },
+    {
+      "id": 231234345,
+      "name": "DEVICE_NUMBER",
+      "dataTypeName": "text",
+      "fieldName": "device_number",
+      "position": 13,
+      "renderTypeName": "text",
+      "tableColumnId": 32843430,
+      "width": 256,
+      "format": {}
+    },
+    {
+      "id": 231234346,
+      "name": "DESCRIPTION",
+      "dataTypeName": "text",
+      "fieldName": "description",
+      "position": 14,
+      "renderTypeName": "text",
+      "tableColumnId": 32843431,
+      "width": 232,
+      "format": {}
+    },
+    {
+      "id": 231234347,
+      "name": "ECB_NUMBER",
+      "dataTypeName": "text",
+      "fieldName": "ecb_number",
+      "position": 15,
+      "renderTypeName": "text",
+      "tableColumnId": 32843432,
+      "width": 220,
+      "format": {}
+    },
+    {
+      "id": 231234348,
+      "name": "NUMBER",
+      "dataTypeName": "text",
+      "fieldName": "number",
+      "position": 16,
+      "renderTypeName": "text",
+      "tableColumnId": 32843433,
+      "width": 172,
+      "format": {}
+    },
+    {
+      "id": 231234349,
+      "name": "VIOLATION_CATEGORY",
+      "dataTypeName": "text",
+      "fieldName": "violation_category",
+      "position": 17,
+      "renderTypeName": "text",
+      "tableColumnId": 32843434,
+      "width": 316,
+      "format": {}
+    },
+    {
+      "id": 231234350,
+      "name": "VIOLATION_TYPE",
+      "dataTypeName": "text",
+      "fieldName": "violation_type",
+      "position": 18,
+      "renderTypeName": "text",
+      "tableColumnId": 32843435,
+      "width": 268,
+      "format": {}
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "metadata": {
+    "rdfSubject": "0",
+    "rdfClass": "",
+    "attachments": [
+      {
+        "filename": "DD_DOB_Violations_2019-03-19.xlsx",
+        "assetId": "09445410-995e-40ad-aa44-37049d1f4e4d",
+        "name": "DD_DOB_Violations_2019-03-19.xlsx"
+      }
+    ],
+    "custom_fields": {
+      "Update": {
+        "Automation": "Yes",
+        "Date Made Public": "12/11/2015",
+        "Update Frequency": "Every weekday"
+      },
+      "Dataset Information": {
+        "Agency": "Department of Buildings (DOB)"
+      }
+    },
+    "rowLabel": "Row",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ],
+    "renderTypeConfig": {
+      "visible": {
+        "table": true
+      }
+    }
+  },
+  "owner": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {},
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "dob",
+    "buildings",
+    "violation"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

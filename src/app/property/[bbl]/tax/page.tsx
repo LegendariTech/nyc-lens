@@ -36,7 +36,7 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
   } : null;
 
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="tax" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="tax" address={address} maxWidth="xl">
       {/* Handle error state */}
       {valuationError && (
         <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
@@ -57,7 +57,7 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
 
       {/* Display data */}
       {!valuationError && valuationData && valuationData.length > 0 && datasetMetadata && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Dataset Information */}
           <DatasetInfoCard
             metadata={{

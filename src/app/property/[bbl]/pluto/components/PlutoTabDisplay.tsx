@@ -74,7 +74,6 @@ export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true 
 
       {/* Controls Row */}
       <TabControlsBar
-        showAIServices={true}
         showEmptyFieldsToggle={true}
         hideEmptyFields={hideEmptyFields}
         onEmptyFieldsChange={setHideEmptyFields}

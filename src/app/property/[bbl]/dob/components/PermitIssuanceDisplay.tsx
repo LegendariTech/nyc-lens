@@ -46,7 +46,6 @@ export function PermitIssuanceDisplay({ bbl, data, metadata, error }: PermitIssu
 
         {/* Controls Row */}
         <TabControlsBar
-          showAIServices={true}
           showEmptyFieldsToggle={false}
         />
 
@@ -88,7 +87,6 @@ export function PermitIssuanceDisplay({ bbl, data, metadata, error }: PermitIssu
 
       {/* Controls Row */}
       <TabControlsBar
-        showAIServices={true}
         showEmptyFieldsToggle={true}
       />
 

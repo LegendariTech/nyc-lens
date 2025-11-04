@@ -46,7 +46,6 @@ export function CertificateOfOccupancyDisplay({ bbl, data, metadata, error }: Ce
 
         {/* Controls Row */}
         <TabControlsBar
-          showAIServices={true}
           showEmptyFieldsToggle={false}
         />
 
@@ -88,7 +87,6 @@ export function CertificateOfOccupancyDisplay({ bbl, data, metadata, error }: Ce
 
       {/* Controls Row */}
       <TabControlsBar
-        showAIServices={true}
         showEmptyFieldsToggle={true}
       />
 

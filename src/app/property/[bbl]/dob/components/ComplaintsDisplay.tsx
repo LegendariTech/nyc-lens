@@ -46,7 +46,6 @@ export function ComplaintsDisplay({ bbl, data, metadata, error }: ComplaintsDisp
 
         {/* Controls Row */}
         <TabControlsBar
-          showAIServices={true}
           showEmptyFieldsToggle={false}
         />
 
@@ -88,7 +87,6 @@ export function ComplaintsDisplay({ bbl, data, metadata, error }: ComplaintsDisp
 
       {/* Controls Row */}
       <TabControlsBar
-        showAIServices={true}
         showEmptyFieldsToggle={true}
       />
 
