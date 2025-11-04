@@ -1,7 +1,7 @@
-import type { DobViolation } from '@/types/dob';
+import type { DobSafetyViolation } from '@/types/dob';
 
 /**
- * Row type for DOB Violations AG Grid table
+ * Row type for DOB Safety Violations AG Grid table
  */
-export type DobViolationRow = DobViolation;
+export type DobViolationRow = DobSafetyViolation;
 

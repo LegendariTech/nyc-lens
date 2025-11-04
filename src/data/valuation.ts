@@ -69,17 +69,17 @@ export async function fetchPropertyValuation(bbl: string): Promise<PropertyValua
       lot: parsed.lot,
     });
 
-    // Load metadata (static file with field descriptions)
-    const metadataModule = await import('@/app/property/[bbl]/tax/components/metadata.json');
-    const metadata = metadataModule.default as any as DatasourceMetadata;
-
     if (!rows || rows.length === 0) {
       return {
         data: null,
-        metadata,
+        metadata: null,
         error: `No valuation data found for BBL ${bbl}`,
       };
     }
+
+    // Load metadata (static file with field descriptions)
+    const metadataModule = await import('@/app/property/[bbl]/tax/metadata.json');
+    const metadata = metadataModule.default as unknown as DatasourceMetadata;
 
     return {
       data: rows,

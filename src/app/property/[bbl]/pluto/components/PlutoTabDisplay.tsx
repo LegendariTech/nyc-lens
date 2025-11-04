@@ -62,6 +62,7 @@ export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true 
             agency: metadata.attribution,
             attachments: metadata.metadata?.attachments,
             sourceId: metadata.id,
+            updateFrequency: metadata.metadata?.custom_fields?.Update?.['Update Frequency'],
           }}
           id="dataset-info"
           description={

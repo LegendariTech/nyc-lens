@@ -67,6 +67,7 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
               agency: datasetMetadata.attribution,
               attachments: rawMetadata.metadata?.attachments,
               sourceId: datasetMetadata.id,
+              updateFrequency: rawMetadata.metadata?.custom_fields?.Update?.['Update Frequency'],
             }}
             id="dataset-info"
             description={

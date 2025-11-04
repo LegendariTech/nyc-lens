@@ -1,5 +1,5 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
-import type { DobViolationRow } from './types';
+import type { DobViolationBISRow } from './types';
 
 /**
  * Format date string to readable format
@@ -19,22 +19,22 @@ function formatDate(value: string | null | undefined): string {
   }
 }
 
-export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
+export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
   {
     field: 'violation_number',
     headerName: 'Violation #',
-    width: 220,
+    width: 140,
     pinned: 'left',
     sortable: true,
     filter: true,
   },
   {
-    field: 'violation_issue_date',
+    field: 'issue_date',
     headerName: 'Issue Date',
     width: 130,
     sortable: true,
     filter: true,
-    valueFormatter: (p: ValueFormatterParams<DobViolationRow, string>) => formatDate(p.value),
+    valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) => formatDate(p.value),
     comparator: (valueA: string, valueB: string) => {
       // Sort by date
       const dateA = new Date(valueA || '1900-01-01').getTime();
@@ -53,16 +53,71 @@ export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
     cellClass: 'multiline-cell',
   },
   {
-    field: 'violation_status',
-    headerName: 'Status',
-    width: 130,
+    field: 'violation_category',
+    headerName: 'Category',
+    width: 150,
     sortable: true,
     filter: true,
   },
   {
-    field: 'device_type',
-    headerName: 'Device Type',
-    width: 150,
+    field: 'description',
+    headerName: 'Description',
+    width: 300,
+    sortable: true,
+    filter: true,
+    wrapText: true,
+    autoHeight: true,
+    cellClass: 'multiline-cell',
+    valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) =>
+      p.value || 'N/A',
+    tooltipField: 'description',
+  },
+  {
+    field: 'disposition_date',
+    headerName: 'Disposition Date',
+    width: 140,
+    sortable: true,
+    filter: true,
+    valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) => formatDate(p.value),
+  },
+  {
+    field: 'disposition_comments',
+    headerName: 'Disposition',
+    width: 250,
+    sortable: true,
+    filter: true,
+    wrapText: true,
+    autoHeight: true,
+    cellClass: 'multiline-cell',
+    valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) =>
+      p.value || 'N/A',
+    tooltipField: 'disposition_comments',
+  },
+  {
+    field: 'ecb_number',
+    headerName: 'ECB #',
+    width: 120,
+    sortable: true,
+    filter: true,
+  },
+  {
+    field: 'house_number',
+    headerName: 'House #',
+    width: 100,
+    sortable: true,
+    filter: true,
+  },
+  {
+    field: 'street',
+    headerName: 'Street',
+    width: 180,
+    sortable: true,
+    filter: true,
+  },
+  {
+    field: 'bin',
+    headerName: 'BIN',
+    width: 110,
     sortable: true,
     filter: true,
   },
@@ -74,81 +129,18 @@ export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
     filter: true,
   },
   {
-    field: 'cycle_end_date',
-    headerName: 'Cycle End Date',
-    width: 140,
-    sortable: true,
-    filter: true,
-    valueFormatter: (p: ValueFormatterParams<DobViolationRow, string>) => formatDate(p.value),
-  },
-  {
-    field: 'violation_remarks',
-    headerName: 'Remarks',
-    width: 600,
-    sortable: true,
-    filter: true,
-    wrapText: true,
-    autoHeight: true,
-    cellClass: 'multiline-cell',
-    valueFormatter: (p: ValueFormatterParams<DobViolationRow, string>) =>
-      p.value || 'N/A',
-    tooltipField: 'violation_remarks',
-  },
-  {
-    field: 'house_number',
-    headerName: 'House #',
-    width: 100,
-    sortable: true,
-    filter: true,
-    hide: true,
-  },
-  {
-    field: 'street',
-    headerName: 'Street',
-    width: 180,
-    sortable: true,
-    filter: true,
-    hide: true,
-  },
-  {
-    field: 'borough',
-    headerName: 'Borough',
-    width: 120,
-    sortable: true,
-    filter: true,
-    hide: true,
-  },
-  {
-    field: 'city',
-    headerName: 'City',
-    width: 120,
-    sortable: true,
-    filter: true,
-    hide: true,
-  },
-  {
-    field: 'zip',
-    headerName: 'Zip',
-    width: 100,
-    sortable: true,
-    filter: true,
-    hide: true,
-  },
-  {
-    field: 'bin',
-    headerName: 'BIN',
+    field: 'violation_type_code',
+    headerName: 'Type Code',
     width: 110,
     sortable: true,
     filter: true,
-    hide: true,
   },
   {
-    field: 'bbl',
-    headerName: 'BBL',
-    width: 130,
+    field: 'isn_dob_bis_viol',
+    headerName: 'ISN',
+    width: 140,
     sortable: true,
     filter: true,
-    hide: true,
   },
 ];
 

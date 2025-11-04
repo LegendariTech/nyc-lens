@@ -1,0 +1,460 @@
+{
+  "id": "855j-jady",
+  "name": "DOB Safety Violations",
+  "assetType": "dataset",
+  "attribution": "Department of Buildings (DOB)",
+  "averageRating": 0,
+  "category": "Housing & Development",
+  "createdAt": 1697646128,
+  "description": "This data set includes newer civil penalties (commonly referred to as ‘DOB Violations’) that were issued or payable in DOB NOW.  For older civil penalties, see the <a href=\"https://data.cityofnewyork.us/d/3h2n-5cm9\">DOB Violations</a> data set (note: some violations are duplicated in both data sets).  Separately, summonses that are issued by DOB but adjudicated by OATH/ECB are in the <a href=\"https://data.cityofnewyork.us/d/6bgk-3dad\">DOB ECB Violations</a> data set.",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 2601,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 0,
+  "oid": 40384933,
+  "provenance": "official",
+  "publicationAppendEnabled": true,
+  "publicationDate": 1706041508,
+  "publicationGroup": 19331975,
+  "publicationStage": "published",
+  "rowClass": "",
+  "rowsUpdatedAt": 1762196786,
+  "rowsUpdatedBy": "5fuc-pqz2",
+  "tableId": 19439383,
+  "totalTimesRated": 0,
+  "viewCount": 6330,
+  "viewLastModified": 1762196429,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1700671436,
+      "reviewedAutomatically": false,
+      "state": "approved",
+      "submissionId": 6102911,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1700671412,
+      "targetAudience": "public",
+      "workflowId": 2285,
+      "reviewer": {
+        "id": "d5dp-fses",
+        "displayName": "afinkel"
+      },
+      "submissionDetails": {
+        "permissionType": "read"
+      },
+      "submissionOutcomeApplication": {
+        "endedAt": 1700671436,
+        "failureCount": 0,
+        "startedAt": 1700671436,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "d5dp-fses",
+        "displayName": "afinkel"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 588648606,
+      "name": "BIN",
+      "dataTypeName": "text",
+      "description": "Building Identification Number assigned by Department of City Planning",
+      "fieldName": "bin",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 149819556,
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648607,
+      "name": "Violation Issue Date",
+      "dataTypeName": "calendar_date",
+      "description": "The date of violation issuance",
+      "fieldName": "violation_issue_date",
+      "position": 2,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 149818966,
+      "format": {
+        "view": "date",
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648608,
+      "name": "Violation Number",
+      "dataTypeName": "text",
+      "description": "The violation identifier",
+      "fieldName": "violation_number",
+      "position": 3,
+      "renderTypeName": "text",
+      "tableColumnId": 149344144,
+      "format": {}
+    },
+    {
+      "id": 588648609,
+      "name": "Violation Type",
+      "dataTypeName": "text",
+      "description": "The type of violation issued",
+      "fieldName": "violation_type",
+      "position": 4,
+      "renderTypeName": "text",
+      "tableColumnId": 149344143,
+      "format": {}
+    },
+    {
+      "id": 588648610,
+      "name": "Violation Remarks",
+      "dataTypeName": "text",
+      "description": "Note recorded about the violation",
+      "fieldName": "violation_remarks",
+      "position": 5,
+      "renderTypeName": "text",
+      "tableColumnId": 149344142,
+      "format": {}
+    },
+    {
+      "id": 588648611,
+      "name": "Violation Status",
+      "dataTypeName": "text",
+      "description": "The status of the violation",
+      "fieldName": "violation_status",
+      "position": 6,
+      "renderTypeName": "text",
+      "tableColumnId": 149344141,
+      "format": {}
+    },
+    {
+      "id": 588648612,
+      "name": "Device Number",
+      "dataTypeName": "text",
+      "description": "The devices identification number",
+      "fieldName": "device_number",
+      "position": 7,
+      "renderTypeName": "text",
+      "tableColumnId": 149344139,
+      "format": {}
+    },
+    {
+      "id": 588648613,
+      "name": "Device Type",
+      "dataTypeName": "text",
+      "description": "The specific type of device",
+      "fieldName": "device_type",
+      "position": 8,
+      "renderTypeName": "text",
+      "tableColumnId": 149344138,
+      "format": {}
+    },
+    {
+      "id": 588648614,
+      "name": "Cycle End Date",
+      "dataTypeName": "calendar_date",
+      "description": "The end date of the compliance cycle",
+      "fieldName": "cycle_end_date",
+      "position": 9,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 149818328,
+      "format": {
+        "view": "date",
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648615,
+      "name": "Borough",
+      "dataTypeName": "text",
+      "description": "The borough where the violating condition was observed",
+      "fieldName": "borough",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 149344136,
+      "format": {}
+    },
+    {
+      "id": 588648616,
+      "name": "Block",
+      "dataTypeName": "number",
+      "description": "The block where the violating condition was observed",
+      "fieldName": "block",
+      "position": 11,
+      "renderTypeName": "number",
+      "tableColumnId": 149344129,
+      "format": {
+        "decimalSeparator": ".",
+        "noCommas": "true",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648617,
+      "name": "Lot",
+      "dataTypeName": "number",
+      "description": "The lot where the violating condition was observed",
+      "fieldName": "lot",
+      "position": 12,
+      "renderTypeName": "number",
+      "tableColumnId": 149344130,
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648618,
+      "name": "House Number",
+      "dataTypeName": "text",
+      "description": "The address number where the violating condition was observed",
+      "fieldName": "house_number",
+      "position": 13,
+      "renderTypeName": "text",
+      "tableColumnId": 149344135,
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648619,
+      "name": "Street",
+      "dataTypeName": "text",
+      "description": "The address name where the violating condition was observed",
+      "fieldName": "street",
+      "position": 14,
+      "renderTypeName": "text",
+      "tableColumnId": 149344134,
+      "format": {}
+    },
+    {
+      "id": 588648620,
+      "name": "City",
+      "dataTypeName": "text",
+      "description": "The city where the violating condition was observed",
+      "fieldName": "city",
+      "position": 15,
+      "renderTypeName": "text",
+      "tableColumnId": 149344133,
+      "format": {}
+    },
+    {
+      "id": 588648621,
+      "name": "State",
+      "dataTypeName": "text",
+      "description": "The state where the violating condition was observed",
+      "fieldName": "state",
+      "position": 16,
+      "renderTypeName": "text",
+      "tableColumnId": 149344132,
+      "format": {}
+    },
+    {
+      "id": 588648622,
+      "name": "Postcode",
+      "dataTypeName": "text",
+      "description": "The postal code where the violating condition was observed",
+      "fieldName": "zip",
+      "position": 17,
+      "renderTypeName": "text",
+      "tableColumnId": 149344131,
+      "format": {
+        "decimalSeparator": ".",
+        "groupSeparator": ","
+      }
+    },
+    {
+      "id": 588648627,
+      "name": "Latitude",
+      "dataTypeName": "number",
+      "description": "Latitude of the site's location",
+      "fieldName": "latitude",
+      "position": 18,
+      "renderTypeName": "number",
+      "tableColumnId": 151065844,
+      "format": {}
+    },
+    {
+      "id": 588648623,
+      "name": "Longitude",
+      "dataTypeName": "number",
+      "description": "Longitude of the site's location",
+      "fieldName": "longitude",
+      "position": 19,
+      "renderTypeName": "number",
+      "tableColumnId": 151065840,
+      "format": {}
+    },
+    {
+      "id": 588648628,
+      "name": "Community Board",
+      "dataTypeName": "number",
+      "description": "Community Boards are volunteer-run neighborhood organizations that work on all kinds of issues pertinent to their communities, often working with elected city officials in doing so. Community Board members, ﻿who can be as young as 16﻿, are appointed by Borough Presidents and City Council representatives. They serve two-year terms. There are 59 Community Boards in NYC, each of which represents a unique geographical area, known as a Community District. Note: as a column header, “Community Board” (which refers to a group of Board members) is often used to mean “Community District” (the geographical area) instead.",
+      "fieldName": "community_board",
+      "position": 20,
+      "renderTypeName": "number",
+      "tableColumnId": 151065845,
+      "format": {}
+    },
+    {
+      "id": 588648625,
+      "name": "Council District",
+      "dataTypeName": "number",
+      "description": "The City Council is the lawmaking body of NYC, on equal footing with the mayor in terms of governing power. Besides legislating, the Council has sole approval power over the city budget, and is the final decision-maker in land use matters. There are 51 City Council members in total, each representing a unique geographical area, called a Council District.",
+      "fieldName": "council_district",
+      "position": 21,
+      "renderTypeName": "number",
+      "tableColumnId": 151065842,
+      "format": {}
+    },
+    {
+      "id": 588648629,
+      "name": "BBL",
+      "dataTypeName": "number",
+      "description": "The BBL (Borough, Block, and Lot) is a unique combination of three numeric codes - a 1-digit borough number, a block number (up to 5 digits) and a lot number (up to 4 digits) -- designated and modified by the Department of Finance (DOF). BBLs are used by various city agencies to identify real estate for taxes, zoning, construction, and other purposes.",
+      "fieldName": "bbl",
+      "position": 22,
+      "renderTypeName": "number",
+      "tableColumnId": 151065846,
+      "format": {
+        "noCommas": "true"
+      }
+    },
+    {
+      "id": 588648624,
+      "name": "Census Tract (2020)",
+      "dataTypeName": "number",
+      "description": "The Census Tract (Census 2020) field indicates the U.S. Census Tract where the site is located. Please note that as part of the geocoding process, leading and trailing zeros are dropped",
+      "fieldName": "census_tract_2020_",
+      "position": 23,
+      "renderTypeName": "number",
+      "tableColumnId": 151065841,
+      "format": {
+        "noCommas": "true"
+      }
+    },
+    {
+      "id": 588648626,
+      "name": "Neighborhood Tabulation Area (NTA) (2020)",
+      "dataTypeName": "text",
+      "description": "NTAs are small area boundaries, created by the Department of City Planning (DCP) to aggregate population projections in a small area.. Each NTA approximates a minimum population of 15,000. While NTAs were initially created to support PlaNYC, the thirty-year (2000-2030) sustainability plan for NYC, NTAs are now also being used to present data from the Decennial Census and American Community Survey. NTA boundaries and their associated names do not definitively represent neighborhood boundaries.",
+      "fieldName": "neighborhood_tabulation_area_nta_2020_",
+      "position": 24,
+      "renderTypeName": "text",
+      "tableColumnId": 151065843,
+      "format": {}
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "metadata": {
+    "rdfSubject": "0",
+    "rdfClass": "",
+    "jsonQuery": {
+      "order": [
+        {
+          "columnFieldName": "violation_issue_date",
+          "ascending": false
+        }
+      ]
+    },
+    "attachments": [
+      {
+        "filename": "DOB_NOW_Safety_Violations_Data_Dictionary.xlsx",
+        "assetId": "9e8abcb0-c377-4b5f-a5ed-7c4cf490b2b7",
+        "name": "DOB_NOW_Safety_Violations_Data_Dictionary.xlsx"
+      }
+    ],
+    "custom_fields": {
+      "Update": {
+        "Automation": "Yes",
+        "Update Frequency Details": "The underlying data changes second-to-second in the system of record.",
+        "Date Made Public": "11/22/2023",
+        "Update Frequency": "Daily",
+        "Data Change Frequency": "Daily"
+      },
+      "Dataset Information": {
+        "Agency": "Department of Buildings (DOB)"
+      }
+    },
+    "rowLabel": "safety violations",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ]
+  },
+  "owner": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {
+    "orderBys": [
+      {
+        "ascending": false,
+        "expression": {
+          "columnId": 588648607,
+          "type": "column"
+        }
+      }
+    ]
+  },
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "dob",
+    "boiler",
+    "elevator",
+    "safety",
+    "violation",
+    "cycle"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

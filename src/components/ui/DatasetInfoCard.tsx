@@ -17,6 +17,7 @@ interface DatasetMetadata {
   agency?: string;
   attachments?: DatasetAttachment[];
   sourceId?: string;
+  updateFrequency?: string;
 }
 
 interface DatasetInfoCardProps {
@@ -73,10 +74,12 @@ export function DatasetInfoCard({
               </div>
             )}
 
-            <div>
-              <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Update Frequency</dt>
-              <dd className="mt-1 text-sm text-foreground">Quarterly</dd>
-            </div>
+            {metadata.updateFrequency && (
+              <div>
+                <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Update Frequency</dt>
+                <dd className="mt-1 text-sm text-foreground">{metadata.updateFrequency}</dd>
+              </div>
+            )}
 
             {metadata.attributionLink && (
               <div>
@@ -95,32 +98,32 @@ export function DatasetInfoCard({
             )}
 
             {metadata.agency && (
-            <div>
-              <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Agency</dt>
+              <div>
+                <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Agency</dt>
                 <dd className="mt-1 text-sm text-foreground">{metadata.agency}</dd>
-            </div>
+              </div>
             )}
 
             {metadata.attachments && metadata.attachments.length > 0 && metadata.sourceId && (
-            <div>
-              <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Attachments</dt>
-              <dd className="mt-1 text-xs text-foreground">
-                <div className="space-y-1">
+              <div>
+                <dt className="text-xs font-medium text-foreground/60 uppercase tracking-wide">Attachments</dt>
+                <dd className="mt-1 text-xs text-foreground">
+                  <div className="space-y-1">
                     {metadata.attachments.map((attachment) => (
                       <div key={attachment.assetId}>
-                    <a
+                        <a
                           href={`https://data.cityofnewyork.us/api/views/${metadata.sourceId}/files/${attachment.assetId}?download=true&filename=${attachment.filename}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground underline hover:text-foreground/80"
-                    >
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-foreground underline hover:text-foreground/80"
+                        >
                           {attachment.name}
-                    </a>
-                  </div>
+                        </a>
+                      </div>
                     ))}
-                </div>
-              </dd>
-            </div>
+                  </div>
+                </dd>
+              </div>
             )}
 
             {/* Custom metadata items */}
