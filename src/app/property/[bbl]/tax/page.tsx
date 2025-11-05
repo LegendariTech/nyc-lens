@@ -61,7 +61,7 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
           {/* Dataset Information */}
           <DatasetInfoCard
             metadata={{
-              name: datasetMetadata.name,
+              name: 'Data Source Information',
               attributionLink: datasetMetadata.attributionLink,
               rowsUpdatedAt: datasetMetadata.rowsUpdatedAt?.toString(),
               agency: datasetMetadata.attribution,
@@ -72,7 +72,19 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
             id="dataset-info"
             description={
               <p className="text-sm text-foreground/80 leading-relaxed">
-                {datasetMetadata.description}
+                This dataset presents detailed information on how every property in New York City—including residential, commercial, industrial and utility ­properties—is valued and assessed for tax purposes. It covers properties classified under the four major tax classes (Tax Classes 1, 2, 3 and 4) used by the city.
+                <br />
+                Essentially, the DOF uses this data to calculate property taxes, determine exemptions or abatements (tax breaks) and maintain the city’s official records of assessed values.
+                <br />
+                <strong>Note:</strong> For more information about how property taxes are calculated, visit{' '}
+                <a
+                  href="http://nyc.gov/assessments"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-foreground"
+                >
+                  nyc.gov/assessments
+                </a>
               </p>
             }
           />

@@ -45,7 +45,7 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
   {
     field: 'issue_date',
     headerName: 'Issue Date',
-    width: 150,
+    width: 140,
     sortable: true,
     filter: true,
     valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) => formatDate(p.value),
@@ -84,7 +84,7 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
   {
     field: 'violation_type',
     headerName: 'Violation Type',
-    width: 400,
+    width: 350,
     sortable: true,
     filter: true,
     wrapText: true,
@@ -107,7 +107,7 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
   {
     field: 'disposition_date',
     headerName: 'Disposition Date',
-    width: 140,
+    width: 160,
     sortable: true,
     filter: true,
     valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) => formatDate(p.value),

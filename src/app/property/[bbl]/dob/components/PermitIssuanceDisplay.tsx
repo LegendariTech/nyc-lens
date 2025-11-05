@@ -32,7 +32,7 @@ export function PermitIssuanceDisplay({ bbl, data, metadata, error }: PermitIssu
         {/* Dataset Attribution - Placeholder */}
         <DatasetInfoCard
           metadata={{
-            name: 'DOB Permit Issuance',
+            name: 'Data Source Information',
             attributionLink: 'https://data.cityofnewyork.us/',
             agency: 'Department of Buildings',
           }}
@@ -69,7 +69,7 @@ export function PermitIssuanceDisplay({ bbl, data, metadata, error }: PermitIssu
       {metadata && (
         <DatasetInfoCard
           metadata={{
-            name: metadata.name,
+            name: 'Data Source Information',
             attributionLink: metadata.attributionLink,
             rowsUpdatedAt: metadata.rowsUpdatedAt?.toString(),
             agency: metadata.attribution,

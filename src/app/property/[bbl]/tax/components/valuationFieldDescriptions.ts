@@ -16,7 +16,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'subident': 'Sub-Ident',
   'roll_section': 'Roll Section',
   'secvol': 'Section Volume Number (2 Digits each)',
-  
+
   // PY (Prior Year) values
   'pymktland': 'Market Assessed Land Value',
   'pymkttot': 'Market Assessed Total Value',
@@ -28,9 +28,8 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'pytrnextot': 'Transitional Exemption Total Value',
   'pytxbtot': 'Taxable Assessed Total',
   'pytxbextot': 'Taxable Exemption Total',
-  'pytaxclass': 'Property Tax Class',
   'pytaxflag': 'Taxable Flag',
-  
+
   // TEN (Tentative) values
   'tenmktland': 'Tentative Market Assessed Land Value',
   'tenmkttot': 'Tentative Market Assessed Total Value',
@@ -42,9 +41,8 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'tentrnextot': 'Tentative Transitional Exemption Total Value',
   'tentxbtot': 'Tentative Taxable Assessed Total',
   'tentxbextot': 'Tentative Taxable Exemption Total',
-  'tentaxclass': 'Property Tax Class',
   'tentaxflag': 'Tentative Taxable Flag',
-  
+
   // CBN (Change By Notice) values
   'cbnmktland': 'Change By Notice Market Assessed Land Value',
   'cbnmkttot': 'Change By Notice Market Assessed Total Value',
@@ -56,9 +54,8 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'cbntrnextot': 'Change By Notice Transitional Exemption Total Value',
   'cbntxbtot': 'Change By Notice Taxable Assessed Total Value',
   'cbntxbextot': 'Change By Notice Taxable Exemption Total Value',
-  'cbntaxclass': 'Property Tax Class',
   'cbntaxflag': 'Change By Notice Taxable Flag',
-  
+
   // FIN (Final) values
   'finmktland': 'Final Market Assessed Land Value',
   'finmkttot': 'Final Market Assessed Total Value',
@@ -72,7 +69,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'fintxbextot': 'Final Taxable Exemption Total Value',
   'fintaxclass': 'Property Tax Class',
   'fintaxflag': 'Final Taxable Flag',
-  
+
   // CUR (Current) values
   'curmktland': 'Current Market Assessed Land Value',
   'curmkttot': 'Current Market Assessed Total Value',
@@ -84,9 +81,8 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'curtrnextot': 'Current Transitional Exemption Total Value',
   'curtxbtot': 'Current Taxable Assessed Total Value',
   'curtxbextot': 'Current Taxable Exemption Total Value',
-  'curtaxclass': 'Property Tax Class',
   'curtaxflag': 'Current Taxable Flag',
-  
+
   // Property Details
   'period': 'Period',
   'newdrop': 'Indicates that the lot will be dropped at the end of the fiscal year',
@@ -101,7 +97,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'zip_code': 'Postal Zip code for the property',
   'geosupport_rc': 'Status of the address data verification from Geosupport',
   'stcode': 'Street Code',
-  
+
   // Land Information
   'lot_frt': 'Lot Frontage in feet',
   'lot_dep': 'Lot Depth in feet',
@@ -120,25 +116,25 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'yralt1_range': 'Last year of the alteration',
   'yralt2': 'Year of second alteration',
   'yralt2_range': 'Last year of the second alteration',
-  
+
   // Unit Information
   'coop_apt': 'Coop Apartment',
   'units': 'Units',
   'reuc_ref': 'Contains the ident number (alpha/numeric) for REUC properties',
   'aptno': 'Apartment Number for condominium properties',
   'coop_num': 'Coop identification number',
-  
+
   // Community Planning
   'cpb_boro': 'Borough code',
   'cpb_dist': 'Community planning board number',
-  
+
   // Apportionment
   'appt_date': 'Date of the most recent apportionment',
   'appt_boro': 'Apportionment Borough',
   'appt_block': 'Apportionment Block',
   'appt_lot': 'Apportionment Lot',
   'appt_ease': 'Apportionment Easement',
-  
+
   // Condo Information
   'condo_number': 'Condo identification number',
   'condo_sfx1': 'Condo Suffix 1',
@@ -146,7 +142,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'condo_sfx3': 'Not Used',
   'uaf_land': 'Land percent of common interest in the entire condo',
   'uaf_bldg': 'Building percent of common interest in the condo',
-  
+
   // Protest Information
   'protest_1': 'Protest code',
   'protest_2': 'Indicates a second protest on the property',
@@ -154,7 +150,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'attorney_group1': 'Protest Attorney identification number',
   'attorney_group2': 'Protest Attorney identification number',
   'attorney_group_old': 'Protest Attorney identification number',
-  
+
   // Area Information
   'gross_sqft': 'Gross Square Footage of the building',
   'hotel_area_gross': 'Hotel Area Gross Square Footage',
@@ -167,10 +163,10 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'storage_area_gross': 'Storage Area Gross Square Footage',
   'garage_area': 'Garage Area Gross Square Footage',
   'other_area_gross': 'Other Area Gross Square Footage',
-  
+
   // REUC
   'reuc_description': 'REUC Description',
-  
+
   // System Fields
   'extractdt': 'Data extract date',
   ':@computed_region_efsh_h5xi': 'Computed Region EFSH',

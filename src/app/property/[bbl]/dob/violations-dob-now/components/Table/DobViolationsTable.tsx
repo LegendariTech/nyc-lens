@@ -4,17 +4,17 @@ import { useMemo } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { SideBarModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
-import { myTheme } from '../theme';
-import { dobViolationBISColumnDefs } from './columnDefs';
-import type { DobViolationBISRow } from './types';
+import { myTheme } from '@/components/table/theme';
+import { dobViolationColumnDefs } from './columnDefs';
+import type { DobViolationRow } from './types';
 
 ModuleRegistry.registerModules([AllCommunityModule, SideBarModule, ColumnsToolPanelModule]);
 
-interface DobViolationsBISTableProps {
-  data: DobViolationBISRow[];
+interface DobViolationsTableProps {
+  data: DobViolationRow[];
 }
 
-export function DobViolationsBISTable({ data }: DobViolationsBISTableProps) {
+export function DobViolationsTable({ data }: DobViolationsTableProps) {
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -35,11 +35,11 @@ export function DobViolationsBISTable({ data }: DobViolationsBISTableProps) {
         }
       `}} />
       <div className="ag-theme-quartz-dark" style={{ width: '100%' }}>
-        <AgGridReact<DobViolationBISRow>
+        <AgGridReact<DobViolationRow>
           theme={myTheme}
           domLayout="autoHeight"
           defaultColDef={defaultColDef}
-          columnDefs={dobViolationBISColumnDefs}
+          columnDefs={dobViolationColumnDefs}
           rowData={data}
           suppressCellFocus={true}
           pagination={true}

@@ -2,7 +2,7 @@
 
 import { DatasetInfoCard } from '@/components/ui';
 import { DataTabLayout } from '@/components/layout';
-import { DobViolationsBISTable } from '@/components/table/dob-violations-bis';
+import { DobViolationsBISTable } from './Table';
 import type { DobViolationsBISResult } from '@/data/dobViolations';
 
 interface DobBISViolationsDisplayProps {
@@ -34,7 +34,7 @@ export function DobBISViolationsDisplay({ bbl, bisViolations }: DobBISViolations
           <div className="max-w-screen-xl">
             <DatasetInfoCard
               metadata={{
-                name: 'Data Source Description',
+                name: 'Data Source Information',
                 attributionLink: bisViolations.metadata.attributionLink,
                 rowsUpdatedAt: bisViolations.metadata.rowsUpdatedAt?.toString(),
                 agency: bisViolations.metadata.attribution,

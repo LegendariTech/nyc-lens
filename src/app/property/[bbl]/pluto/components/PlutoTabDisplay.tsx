@@ -56,7 +56,7 @@ export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true 
       {metadata && (
         <DatasetInfoCard
           metadata={{
-            name: metadata.name,
+            name: 'Data Source Information',
             attributionLink: metadata.attributionLink,
             rowsUpdatedAt: metadata.rowsUpdatedAt?.toString(),
             agency: metadata.attribution,

@@ -32,7 +32,7 @@ export function ComplaintsDisplay({ bbl, data, metadata, error }: ComplaintsDisp
         {/* Dataset Attribution - Placeholder */}
         <DatasetInfoCard
           metadata={{
-            name: 'DOB Complaints',
+            name: 'Data Source Information',
             attributionLink: 'https://data.cityofnewyork.us/',
             agency: 'Department of Buildings',
           }}
@@ -69,7 +69,7 @@ export function ComplaintsDisplay({ bbl, data, metadata, error }: ComplaintsDisp
       {metadata && (
         <DatasetInfoCard
           metadata={{
-            name: metadata.name,
+            name: 'Data Source Information',
             attributionLink: metadata.attributionLink,
             rowsUpdatedAt: metadata.rowsUpdatedAt?.toString(),
             agency: metadata.attribution,

@@ -8,6 +8,30 @@ import {
   resolveBuildingExtension,
   resolveEasement,
 } from '@/utils/taxCodes';
+import { formatCurrency } from '@/utils/formatters';
+
+// Fields that contain currency values and should be formatted as USD
+const CURRENCY_FIELDS = new Set([
+  // PY (Prior Year) values
+  'pymktland', 'pymkttot', 'pyactland', 'pyacttot', 'pyactextot',
+  'pytrnland', 'pytrntot', 'pytrnextot', 'pytxbtot', 'pytxbextot',
+
+  // TEN (Tentative) values
+  'tenmktland', 'tenmkttot', 'tenactland', 'tenacttot', 'tenactextot',
+  'tentrnland', 'tentrntot', 'tentrnextot', 'tentxbtot', 'tentxbextot',
+
+  // CBN (Change By Notice) values
+  'cbnmktland', 'cbnmkttot', 'cbnactland', 'cbnacttot', 'cbnactextot',
+  'cbntrnland', 'cbntrntot', 'cbntrnextot', 'cbntxbtot', 'cbntxbextot',
+
+  // FIN (Final) values
+  'finmktland', 'finmkttot', 'finactland', 'finacttot', 'finactextot',
+  'fintrnland', 'fintrntot', 'fintrnextot', 'fintxbtot', 'fintxbextot',
+
+  // CUR (Current) values
+  'curmktland', 'curmkttot', 'curactland', 'curacttot', 'curactextot',
+  'curtrnland', 'curtrntot', 'curtrnextot', 'curtxbtot', 'curtxbextot',
+]);
 
 interface RawDataViewProps {
   data: PropertyValuation[];
@@ -74,8 +98,12 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
                 // Format value based on field type
                 let displayValue = String(value);
 
+                // Apply currency formatting for currency fields
+                if (CURRENCY_FIELDS.has(field) && typeof value === 'number') {
+                  displayValue = formatCurrency(value);
+                }
                 // Apply code resolution for specific fields
-                if (field === 'pytaxflag' || field === 'tentaxflag' || field === 'cbntaxflag' ||
+                else if (field === 'pytaxflag' || field === 'tentaxflag' || field === 'cbntaxflag' ||
                   field === 'fintaxflag' || field === 'curtaxflag') {
                   displayValue = `${value} (${resolveTaxableFlag(String(value))})`;
                 } else if (field === 'condo_sfx1') {

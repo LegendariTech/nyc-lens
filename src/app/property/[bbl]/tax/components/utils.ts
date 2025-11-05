@@ -32,15 +32,19 @@ export function formatAssessmentYear(year: string | null): string {
  * Calculate year over year change as decimal (0.0679 = 6.79% increase)
  */
 function calculateYoyChange(currentTax: number | null, previousTax: number | null): number | null {
-  if (!currentTax || !previousTax || previousTax === 0) return null;
+  if (currentTax == null || previousTax == null) return null;
+  if (previousTax === 0) {
+    if (currentTax === 0) return 0;
+    return null;
+  }
   return (currentTax - previousTax) / previousTax;
 }
 
 /**
  * Get the taxable amount from the valuation
  */
-export function getTaxableAssessedValue(valuation: PropertyValuation): number | null {
-  return valuation.fintxbtot ? valuation.fintxbtot - (valuation.fintxbextot || 0) : null;
+export function getTaxableAssessedValue(fintxbtot: number | null, fintxbextot: number | null): number | null {
+  return fintxbtot ? fintxbtot - (fintxbextot || 0) : null;
 }
 
 /**
@@ -54,25 +58,24 @@ export function transformValuationToTaxRows(valuations: PropertyValuation[]): Ta
 
   for (let i = 0; i < valuations.length; i++) {
     const valuation = valuations[i];
-    const previousValuation = i < valuations.length - 1 ? valuations[i + 1] : null;
 
     // Use final values as they represent the actual assessed/taxable amounts
     const marketValue = valuation.finmkttot;
     const assessedValue = valuation.finacttot;
-    const taxable = getTaxableAssessedValue(valuation);
+    const taxable = getTaxableAssessedValue(valuation.fintxbtot, valuation.fintxbextot);
     const taxClass = valuation.fintaxclass;
     const fiscalYear = valuation.year;
 
     // Get the actual tax rate from NYC tax rates and calculate base tax
     const taxRate = getTaxRate(fiscalYear, taxClass);
-    const propertyTax = taxable && taxRate ? taxable * (taxRate / 100) : null;
+    const propertyTax = taxable != null && taxRate != null ? taxable * (taxRate / 100) : null;
 
     // Calculate year over year change
-    const previousTaxable = previousValuation ? getTaxableAssessedValue(previousValuation) : null;
-    const previousTaxClass = previousValuation?.fintaxclass || null;
-    const previousFiscalYear = previousValuation?.year || null;
+    const previousTaxable = getTaxableAssessedValue(valuation.pytxbtot, valuation.pytxbextot);
+    const previousTaxClass = valuation.pytaxclass || null;
+    const previousFiscalYear = valuation.year - 1;
     const previousRate = getTaxRate(previousFiscalYear, previousTaxClass);
-    const previousPropertyTax = previousTaxable && previousRate ? previousTaxable * (previousRate / 100) : null;
+    const previousPropertyTax = previousTaxable != null && previousRate != null ? previousTaxable * (previousRate / 100) : null;
     const yoyChange = calculateYoyChange(propertyTax, previousPropertyTax);
 
     rows.push({

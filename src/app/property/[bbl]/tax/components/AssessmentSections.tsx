@@ -142,7 +142,7 @@ export function AssessmentInfo({ valuation }: AssessmentInfoProps) {
       <AssessmentTable rows={getAssessmentTableRows(valuation)} />
       <TaxableAssessmentCard
         taxYear={formatTaxYear(valuation.year)}
-        amount={getTaxableAssessedValue(valuation)}
+        amount={getTaxableAssessedValue(valuation.fintxbtot, valuation.fintxbextot)}
       />
     </div>
   );

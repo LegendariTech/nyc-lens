@@ -132,7 +132,6 @@ export const formatDateMMDDYYYY = formatDate;
  */
 export function formatCurrency(value?: number | null): string {
   if (value == null) return 'N/A';
-  if (value === 0) return 'N/A';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

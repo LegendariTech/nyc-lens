@@ -32,7 +32,7 @@ export function CertificateOfOccupancyDisplay({ bbl, data, metadata, error }: Ce
         {/* Dataset Attribution - Placeholder */}
         <DatasetInfoCard
           metadata={{
-            name: 'DOB Certificate of Occupancy',
+            name: 'Data Source Information',
             attributionLink: 'https://data.cityofnewyork.us/',
             agency: 'Department of Buildings',
           }}
@@ -69,7 +69,7 @@ export function CertificateOfOccupancyDisplay({ bbl, data, metadata, error }: Ce
       {metadata && (
         <DatasetInfoCard
           metadata={{
-            name: metadata.name,
+            name: 'Data Source Information',
             attributionLink: metadata.attributionLink,
             rowsUpdatedAt: metadata.rowsUpdatedAt?.toString(),
             agency: metadata.attribution,

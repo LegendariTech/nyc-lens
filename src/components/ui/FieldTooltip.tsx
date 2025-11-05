@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { cn } from '@/utils/cn';
 
 export interface FieldTooltipProps {
@@ -15,7 +15,7 @@ export interface FieldTooltipProps {
   /**
    * Children to render (typically the label or trigger element)
    */
-  children: React.ReactNode;
+  children?: React.ReactNode;
   /**
    * Additional className for the trigger wrapper
    */
@@ -30,11 +30,12 @@ export interface FieldTooltipProps {
  * FieldTooltip - A reusable tooltip component for field descriptions
  * 
  * Features:
- * - Auto-positions tooltip (top/bottom) based on available space
- * - Mobile: Click to open with backdrop, click backdrop to close
- * - Desktop: Hover to open with delay before closing
+ * - Auto-positions tooltip based on available space (uses Radix UI Tooltip)
+ * - Mobile: Click to open, click outside to close
+ * - Desktop: Hover to open with configurable delays
  * - Supports HTML content in descriptions
  * - Accessible and responsive
+ * - Prevents clipping by parent overflow containers
  * 
  * @example
  * ```tsx
@@ -58,162 +59,83 @@ export function FieldTooltip({
   className,
   asIcon = false,
 }: FieldTooltipProps) {
-  const [openTooltip, setOpenTooltip] = useState<string | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top');
-  const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const calculatePosition = useCallback((element: HTMLElement) => {
-    const rect = element.getBoundingClientRect();
-    const spaceAbove = rect.top;
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const tooltipHeight = window.innerHeight * 0.6; // max-h-[60vh]
-
-    // Position below if not enough space above
-    const newPosition = spaceAbove < tooltipHeight && spaceBelow > spaceAbove ? 'bottom' : 'top';
-    setTooltipPosition(newPosition);
-  }, []);
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    // Only handle click on mobile (touch devices)
-    // On desktop, hover handles the tooltip
-    e.preventDefault();
-
-    // Toggle: if already open, close it; otherwise open it
-    if (openTooltip === fieldKey) {
-      setOpenTooltip(null);
-    } else {
-      calculatePosition(e.currentTarget);
-      setOpenTooltip(fieldKey);
-    }
-  }, [openTooltip, fieldKey, calculatePosition]);
-
-  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    // Clear any pending hide timeout
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current);
-      hideTimeoutRef.current = null;
-    }
-
-    calculatePosition(e.currentTarget);
-    setHoveredTooltip(fieldKey);
-  }, [fieldKey, calculatePosition]);
-
-  const handleMouseLeave = useCallback(() => {
-    // Set a delay before hiding the tooltip
-    hideTimeoutRef.current = setTimeout(() => {
-      setHoveredTooltip(null);
-    }, 300); // 300ms delay
-  }, []);
-
-  const handleTooltipMouseEnter = useCallback(() => {
-    // Clear hide timeout when mouse enters tooltip
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current);
-      hideTimeoutRef.current = null;
-    }
-  }, []);
-
-  const handleTooltipMouseLeave = useCallback(() => {
-    // Hide tooltip when mouse leaves tooltip area
-    setHoveredTooltip(null);
-  }, []);
-
-  const handleBackdropClick = useCallback(() => {
-    setOpenTooltip(null);
-  }, []);
-
+  // If no description, just render children (or nothing in icon mode)
   if (!description) {
-    return <>{children}</>;
+    return asIcon ? null : <>{children}</>;
   }
 
   // Icon-only mode
   if (asIcon) {
     return (
-      <div className="relative inline-flex items-center">
-        <button
-          type="button"
-          className="text-foreground/40 hover:text-foreground/60 transition-colors cursor-help"
-          onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="w-3.5 h-3.5"
-          >
-            <path
-              fillRule="evenodd"
-              d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-        
-        {/* Backdrop for mobile */}
-        {openTooltip === fieldKey && (
-          <div
-            className="fixed inset-0 z-[90] bg-black/50 md:hidden"
-            onClick={handleBackdropClick}
-          />
-        )}
-        
-        {/* Tooltip */}
-        <div
-          className={cn(
-            'prose prose-xs absolute left-0 z-[100] max-h-[60vh] w-[calc(100vw-2rem)] max-w-md overflow-y-auto whitespace-pre-wrap rounded-md border border-gray-600 bg-black p-4 text-xs text-white shadow-lg',
-            '[&_a]:text-blue-300 [&_a]:underline [&_a]:hover:text-blue-200 [&_b]:font-semibold [&_p]:my-1',
-            tooltipPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2',
-            // Mobile: show when clicked (openTooltip state)
-            // Desktop: show on hover (hoveredTooltip state)
-            openTooltip === fieldKey ? 'block md:hidden' : hoveredTooltip === fieldKey ? 'hidden md:block' : 'hidden'
-          )}
-          onMouseEnter={handleTooltipMouseEnter}
-          onMouseLeave={handleTooltipMouseLeave}
-          dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }}
-        />
-      </div>
+      <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
+        <TooltipPrimitive.Root>
+          <TooltipPrimitive.Trigger asChild>
+            <button
+              type="button"
+              className="text-foreground/40 hover:text-foreground/60 transition-colors cursor-help inline-flex items-center"
+              aria-label={`Information about ${fieldKey}`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-3.5 h-3.5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </TooltipPrimitive.Trigger>
+          <TooltipPrimitive.Portal>
+            <TooltipPrimitive.Content
+              className={cn(
+                'prose prose-sm z-[100] max-h-[60vh] w-[calc(100vw-2rem)] max-w-md overflow-y-auto whitespace-pre-wrap rounded-md border border-gray-600 bg-black p-4 text-sm text-white shadow-lg',
+                '[&_a]:text-blue-300 [&_a]:underline [&_a]:hover:text-blue-200 [&_b]:font-semibold [&_p]:my-1',
+                'data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade',
+                'data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade',
+                'data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade',
+                'data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade',
+              )}
+              sideOffset={8}
+              collisionPadding={16}
+            >
+              <div dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
+            </TooltipPrimitive.Content>
+          </TooltipPrimitive.Portal>
+        </TooltipPrimitive.Root>
+      </TooltipPrimitive.Provider>
     );
   }
 
   // Wrapper mode - wraps children
   return (
-    <span className={cn('group relative', className)}>
-      <span
-        className="cursor-help"
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {children}
-      </span>
-      
-      {/* Backdrop for mobile */}
-      {openTooltip === fieldKey && (
-        <div
-          className="fixed inset-0 z-[90] bg-black/50 md:hidden"
-          onClick={handleBackdropClick}
-        />
-      )}
-      
-      {/* Tooltip */}
-      <div
-        className={cn(
-          'prose prose-xs absolute left-0 z-[100] max-h-[60vh] w-[calc(100vw-2rem)] max-w-md overflow-y-auto whitespace-pre-wrap rounded-md border border-gray-600 bg-black p-4 text-xs text-white shadow-lg',
-          '[&_a]:text-blue-300 [&_a]:underline [&_a]:hover:text-blue-200 [&_b]:font-semibold [&_p]:my-1',
-          tooltipPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2',
-          // Mobile: show when clicked (openTooltip state)
-          // Desktop: show on hover (hoveredTooltip state)
-          openTooltip === fieldKey ? 'block md:hidden' : hoveredTooltip === fieldKey ? 'hidden md:block' : 'hidden'
-        )}
-        onMouseEnter={handleTooltipMouseEnter}
-        onMouseLeave={handleTooltipMouseLeave}
-        dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }}
-      />
-    </span>
+    <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
+      <TooltipPrimitive.Root>
+        <TooltipPrimitive.Trigger asChild>
+          <span className={cn('cursor-help inline-flex', className)}>
+            {children}
+          </span>
+        </TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Portal>
+          <TooltipPrimitive.Content
+            className={cn(
+              'prose prose-sm z-[100] max-h-[60vh] w-[calc(100vw-2rem)] max-w-md overflow-y-auto whitespace-pre-wrap rounded-md border border-gray-600 bg-black p-4 text-sm text-white shadow-lg',
+              '[&_a]:text-blue-300 [&_a]:underline [&_a]:hover:text-blue-200 [&_b]:font-semibold [&_p]:my-1',
+              'data-[state=delayed-open]:data-[side=top]:animate-slideDownAndFade',
+              'data-[state=delayed-open]:data-[side=right]:animate-slideLeftAndFade',
+              'data-[state=delayed-open]:data-[side=left]:animate-slideRightAndFade',
+              'data-[state=delayed-open]:data-[side=bottom]:animate-slideUpAndFade',
+            )}
+            sideOffset={8}
+            collisionPadding={16}
+          >
+            <div dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br>') }} />
+          </TooltipPrimitive.Content>
+        </TooltipPrimitive.Portal>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
   );
 }
-
-

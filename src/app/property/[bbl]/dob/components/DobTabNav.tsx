@@ -29,9 +29,9 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   const tabs = [
     { value: 'violations-dob-now', label: 'Violations: DOB Now' },
     { value: 'violations-bis', label: 'Violations: BIS' },
+    { value: 'permit-issuance', label: 'Permit Issuance' },
     { value: 'certificate-of-occupancy', label: 'Certificate of Occupancy' },
     { value: 'complaints', label: 'Complaints' },
-    { value: 'permit-issuance', label: 'Permit Issuance' },
   ];
 
   return (

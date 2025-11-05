@@ -2,7 +2,7 @@
 
 import { DatasetInfoCard } from '@/components/ui';
 import { DataTabLayout } from '@/components/layout';
-import { DobViolationsTable } from '@/components/table/dob-violations';
+import { DobViolationsTable } from './Table';
 import type { DobSafetyViolationsResult } from '@/data/dobViolations';
 
 interface DobSafetyViolationsDisplayProps {
@@ -34,7 +34,7 @@ export function DobSafetyViolationsDisplay({ bbl, safetyViolations }: DobSafetyV
           <div className="max-w-screen-xl">
             <DatasetInfoCard
               metadata={{
-                name: 'Data Source Description',
+                name: 'Data Source Information',
                 attributionLink: safetyViolations.metadata.attributionLink,
                 rowsUpdatedAt: safetyViolations.metadata.rowsUpdatedAt?.toString(),
                 agency: safetyViolations.metadata.attribution,
