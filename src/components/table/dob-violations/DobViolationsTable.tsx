@@ -43,8 +43,8 @@ export function DobViolationsTable({ data }: DobViolationsTableProps) {
           rowData={data}
           suppressCellFocus={true}
           pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 25, 50, 100]}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[10, 25, 50, 100]}
           sideBar={{
             toolPanels: [
               {
@@ -59,7 +59,7 @@ export function DobViolationsTable({ data }: DobViolationsTableProps) {
                   suppressPivots: true,
                   suppressPivotMode: true,
                 },
-              }, 'filters',
+              },
             ],
             defaultToolPanel: '',
           }}

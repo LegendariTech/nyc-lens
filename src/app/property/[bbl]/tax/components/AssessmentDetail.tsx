@@ -1,6 +1,6 @@
 'use client';
 
-import { formatAssessmentYear } from '@/components/table/tax';
+import { formatAssessmentYear } from './utils';
 import { getTaxableStatusDate } from '@/constants/taxRates';
 import type { PropertyValuation } from '@/types/valuation';
 import { AssessmentHeader } from './AssessmentComponents';

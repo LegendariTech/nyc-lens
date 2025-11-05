@@ -203,7 +203,7 @@ describe("SidebarNav", () => {
     });
 
     it("shows DOB group when on DOB pages even without bulk param", () => {
-      currentPathname = "/dob/violations";
+      currentPathname = "/dob/violations-dob-now";
       currentSearchParams = new URLSearchParams(); // No bulk param
       renderWithProvider(<SidebarNav />);
 
@@ -231,13 +231,14 @@ describe("SidebarNav", () => {
       const dobButton = screen.getByRole("button", { name: /DOB/i });
 
       // Initially, DOB children should not be visible
-      expect(screen.queryByRole("link", { name: /Violations/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /Violations: DOB Now/i })).not.toBeInTheDocument();
 
       // Click to expand
       await user.click(dobButton);
 
       // Now DOB children should be visible
-      expect(screen.getByRole("link", { name: /Violations/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Violations: DOB Now/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Violations: BIS/i })).toBeInTheDocument();
       expect(screen.getByRole("link", { name: /Complaints/i })).toBeInTheDocument();
     });
 
@@ -261,12 +262,13 @@ describe("SidebarNav", () => {
     });
 
     it("auto-expands DOB group when on DOB page", () => {
-      currentPathname = "/dob/violations";
+      currentPathname = "/dob/violations-dob-now";
       currentSearchParams = new URLSearchParams();
       renderWithProvider(<SidebarNav />);
 
       // DOB group should be auto-expanded
-      expect(screen.getByRole("link", { name: /Violations/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Violations: DOB Now/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Violations: BIS/i })).toBeInTheDocument();
       expect(screen.getByRole("link", { name: /Complaints/i })).toBeInTheDocument();
     });
 
@@ -290,20 +292,20 @@ describe("SidebarNav", () => {
 
       // Expand
       await user.click(dobButton);
-      expect(screen.getByRole("link", { name: /Violations/i })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Violations: DOB Now/i })).toBeInTheDocument();
 
       // Collapse
       await user.click(dobButton);
-      expect(screen.queryByRole("link", { name: /Violations/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /Violations: DOB Now/i })).not.toBeInTheDocument();
     });
 
     it("marks active DOB child link correctly", () => {
-      currentPathname = "/dob/violations";
+      currentPathname = "/dob/violations-dob-now";
       currentSearchParams = new URLSearchParams();
       renderWithProvider(<SidebarNav />);
 
-      // Violations link should be marked as active
-      const violationsLink = screen.getByRole("link", { name: /Violations/i });
+      // Violations: DOB Now link should be marked as active
+      const violationsLink = screen.getByRole("link", { name: /Violations: DOB Now/i });
       expect(violationsLink).toHaveAttribute("aria-current", "page");
     });
 

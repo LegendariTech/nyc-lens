@@ -1,7 +1,7 @@
 'use client';
 
 import type { PropertyValuation } from '@/types/valuation';
-import { formatTaxYear } from '@/components/table/tax';
+import { formatTaxYear } from './utils';
 import { AssessmentTable, TaxableAssessmentCard, InfoField, InfoRow, InfoSection } from './AssessmentComponents';
 import {
   formatPropertyAddress,
@@ -11,8 +11,8 @@ import {
   getExtensionValue,
   getAssessmentTableRows,
   getTaxableAssessedValue,
-} from './assessmentUtils';
-import { ASSESSMENT_FIELD_DESCRIPTIONS } from './assessmentFieldDescriptions';
+} from './utils';
+import { ASSESSMENT_FIELD_DESCRIPTIONS } from './const';
 
 interface OwnerPropertyInfoProps {
   valuation: PropertyValuation;

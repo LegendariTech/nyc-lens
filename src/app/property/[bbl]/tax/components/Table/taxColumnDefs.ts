@@ -1,5 +1,5 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
-import type { TaxRow } from './types';
+import type { TaxRow } from '../taxTypes';
 import { formatCurrency } from '@/utils/formatters';
 
 /**

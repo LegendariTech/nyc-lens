@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TaxTable, transformValuationToTaxRows } from '@/components/table/tax';
+import { TaxTable } from './Table/TaxTable';
+import { transformValuationToTaxRows } from './utils';
 import { AssessmentDetail } from './AssessmentDetail';
 import { RawDataView } from './RawDataView';
 import { TabControlsBar } from '@/components/layout';

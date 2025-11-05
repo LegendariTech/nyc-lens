@@ -15,4 +15,17 @@ export {
   BuildingInfo,
   AssessmentInfo,
 } from './AssessmentSections';
-export * from './assessmentUtils';
+export { TaxTable } from './Table/TaxTable';
+export {
+  formatTaxYear,
+  formatAssessmentYear,
+  transformValuationToTaxRows,
+  formatPropertyAddress,
+  formatBuildingClass,
+  getTaxableAssessedValue,
+  getAssessmentTableRows,
+  formatLotShape,
+  formatCorner,
+  getExtensionValue,
+} from './utils';
+export type { TaxRow } from './taxTypes';

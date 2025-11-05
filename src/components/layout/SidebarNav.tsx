@@ -32,7 +32,8 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Complaints", href: "/dob/complaints" },
       { label: "Certificate of Occupancy", href: "/dob/certificate-of-occupancy" },
       { label: "Permits", href: "/dob/permits" },
-      { label: "Violations", href: "/dob/violations" },
+      { label: "Violations: DOB Now", href: "/dob/violations-dob-now" },
+      { label: "Violations: BIS", href: "/dob/violations-bis" },
     ],
   },
   {

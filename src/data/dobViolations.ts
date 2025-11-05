@@ -113,7 +113,7 @@ export async function fetchDobSafetyViolations(bbl: string): Promise<DobSafetyVi
     });
 
     // Load metadata (static file with field descriptions)
-    const metadataModule = await import('@/app/property/[bbl]/dob/violations/metadata-safety.json');
+    const metadataModule = await import('@/app/property/[bbl]/dob/violations-dob-now/metadata.json');
     const metadata = metadataModule.default as unknown as DatasourceMetadata;
 
     if (!rows || rows.length === 0) {
@@ -181,7 +181,7 @@ export async function fetchDobViolationsBIS(bbl: string): Promise<DobViolationsB
     });
 
     // Load metadata (static file with field descriptions)
-    const metadataModule = await import('@/app/property/[bbl]/dob/violations/metadata.json');
+    const metadataModule = await import('@/app/property/[bbl]/dob/violations-bis/metadata.json');
     const metadata = metadataModule.default as unknown as DatasourceMetadata;
 
     if (!rows || rows.length === 0) {
