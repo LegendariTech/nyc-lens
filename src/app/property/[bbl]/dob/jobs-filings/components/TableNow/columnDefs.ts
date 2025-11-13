@@ -1,6 +1,6 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { DobJobNowApplicationRow } from './types';
-import { getDobJobTypeDisplay } from '@/constants/dob';
+import { getDobJobTypeDisplay, getDobApplicantProfessionalTitleDisplay } from '@/constants/dob';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import metadata from '../../now-metadata.json';
 
@@ -55,8 +55,6 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
     field: 'filing_date',
     headerName: getColumnName('filing_date'),
     width: 180,
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
     valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, Date>) => {
       return formatDate(p.value);
     },
@@ -68,6 +66,11 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
       const dateB = valueB ? new Date(valueB).getTime() : 0;
       return dateB - dateA;
     },
+  },
+  {
+    field: 'approved_date',
+    headerName: getColumnName('approved_date'),
+    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, Date>) => formatDate(p.value),
   },
   {
     field: 'job_type',
@@ -84,7 +87,7 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
   {
     field: 'current_status_date',
     headerName: getColumnName('current_status_date'),
-    width: 150,
+    width: 170,
     valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, Date>) => formatDate(p.value),
     comparator: (valueA: Date, valueB: Date) => {
       const dateA = valueA ? new Date(valueA).getTime() : 0;
@@ -93,15 +96,22 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
     },
   },
   {
+    headerName: 'Applicant',
+    width: 200,
+    valueGetter: (params) => formatApplicantName(params.data!),
+  },
+  {
+    field: 'applicant_professional_title',
+    headerName: getColumnName('applicant_professional_title'),
+    width: 220,
+    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => getDobApplicantProfessionalTitleDisplay(p.value ?? null),
+  },
+  {
     field: 'applicant_license',
     headerName: getColumnName('applicant_license'),
     width: 120,
+    hide: true,
     valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    headerName: 'APPLICANT',
-    width: 200,
-    valueGetter: (params) => formatApplicantName(params.data!),
   },
   {
     field: 'initial_cost',
@@ -111,42 +121,6 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
       if (!p.value) return 'N/A';
       return formatCurrency(p.value);
     },
-  },
-  {
-    field: 'house_no',
-    headerName: getColumnName('house_no'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'street_name',
-    headerName: getColumnName('street_name'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'borough',
-    headerName: getColumnName('borough'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'block',
-    headerName: getColumnName('block'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'lot',
-    headerName: getColumnName('lot'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'bin',
-    headerName: getColumnName('bin'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
   },
   {
     field: 'commmunity_board',
@@ -163,30 +137,6 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
   {
     field: 'apt_condo_no_s',
     headerName: getColumnName('apt_condo_no_s'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'applicant_professional_title',
-    headerName: getColumnName('applicant_professional_title'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'applicant_first_name',
-    headerName: getColumnName('applicant_first_name'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'applicants_middle_initial',
-    headerName: getColumnName('applicants_middle_initial'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'applicant_last_name',
-    headerName: getColumnName('applicant_last_name'),
     hide: true,
     valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
   },
@@ -572,12 +522,6 @@ export const dobJobNowApplicationsColumnDefs: ColDef<DobJobNowApplicationRow>[] 
     headerName: getColumnName('temporary_place_of_assembly_work_type_'),
     hide: true,
     valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, string>) => p.value || 'N/A',
-  },
-  {
-    field: 'approved_date',
-    headerName: getColumnName('approved_date'),
-    hide: true,
-    valueFormatter: (p: ValueFormatterParams<DobJobNowApplicationRow, Date>) => formatDate(p.value),
   },
   {
     field: 'signoff_date',

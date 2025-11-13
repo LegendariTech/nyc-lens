@@ -47,7 +47,7 @@ export function getDobJobStatusInfo(statusCode: string | null): { status: string
 export function getDobJobStatusDisplay(statusCode: string | null): string {
   if (!statusCode) return 'N/A';
   const statusInfo = getDobJobStatusInfo(statusCode);
-  return statusInfo ? `${statusInfo.status} - ${statusInfo.description}` : statusCode;
+  return statusInfo ? `${statusInfo.description}` : statusCode;
 }
 
 /**
@@ -108,4 +108,27 @@ export function getDobJobTypeDisplay(jobTypeCode: string | null): string {
   if (!jobTypeCode) return 'N/A';
   const jobTypeInfo = getDobJobTypeInfo(jobTypeCode);
   return jobTypeInfo ? `${jobTypeInfo.type}` : jobTypeCode;
+}
+
+/**
+ * DOB Applicant Professional Title Codes and Descriptions
+ * 2-digit codes indicating the license type the applicant used to file the application
+ */
+export const DOB_APPLICANT_PROFESSIONAL_TITLE_MAP: Record<string, string> = {
+  GC: 'General Contractor',
+  PE: 'Professional Engineer',
+  RA: 'Registered Architect',
+  LA: 'Registered Landscape Architect',
+  S: 'Sign Hanger',
+  PR: 'Preparer',
+};
+
+/**
+ * Get DOB applicant professional title display string from title code
+ * @param titleCode - Professional title code (e.g., 'GC', 'PE', 'RA')
+ * @returns Full professional title or the code itself if not found
+ */
+export function getDobApplicantProfessionalTitleDisplay(titleCode: string | null): string {
+  if (!titleCode) return 'N/A';
+  return DOB_APPLICANT_PROFESSIONAL_TITLE_MAP[titleCode.toUpperCase()] || titleCode;
 }

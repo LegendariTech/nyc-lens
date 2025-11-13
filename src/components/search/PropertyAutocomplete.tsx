@@ -57,7 +57,7 @@ export function PropertyAutocomplete({
       initialValue={initialValue}
       autoFocus={autoFocus}
       placeholder='Try "1 Broadway" or "1 13 1"'
-      maxResults={4}
+      maxResults={400}
       openOnFocus={true}
       getSources={({ query }) => [
         {

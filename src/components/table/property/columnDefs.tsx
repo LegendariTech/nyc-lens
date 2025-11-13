@@ -33,10 +33,11 @@ export const colDefs: ColDef<AcrisRecord>[] = [
   },
   {
     field: 'borough',
-    hide: true,
+    // hide: true,
     // cellRenderer: 'agGroupCellRenderer',
     headerName: 'Borough',
     filter: 'agSetColumnFilter',
+    width: 150,
     valueFormatter: (params: ValueFormatterParams<AcrisRecord, string>) => {
       return (params.value || '') + ' - ' + BOROUGH_NAMES[params.value || ''];
     },
@@ -52,7 +53,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
   },
   {
     field: 'block',
-    hide: true,
+    // hide: true,
     headerName: 'Block',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
@@ -64,7 +65,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
   {
     field: 'lot',
     headerName: 'Lot',
-    hide: true,
+    // hide: true,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     width: 115,
@@ -77,6 +78,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     headerName: 'Address',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
+    width: 300,
     cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
       const address = encodeURIComponent(params.value || '');
       return (
@@ -102,6 +104,11 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     floatingFilter: true,
     filterParams: {
       ...DEFAULT_TEXT_FILTER_PARAMS,
+      filterOptions: [
+        ...DEFAULT_TEXT_FILTER_PARAMS.filterOptions,
+        'blank',
+        'notBlank',
+      ],
     }
   },
   {
@@ -115,7 +122,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
   },
   {
     field: 'avroll_building_class',
-    hide: true,
+    // hide: true,
     headerName: 'Building Class',
     filter: 'agSetColumnFilter',
     width: 350,
@@ -143,17 +150,17 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     },
     floatingFilter: true,
   },
-  {
-    field: 'avroll_units',
-    hide: true,
-    headerName: 'Units',
-    filter: 'agNumberColumnFilter',
-    width: 100,
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_NUMBER_FILTER_PARAMS,
-    }
-  },
+  // {
+  //   field: 'avroll_units',
+  //   hide: true,
+  //   headerName: 'Units',
+  //   filter: 'agNumberColumnFilter',
+  //   width: 100,
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_NUMBER_FILTER_PARAMS,
+  //   }
+  // },
   {
     field: 'avroll_building_story',
     hide: true,
@@ -163,17 +170,6 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     width: 100,
     filterParams: {
       ...DEFAULT_NUMBER_FILTER_PARAMS,
-    }
-  },
-  {
-    field: 'sale_document_amount',
-    headerName: 'Sale Amount',
-    width: 150,
-    valueFormatter: ({ value }) => formatCurrency(value),
-    filter: 'agNumberColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_NUMBER_FILTER_PARAMS
     }
   },
   {
@@ -188,8 +184,19 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     }
   },
   {
+    field: 'sale_document_amount',
+    headerName: 'Sale Amount',
+    width: 150,
+    valueFormatter: ({ value }) => formatCurrency(value),
+    filter: 'agNumberColumnFilter',
+    floatingFilter: true,
+    filterParams: {
+      ...DEFAULT_NUMBER_FILTER_PARAMS
+    }
+  },
+  {
     field: 'buyer_name',
-    headerName: 'Owner',
+    headerName: 'Recorded Owner',
     width: 250,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
@@ -230,7 +237,6 @@ export const colDefs: ColDef<AcrisRecord>[] = [
   {
     field: 'mortgage_document_date',
     headerName: 'Mortgage Date',
-    sort: 'desc',
     valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
     filter: 'agDateColumnFilter',
     floatingFilter: true,
@@ -260,68 +266,68 @@ export const colDefs: ColDef<AcrisRecord>[] = [
       ...DEFAULT_DATE_FILTER_PARAMS
     }
   },
-  {
-    hide: true,
-    field: 'prior_mortgage_document_date',
-    headerName: 'Prior Mortgage Date',
-    valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
-    filter: 'agDateColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_DATE_FILTER_PARAMS
-    }
-  },
-  {
-    hide: true,
-    field: 'prior_mortgage_document_amount',
-    headerName: 'Prior Mortgage Amount',
-    valueFormatter: ({ value }) => formatCurrency(value),
-    filter: 'agNumberColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_NUMBER_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'prior_lender',
-    hide: true,
-    headerName: 'Prior Lender',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'prior_lendee',
-    hide: true,
-    headerName: 'Prior Lendee',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'hpd_name',
-    hide: true,
-    headerName: 'HPD Name',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'hpd_phone',
-    hide: true,
-    headerName: 'HPD Phone',
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_TEXT_FILTER_PARAMS
-    }
-  },
+  // {
+  //   hide: true,
+  //   field: 'prior_mortgage_document_date',
+  //   headerName: 'Prior Mortgage Date',
+  //   valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
+  //   filter: 'agDateColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_DATE_FILTER_PARAMS
+  //   }
+  // },
+  // {
+  //   hide: true,
+  //   field: 'prior_mortgage_document_amount',
+  //   headerName: 'Prior Mortgage Amount',
+  //   valueFormatter: ({ value }) => formatCurrency(value),
+  //   filter: 'agNumberColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_NUMBER_FILTER_PARAMS
+  //   }
+  // },
+  // {
+  //   field: 'prior_lender',
+  //   hide: true,
+  //   headerName: 'Prior Lender',
+  //   filter: 'agTextColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
+  //   }
+  // },
+  // {
+  //   field: 'prior_lendee',
+  //   hide: true,
+  //   headerName: 'Prior Lendee',
+  //   filter: 'agTextColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
+  //   }
+  // },
+  // {
+  //   field: 'hpd_name',
+  //   hide: true,
+  //   headerName: 'HPD Name',
+  //   filter: 'agTextColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
+  //   }
+  // },
+  // {
+  //   field: 'hpd_phone',
+  //   hide: true,
+  //   headerName: 'HPD Phone',
+  //   filter: 'agTextColumnFilter',
+  //   floatingFilter: true,
+  //   filterParams: {
+  //     ...DEFAULT_TEXT_FILTER_PARAMS
+  //   }
+  // },
   {
     field: 'purchase_refinance',
     hide: true,

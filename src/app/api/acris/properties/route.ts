@@ -10,6 +10,24 @@ export async function POST(req: NextRequest) {
     const { request } = body as AcrisPropertiesRequest;
 
     // Merge with defaults
+    const defaultSortModel = [
+      { colId: 'sale_document_date', sort: 'desc' as const },
+      { colId: 'borough', sort: 'asc' as const },
+      { colId: 'block', sort: 'asc' as const },
+      { colId: 'lot', sort: 'asc' as const },
+    ];
+
+    let effectiveSortModel = defaultSortModel;
+
+    if (
+      request &&
+      'sortModel' in request &&
+      Array.isArray(request.sortModel) &&
+      request.sortModel.length > 0
+    ) {
+      effectiveSortModel = request.sortModel;
+    }
+
     const fullRequest: ServerSideGetRowsRequest = {
       startRow: 0,
       endRow: 100,
@@ -19,20 +37,17 @@ export async function POST(req: NextRequest) {
       pivotMode: false,
       groupKeys: [],
       filterModel: {},
-      sortModel: [
-        { colId: 'mortgage_document_date', sort: 'desc' },
-        { colId: 'borough', sort: 'asc' },
-        { colId: 'block', sort: 'asc' },
-        { colId: 'lot', sort: 'asc' },
-      ],
-      ...request, // Override with provided values
+      ...request, // Override with provided values (sortModel below will be replaced, but we set above for default logic)
+      sortModel: effectiveSortModel,
     };
+
+    console.log(JSON.stringify({ fullRequest }, null, 2));
 
     const index = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || '';
     const base = buildEsQueryFromAgGrid(fullRequest);
     (base as Record<string, unknown>).track_total_hits = true;
 
-    console.log(JSON.stringify(base, null, 2));
+    // console.log(JSON.stringify(base, null, 2));
 
     const res = await search(index, base);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];

@@ -61,12 +61,25 @@ function addSetFilter(b: BodyBuilderLite, field: string, values: unknown[]) {
 }
 
 function addTextFilter(b: BodyBuilderLite, field: string, type: string, filter?: string) {
-  if (!filter) return;
-
   const strategy = searchStrategies[field];
   const equalsField = strategy?.equalsField || field;
   const startWithField = strategy?.startWithField || field;
   const containsField = strategy?.containsField || field;
+
+  // Handle blank/notBlank filters (don't require filter value)
+  if (type === 'blank') {
+    // Filter for documents where field is missing or empty
+    b.notFilter('exists', field);
+    return;
+  }
+  if (type === 'notBlank') {
+    // Filter for documents where field exists and has a value
+    b.filter('exists', field);
+    return;
+  }
+
+  // For other filter types, require a filter value
+  if (!filter) return;
 
   if (field === 'address' && filter) {
     b.query('dis_max', {
