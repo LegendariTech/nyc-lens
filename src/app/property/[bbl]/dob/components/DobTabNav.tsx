@@ -27,6 +27,7 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   };
 
   const tabs = [
+    { value: 'jobs-filings', label: 'Jobs' },
     { value: 'violations-dob-now', label: 'Violations: DOB Now' },
     { value: 'violations-bis', label: 'Violations: BIS' },
     { value: 'permit-issuance', label: 'Permit Issuance' },

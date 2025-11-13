@@ -205,4 +205,3 @@ export async function fetchDobViolationsBIS(bbl: string): Promise<DobViolationsB
     };
   }
 }
-

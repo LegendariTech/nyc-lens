@@ -1,23 +1,6 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { DobViolationRow } from './types';
-
-/**
- * Format date string to readable format
- */
-function formatDate(value: string | null | undefined): string {
-  if (!value) return 'N/A';
-  try {
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return value; // Return original if invalid
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  } catch {
-    return value;
-  }
-}
+import { formatDate } from '@/utils/formatters';
 
 export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
   {

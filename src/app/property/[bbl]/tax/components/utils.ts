@@ -125,7 +125,7 @@ export function getAssessmentTableRows(valuation: PropertyValuation) {
       tooltip: ASSESSMENT_FIELD_DESCRIPTIONS.estimatedMarketValue,
     },
     {
-      description: 'Market Assessed Value',
+      description: 'Assessed Value',
       landValue: valuation.finactland,
       totalValue: valuation.finacttot,
       tooltip: ASSESSMENT_FIELD_DESCRIPTIONS.marketAssessedValue,

@@ -1,0 +1,1098 @@
+{
+  "id": "w9ak-ipjd",
+  "name": "DOB NOW: Build – Job Application Filings",
+  "assetType": "dataset",
+  "attribution": "Department of Buildings (DOB)",
+  "averageRating": 0,
+  "category": "Housing & Development",
+  "createdAt": 1464269649,
+  "description": "List of most job filings filed in DOB NOW. This dataset does not include certain types of job.  For Electrical jobs, use https://data.cityofnewyork.us/browse?Data-Collection_Data-Collection=DOB+NOW+Electrical+Permits+Data. Elevator and LAA jobs will also be published separately.",
+  "diciBackend": false,
+  "displayType": "table",
+  "downloadCount": 38181,
+  "hideFromCatalog": false,
+  "hideFromDataJson": false,
+  "locked": false,
+  "newBackend": true,
+  "numberOfComments": 2,
+  "oid": 41532904,
+  "provenance": "official",
+  "publicationAppendEnabled": true,
+  "publicationDate": 1755795591,
+  "publicationGroup": 10951804,
+  "publicationStage": "published",
+  "rowClass": "",
+  "rowsUpdatedAt": 1762983106,
+  "rowsUpdatedBy": "5fuc-pqz2",
+  "tableId": 20018551,
+  "totalTimesRated": 0,
+  "viewCount": 122207,
+  "viewLastModified": 1762982209,
+  "viewType": "tabular",
+  "approvals": [
+    {
+      "reviewedAt": 1526998165,
+      "reviewedAutomatically": true,
+      "state": "approved",
+      "submissionId": 7048309,
+      "submissionObject": "public_audience_request",
+      "submissionOutcome": "change_audience",
+      "submittedAt": 1526998165,
+      "targetAudience": "public",
+      "workflowId": 2285,
+      "submissionDetails": {
+        "permissionType": "READ"
+      },
+      "submissionOutcomeApplication": {
+        "failureCount": 0,
+        "status": "success"
+      },
+      "submitter": {
+        "id": "5fuc-pqz2",
+        "displayName": "NYC OpenData"
+      }
+    }
+  ],
+  "clientContext": {
+    "clientContextVariables": [],
+    "inheritedVariables": {}
+  },
+  "columns": [
+    {
+      "id": 616114247,
+      "name": "Job Filing Number",
+      "dataTypeName": "text",
+      "fieldName": "job_filing_number",
+      "position": 1,
+      "renderTypeName": "text",
+      "tableColumnId": 36407091,
+      "width": 304,
+      "format": {}
+    },
+    {
+      "id": 616114248,
+      "name": "Filing Status",
+      "dataTypeName": "text",
+      "fieldName": "filing_status",
+      "position": 2,
+      "renderTypeName": "text",
+      "tableColumnId": 36407092,
+      "width": 256,
+      "format": {}
+    },
+    {
+      "id": 616114249,
+      "name": "House No",
+      "dataTypeName": "text",
+      "fieldName": "house_no",
+      "position": 3,
+      "renderTypeName": "text",
+      "tableColumnId": 36407093,
+      "width": 196,
+      "format": {}
+    },
+    {
+      "id": 616114250,
+      "name": "Street Name",
+      "dataTypeName": "text",
+      "fieldName": "street_name",
+      "position": 4,
+      "renderTypeName": "text",
+      "tableColumnId": 36407094,
+      "width": 232,
+      "format": {}
+    },
+    {
+      "id": 616114251,
+      "name": "Borough",
+      "dataTypeName": "text",
+      "fieldName": "borough",
+      "position": 5,
+      "renderTypeName": "text",
+      "tableColumnId": 36407095,
+      "width": 184,
+      "format": {}
+    },
+    {
+      "id": 616114252,
+      "name": "Block",
+      "dataTypeName": "text",
+      "fieldName": "block",
+      "position": 6,
+      "renderTypeName": "text",
+      "tableColumnId": 36407096,
+      "width": 160,
+      "format": {}
+    },
+    {
+      "id": 616114253,
+      "name": "LOT",
+      "dataTypeName": "text",
+      "fieldName": "lot",
+      "position": 7,
+      "renderTypeName": "text",
+      "tableColumnId": 36407097,
+      "width": 136,
+      "format": {}
+    },
+    {
+      "id": 616114254,
+      "name": "Bin",
+      "dataTypeName": "text",
+      "fieldName": "bin",
+      "position": 8,
+      "renderTypeName": "text",
+      "tableColumnId": 36407098,
+      "width": 136,
+      "format": {}
+    },
+    {
+      "id": 616114255,
+      "name": "Commmunity - Board",
+      "dataTypeName": "text",
+      "fieldName": "commmunity_board",
+      "position": 9,
+      "renderTypeName": "text",
+      "tableColumnId": 36407099,
+      "width": 316,
+      "format": {}
+    },
+    {
+      "id": 616114256,
+      "name": "Work on Floor",
+      "dataTypeName": "text",
+      "fieldName": "work_on_floor",
+      "position": 10,
+      "renderTypeName": "text",
+      "tableColumnId": 36407100,
+      "width": 256,
+      "format": {}
+    },
+    {
+      "id": 616114257,
+      "name": "Apt./Condo No(s)",
+      "dataTypeName": "text",
+      "fieldName": "apt_condo_no_s",
+      "position": 11,
+      "renderTypeName": "text",
+      "tableColumnId": 36407101,
+      "width": 292,
+      "format": {}
+    },
+    {
+      "id": 616114258,
+      "name": "Applicant Professional Title",
+      "dataTypeName": "text",
+      "fieldName": "applicant_professional_title",
+      "position": 12,
+      "renderTypeName": "text",
+      "tableColumnId": 36407102,
+      "width": 436,
+      "format": {}
+    },
+    {
+      "id": 616114259,
+      "name": "Applicant License #",
+      "dataTypeName": "text",
+      "fieldName": "applicant_license",
+      "position": 13,
+      "renderTypeName": "text",
+      "tableColumnId": 36407103,
+      "width": 328,
+      "format": {}
+    },
+    {
+      "id": 616114260,
+      "name": "Applicant First Name",
+      "dataTypeName": "text",
+      "fieldName": "applicant_first_name",
+      "position": 14,
+      "renderTypeName": "text",
+      "tableColumnId": 36407104,
+      "width": 340,
+      "format": {}
+    },
+    {
+      "id": 616114261,
+      "name": "Applicants Middle Initial",
+      "dataTypeName": "text",
+      "fieldName": "applicants_middle_initial",
+      "position": 15,
+      "renderTypeName": "text",
+      "tableColumnId": 36407105,
+      "width": 400,
+      "format": {}
+    },
+    {
+      "id": 616114262,
+      "name": "Applicant Last Name",
+      "dataTypeName": "text",
+      "fieldName": "applicant_last_name",
+      "position": 16,
+      "renderTypeName": "text",
+      "tableColumnId": 36407106,
+      "width": 328,
+      "format": {}
+    },
+    {
+      "id": 616114263,
+      "name": "Owner's Business Name",
+      "dataTypeName": "text",
+      "fieldName": "owner_s_business_name",
+      "position": 17,
+      "renderTypeName": "text",
+      "tableColumnId": 36407107,
+      "width": 352,
+      "format": {}
+    },
+    {
+      "id": 616114264,
+      "name": "Owner's Street Name",
+      "dataTypeName": "text",
+      "fieldName": "owner_s_street_name",
+      "position": 18,
+      "renderTypeName": "text",
+      "tableColumnId": 36407108,
+      "width": 328,
+      "format": {}
+    },
+    {
+      "id": 616114265,
+      "name": "Owner's City",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "city",
+      "position": 19,
+      "renderTypeName": "text",
+      "tableColumnId": 36407109,
+      "width": 148,
+      "format": {}
+    },
+    {
+      "id": 616114266,
+      "name": "Owner's State",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "state",
+      "position": 20,
+      "renderTypeName": "text",
+      "tableColumnId": 36407110,
+      "width": 160,
+      "format": {}
+    },
+    {
+      "id": 616114267,
+      "name": "Owner's Zip",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "zip",
+      "position": 21,
+      "renderTypeName": "text",
+      "tableColumnId": 36407111,
+      "width": 136,
+      "format": {}
+    },
+    {
+      "id": 616114268,
+      "name": "Filing Representative First Name",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_first_name",
+      "position": 22,
+      "renderTypeName": "text",
+      "tableColumnId": 36407112,
+      "width": 484,
+      "format": {}
+    },
+    {
+      "id": 616114269,
+      "name": "Filing Representative Middle Initial",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_middle_initial",
+      "position": 23,
+      "renderTypeName": "text",
+      "tableColumnId": 36407113,
+      "width": 532,
+      "format": {}
+    },
+    {
+      "id": 616114270,
+      "name": "Filing Representative Last Name",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_last_name",
+      "position": 24,
+      "renderTypeName": "text",
+      "tableColumnId": 36407114,
+      "width": 472,
+      "format": {}
+    },
+    {
+      "id": 616114271,
+      "name": "Filing Representative Business Name",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_business_name",
+      "position": 25,
+      "renderTypeName": "text",
+      "tableColumnId": 36407115,
+      "width": 520,
+      "format": {}
+    },
+    {
+      "id": 616114272,
+      "name": "Filing Representative Street Name",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_street_name",
+      "position": 26,
+      "renderTypeName": "text",
+      "tableColumnId": 36407116,
+      "width": 496,
+      "format": {}
+    },
+    {
+      "id": 616114273,
+      "name": "Filing Representative City",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_city",
+      "position": 27,
+      "renderTypeName": "text",
+      "tableColumnId": 36407117,
+      "width": 412,
+      "format": {}
+    },
+    {
+      "id": 616114274,
+      "name": "Filing Representative State",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_state",
+      "position": 28,
+      "renderTypeName": "text",
+      "tableColumnId": 36407118,
+      "width": 424,
+      "format": {}
+    },
+    {
+      "id": 616114275,
+      "name": "Filing Representative Zip",
+      "dataTypeName": "text",
+      "fieldName": "filing_representative_zip",
+      "position": 29,
+      "renderTypeName": "text",
+      "tableColumnId": 36407119,
+      "width": 400,
+      "format": {}
+    },
+    {
+      "id": 616114276,
+      "name": "Sprinkler (Work Type)",
+      "dataTypeName": "text",
+      "fieldName": "sprinkler_work_type",
+      "position": 30,
+      "renderTypeName": "text",
+      "tableColumnId": 36407120,
+      "width": 352,
+      "format": {}
+    },
+    {
+      "id": 616114277,
+      "name": "Plumbing (Work Type)",
+      "dataTypeName": "text",
+      "fieldName": "plumbing_work_type",
+      "position": 31,
+      "renderTypeName": "text",
+      "tableColumnId": 36407121,
+      "width": 340,
+      "format": {}
+    },
+    {
+      "id": 616114278,
+      "name": "Initial Cost",
+      "dataTypeName": "text",
+      "fieldName": "initial_cost",
+      "position": 32,
+      "renderTypeName": "text",
+      "tableColumnId": 36407122,
+      "width": 244,
+      "format": {}
+    },
+    {
+      "id": 616114279,
+      "name": "Total Construction Floor Area",
+      "dataTypeName": "text",
+      "fieldName": "total_construction_floor_area",
+      "position": 33,
+      "renderTypeName": "text",
+      "tableColumnId": 36407123,
+      "width": 448,
+      "format": {}
+    },
+    {
+      "id": 616114280,
+      "name": "Review Building Code",
+      "dataTypeName": "text",
+      "fieldName": "review_building_code",
+      "position": 34,
+      "renderTypeName": "text",
+      "tableColumnId": 36407124,
+      "width": 340,
+      "format": {}
+    },
+    {
+      "id": 616114281,
+      "name": "Little E",
+      "dataTypeName": "text",
+      "fieldName": "little_e",
+      "position": 35,
+      "renderTypeName": "text",
+      "tableColumnId": 36407125,
+      "width": 196,
+      "format": {}
+    },
+    {
+      "id": 616114282,
+      "name": "Unmapped/CCO Street",
+      "dataTypeName": "text",
+      "fieldName": "unmapped_cco_street",
+      "position": 36,
+      "renderTypeName": "text",
+      "tableColumnId": 36407126,
+      "width": 328,
+      "format": {}
+    },
+    {
+      "id": 616114283,
+      "name": "Request Legalization",
+      "dataTypeName": "text",
+      "fieldName": "request_legalization",
+      "position": 37,
+      "renderTypeName": "text",
+      "tableColumnId": 36407127,
+      "width": 340,
+      "format": {}
+    },
+    {
+      "id": 616114284,
+      "name": "Includes Permanent Removal",
+      "dataTypeName": "text",
+      "fieldName": "includes_permanent_removal",
+      "position": 38,
+      "renderTypeName": "text",
+      "tableColumnId": 36407128,
+      "width": 412,
+      "format": {}
+    },
+    {
+      "id": 616114285,
+      "name": "In Compliance with NYCECC",
+      "dataTypeName": "text",
+      "fieldName": "in_compliance_with_nycecc",
+      "position": 39,
+      "renderTypeName": "text",
+      "tableColumnId": 36407129,
+      "width": 400,
+      "format": {}
+    },
+    {
+      "id": 616114286,
+      "name": "Exempt from NYCECC",
+      "dataTypeName": "text",
+      "fieldName": "exempt_from_nycecc",
+      "position": 40,
+      "renderTypeName": "text",
+      "tableColumnId": 36407130,
+      "width": 316,
+      "format": {}
+    },
+    {
+      "id": 616114287,
+      "name": "Building Type",
+      "dataTypeName": "text",
+      "fieldName": "building_type",
+      "position": 41,
+      "renderTypeName": "text",
+      "tableColumnId": 36407131,
+      "width": 256,
+      "format": {}
+    },
+    {
+      "id": 616114288,
+      "name": "Existing Stories",
+      "dataTypeName": "text",
+      "fieldName": "existing_stories",
+      "position": 42,
+      "renderTypeName": "text",
+      "tableColumnId": 36407132,
+      "width": 292,
+      "format": {}
+    },
+    {
+      "id": 616114289,
+      "name": "Existing Height",
+      "dataTypeName": "text",
+      "fieldName": "existing_height",
+      "position": 43,
+      "renderTypeName": "text",
+      "tableColumnId": 36407133,
+      "width": 280,
+      "format": {}
+    },
+    {
+      "id": 616114290,
+      "name": "Existing Dwelling Units",
+      "dataTypeName": "text",
+      "fieldName": "existing_dwelling_units",
+      "position": 44,
+      "renderTypeName": "text",
+      "tableColumnId": 36407134,
+      "width": 376,
+      "format": {}
+    },
+    {
+      "id": 616114291,
+      "name": "Proposed No of Stories",
+      "dataTypeName": "text",
+      "fieldName": "proposed_no_of_stories",
+      "position": 45,
+      "renderTypeName": "text",
+      "tableColumnId": 36407135,
+      "width": 364,
+      "format": {}
+    },
+    {
+      "id": 616114292,
+      "name": "Proposed Height",
+      "dataTypeName": "text",
+      "fieldName": "proposed_height",
+      "position": 46,
+      "renderTypeName": "text",
+      "tableColumnId": 36407136,
+      "width": 280,
+      "format": {}
+    },
+    {
+      "id": 616114293,
+      "name": "Proposed Dwelling Units",
+      "dataTypeName": "text",
+      "fieldName": "proposed_dwelling_units",
+      "position": 47,
+      "renderTypeName": "text",
+      "tableColumnId": 36407137,
+      "width": 376,
+      "format": {}
+    },
+    {
+      "id": 616114294,
+      "name": "SpecialInspectionRequirement",
+      "dataTypeName": "text",
+      "fieldName": "specialinspectionrequirement",
+      "position": 48,
+      "renderTypeName": "text",
+      "tableColumnId": 36407138,
+      "width": 436,
+      "format": {}
+    },
+    {
+      "id": 616114295,
+      "name": "Special Inspection Agency Number",
+      "dataTypeName": "text",
+      "fieldName": "special_inspection_agency_number",
+      "position": 49,
+      "renderTypeName": "text",
+      "tableColumnId": 36407139,
+      "width": 484,
+      "format": {}
+    },
+    {
+      "id": 616114296,
+      "name": "ProgressInspectionRequirement",
+      "dataTypeName": "text",
+      "fieldName": "progressinspectionrequirement",
+      "position": 50,
+      "renderTypeName": "text",
+      "tableColumnId": 36407140,
+      "width": 448,
+      "format": {}
+    },
+    {
+      "id": 616114297,
+      "name": "Built 1 information value",
+      "dataTypeName": "text",
+      "fieldName": "built_1_information_value",
+      "position": 51,
+      "renderTypeName": "text",
+      "tableColumnId": 36407141,
+      "width": 400,
+      "format": {}
+    },
+    {
+      "id": 616114298,
+      "name": "Built 2 information value",
+      "dataTypeName": "text",
+      "fieldName": "built_2_information_value",
+      "position": 52,
+      "renderTypeName": "text",
+      "tableColumnId": 36407142,
+      "width": 400,
+      "format": {}
+    },
+    {
+      "id": 616114299,
+      "name": "Built 2 A information value",
+      "dataTypeName": "text",
+      "fieldName": "built_2_a_information_value",
+      "position": 53,
+      "renderTypeName": "text",
+      "tableColumnId": 36407143,
+      "width": 424,
+      "format": {}
+    },
+    {
+      "id": 616114300,
+      "name": "Built 2 B information value",
+      "dataTypeName": "text",
+      "fieldName": "built_2_b_information_value",
+      "position": 54,
+      "renderTypeName": "text",
+      "tableColumnId": 36407144,
+      "width": 424,
+      "format": {}
+    },
+    {
+      "id": 616114301,
+      "name": "Standpipe",
+      "dataTypeName": "text",
+      "fieldName": "standpipe",
+      "position": 55,
+      "renderTypeName": "text",
+      "tableColumnId": 65135112,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114302,
+      "name": "Antenna",
+      "dataTypeName": "text",
+      "fieldName": "antenna",
+      "position": 56,
+      "renderTypeName": "text",
+      "tableColumnId": 65135124,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114303,
+      "name": "Curb Cut",
+      "dataTypeName": "text",
+      "fieldName": "curb_cut",
+      "position": 57,
+      "renderTypeName": "text",
+      "tableColumnId": 65135125,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114304,
+      "name": "Sign",
+      "dataTypeName": "text",
+      "fieldName": "sign",
+      "position": 58,
+      "renderTypeName": "text",
+      "tableColumnId": 65135126,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114305,
+      "name": "Fence",
+      "dataTypeName": "text",
+      "fieldName": "fence",
+      "position": 59,
+      "renderTypeName": "text",
+      "tableColumnId": 65135127,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114306,
+      "name": "Scaffold",
+      "dataTypeName": "text",
+      "fieldName": "scaffold",
+      "position": 60,
+      "renderTypeName": "text",
+      "tableColumnId": 65135128,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114307,
+      "name": "Shed",
+      "dataTypeName": "text",
+      "fieldName": "shed",
+      "position": 61,
+      "renderTypeName": "text",
+      "tableColumnId": 65135155,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114308,
+      "name": "Postcode",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "postcode",
+      "position": 62,
+      "renderTypeName": "text",
+      "tableColumnId": 156333734,
+      "format": {}
+    },
+    {
+      "id": 616114309,
+      "name": "Latitude",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "latitude",
+      "position": 63,
+      "renderTypeName": "text",
+      "tableColumnId": 65135156,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114310,
+      "name": "Longitude",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "longitude",
+      "position": 64,
+      "renderTypeName": "text",
+      "tableColumnId": 65135196,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114311,
+      "name": "Council District",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "council_district",
+      "position": 65,
+      "renderTypeName": "text",
+      "tableColumnId": 65135224,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114312,
+      "name": "Census Tract",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "census_tract",
+      "position": 66,
+      "renderTypeName": "text",
+      "tableColumnId": 65135299,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114313,
+      "name": "BBL",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "bbl",
+      "position": 67,
+      "renderTypeName": "text",
+      "tableColumnId": 156336698,
+      "format": {}
+    },
+    {
+      "id": 616114314,
+      "name": "NTA",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "nta",
+      "position": 68,
+      "renderTypeName": "text",
+      "tableColumnId": 65135301,
+      "width": 100,
+      "format": {}
+    },
+    {
+      "id": 616114315,
+      "name": "Filing Date",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "filing_date",
+      "position": 69,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 131183551,
+      "format": {
+        "view": "date_time"
+      }
+    },
+    {
+      "id": 616114316,
+      "name": "Current Status Date",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "current_status_date",
+      "position": 70,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 131183553,
+      "format": {
+        "view": "date_time"
+      }
+    },
+    {
+      "id": 616114317,
+      "name": "First Permit Date",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "first_permit_date",
+      "position": 71,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 131183552,
+      "format": {
+        "view": "date_time"
+      }
+    },
+    {
+      "id": 616114318,
+      "name": "Boiler Equipment (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "boiler_equipment_work_type_",
+      "position": 72,
+      "renderTypeName": "text",
+      "tableColumnId": 138691273,
+      "format": {}
+    },
+    {
+      "id": 616114319,
+      "name": "Earth Work (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "earth_work_work_type_",
+      "position": 73,
+      "renderTypeName": "text",
+      "tableColumnId": 138691277,
+      "format": {}
+    },
+    {
+      "id": 616114320,
+      "name": "Foundation (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "foundation_work_type_",
+      "position": 74,
+      "renderTypeName": "text",
+      "tableColumnId": 138691276,
+      "format": {}
+    },
+    {
+      "id": 616114321,
+      "name": "General Construction (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "general_construction_work_type_",
+      "position": 75,
+      "renderTypeName": "text",
+      "tableColumnId": 138691279,
+      "format": {}
+    },
+    {
+      "id": 616114322,
+      "name": "Mechanical Systems (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "mechanical_systems_work_type_",
+      "position": 76,
+      "renderTypeName": "text",
+      "tableColumnId": 138691275,
+      "format": {}
+    },
+    {
+      "id": 616114323,
+      "name": "Place of Assembly (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "place_of_assembly_work_type_",
+      "position": 77,
+      "renderTypeName": "text",
+      "tableColumnId": 138691270,
+      "format": {}
+    },
+    {
+      "id": 616114324,
+      "name": "Protection Mechanical Methods (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "protection_mechanical_methods_work_type_",
+      "position": 78,
+      "renderTypeName": "text",
+      "tableColumnId": 138691274,
+      "format": {}
+    },
+    {
+      "id": 616114325,
+      "name": "Sidewalk Shed (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "sidewalk_shed_work_type_",
+      "position": 79,
+      "renderTypeName": "text",
+      "tableColumnId": 138691271,
+      "format": {}
+    },
+    {
+      "id": 616114326,
+      "name": "Structural (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "structural_work_type_",
+      "position": 80,
+      "renderTypeName": "text",
+      "tableColumnId": 138691272,
+      "format": {}
+    },
+    {
+      "id": 616114327,
+      "name": "Support of Excavation (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "support_of_excavation_work_type_",
+      "position": 81,
+      "renderTypeName": "text",
+      "tableColumnId": 138691280,
+      "format": {}
+    },
+    {
+      "id": 616114328,
+      "name": "Temporary Place of Assembly (Work Type)",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "temporary_place_of_assembly_work_type_",
+      "position": 82,
+      "renderTypeName": "text",
+      "tableColumnId": 138691278,
+      "format": {}
+    },
+    {
+      "id": 616114329,
+      "name": "Job Type",
+      "dataTypeName": "text",
+      "description": "",
+      "fieldName": "job_type",
+      "position": 83,
+      "renderTypeName": "text",
+      "tableColumnId": 138787214,
+      "format": {}
+    },
+    {
+      "id": 616114332,
+      "name": "Approved Date",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "approved_date",
+      "position": 85,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 160999823,
+      "format": {
+        "view": "date_time"
+      }
+    },
+    {
+      "id": 616114331,
+      "name": "Signoff Date",
+      "dataTypeName": "calendar_date",
+      "description": "",
+      "fieldName": "signoff_date",
+      "position": 86,
+      "renderTypeName": "calendar_date",
+      "tableColumnId": 160999822,
+      "format": {
+        "view": "date"
+      }
+    }
+  ],
+  "grants": [
+    {
+      "inherited": false,
+      "type": "viewer",
+      "flags": [
+        "public"
+      ]
+    }
+  ],
+  "metadata": {
+    "rdfSubject": "0",
+    "rdfClass": "",
+    "attachments": [
+      {
+        "filename": "DOB_NOW_Build_Job_Application_Filings_Data_Dictionary.xlsx",
+        "assetId": "978bdfe8-11c3-4839-9515-7f36a83e219d",
+        "name": "DOB_NOW_Build_Job_Application_Filings_Data_Dictionary.xlsx"
+      }
+    ],
+    "custom_fields": {
+      "Update": {
+        "Automation": "Yes",
+        "Date Made Public": "6/28/2016",
+        "Update Frequency": "Daily"
+      },
+      "Dataset Information": {
+        "Agency": "Department of Buildings (DOB)"
+      }
+    },
+    "rowLabel": "Row",
+    "availableDisplayTypes": [
+      "table",
+      "fatrow",
+      "page"
+    ],
+    "renderTypeConfig": {
+      "visible": {
+        "table": true
+      }
+    }
+  },
+  "owner": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "query": {},
+  "rights": [
+    "read"
+  ],
+  "tableAuthor": {
+    "id": "5fuc-pqz2",
+    "displayName": "NYC OpenData",
+    "profileImageUrlLarge": "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium": "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall": "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName": "NYC OpenData",
+    "type": "interactive",
+    "flags": [
+      "acceptedEula",
+      "mayBeStoriesCoOwner"
+    ]
+  },
+  "tags": [
+    "dob",
+    "job",
+    "filings",
+    "buildings"
+  ],
+  "flags": [
+    "default",
+    "ownerMayBeContacted",
+    "restorable",
+    "restorePossibleForType"
+  ]
+}

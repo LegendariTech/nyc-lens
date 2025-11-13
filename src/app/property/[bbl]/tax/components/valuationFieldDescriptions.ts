@@ -16,6 +16,10 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'subident': 'Sub-Ident',
   'roll_section': 'Roll Section',
   'secvol': 'Section Volume Number (2 Digits each)',
+  'num_bldgs': 'Number of Buildings',
+  'lot_irreg': 'Irregular shaped lot',
+  'coop_apts': 'Number of Coop Apartments',
+  'extracrdt': 'Extract Date',
 
   // PY (Prior Year) values
   'pymktland': 'Market Assessed Land Value',
@@ -29,6 +33,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'pytxbtot': 'Taxable Assessed Total',
   'pytxbextot': 'Taxable Exemption Total',
   'pytaxflag': 'Taxable Flag',
+  'pytaxclass': 'Prior Year Tax Class',
 
   // TEN (Tentative) values
   'tenmktland': 'Tentative Market Assessed Land Value',
@@ -42,6 +47,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'tentxbtot': 'Tentative Taxable Assessed Total',
   'tentxbextot': 'Tentative Taxable Exemption Total',
   'tentaxflag': 'Tentative Taxable Flag',
+  'tentaxclass': 'Tentative Tax Class',
 
   // CBN (Change By Notice) values
   'cbnmktland': 'Change By Notice Market Assessed Land Value',
@@ -55,6 +61,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'cbntxbtot': 'Change By Notice Taxable Assessed Total Value',
   'cbntxbextot': 'Change By Notice Taxable Exemption Total Value',
   'cbntaxflag': 'Change By Notice Taxable Flag',
+  'cbntaxclass': 'Change By Notice Tax Class',
 
   // FIN (Final) values
   'finmktland': 'Final Market Assessed Land Value',
@@ -82,6 +89,7 @@ export const VALUATION_FIELD_DESCRIPTIONS: Record<string, string> = {
   'curtxbtot': 'Current Taxable Assessed Total Value',
   'curtxbextot': 'Current Taxable Exemption Total Value',
   'curtaxflag': 'Current Taxable Flag',
+  'curtaxclass': 'Current Tax Class',
 
   // Property Details
   'period': 'Period',

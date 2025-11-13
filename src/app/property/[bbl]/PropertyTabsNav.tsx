@@ -22,7 +22,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
 
     // For DOB, add default subtab
     if (value === 'dob') {
-      newPath = `/property/${bbl}/dob/violations-dob-now`;
+      newPath = `/property/${bbl}/dob/jobs-filings`;
     }
 
     // Preserve search params (like address)

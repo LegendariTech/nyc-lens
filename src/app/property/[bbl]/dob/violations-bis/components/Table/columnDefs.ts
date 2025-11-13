@@ -1,36 +1,7 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { DobViolationBISRow } from './types';
 import { ViolationNumberCell } from './ViolationNumberCell';
-
-/**
- * Format date string to readable format
- * Handles both ISO dates and YYYYMMDD format (e.g., "20240222")
- */
-function formatDate(value: string | null | undefined): string {
-  if (!value) return 'N/A';
-  try {
-    let date: Date;
-
-    // Check if it's in YYYYMMDD format (8 digits)
-    if (/^\d{8}$/.test(value)) {
-      const year = value.substring(0, 4);
-      const month = value.substring(4, 6);
-      const day = value.substring(6, 8);
-      date = new Date(`${year}-${month}-${day}`);
-    } else {
-      date = new Date(value);
-    }
-
-    if (isNaN(date.getTime())) return value; // Return original if invalid
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  } catch {
-    return value;
-  }
-}
+import { formatDate } from '@/utils/formatters';
 
 export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
   {

@@ -103,12 +103,30 @@ export function formatTimestamp(timestamp: number | string | undefined): string 
 
 /**
  * Format date string to human-readable format (e.g., "Jan 15, 2024")
+ * Handles ISO dates, Date objects, and YYYYMMDD format (e.g., "20240222")
  * Alias: formatDateMMDDYYYY (for backwards compatibility)
  */
-export function formatDate(dateString: string | undefined | null): string {
+export function formatDate(dateString: string | Date | undefined | null): string {
   if (!dateString) return 'N/A';
   try {
-    const date = new Date(dateString);
+    let date: Date;
+
+    // If it's already a Date object, use it directly
+    if (dateString instanceof Date) {
+      date = dateString;
+    }
+    // Check if it's in YYYYMMDD format (8 digits)
+    else if (typeof dateString === 'string' && /^\d{8}$/.test(dateString)) {
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6);
+      const day = dateString.substring(6, 8);
+      date = new Date(`${year}-${month}-${day}`);
+    }
+    // Otherwise parse as regular date string
+    else {
+      date = new Date(dateString);
+    }
+
     if (isNaN(date.getTime())) return 'N/A';
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',

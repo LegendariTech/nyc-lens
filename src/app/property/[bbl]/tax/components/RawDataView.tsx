@@ -99,7 +99,7 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
                 let displayValue = String(value);
 
                 // Apply currency formatting for currency fields
-                if (CURRENCY_FIELDS.has(field) && typeof value === 'number') {
+                if (CURRENCY_FIELDS.has(field)) {
                   displayValue = formatCurrency(value);
                 }
                 // Apply code resolution for specific fields

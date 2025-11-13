@@ -338,5 +338,3 @@ export function getBuildingClassDescription(buildingClass: string | null): strin
   if (!buildingClass) return 'N/A';
   return BUILDING_CLASS_CODE_MAP[buildingClass.toUpperCase()] || buildingClass;
 }
-
-
