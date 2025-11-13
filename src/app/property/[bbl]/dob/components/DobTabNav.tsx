@@ -11,8 +11,8 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Default to violations-dob-now if no sub-tab is specified
-  const currentTab = activeSubTab || 'violations-dob-now';
+  // Default to violations if no sub-tab is specified
+  const currentTab = activeSubTab || 'violations';
 
   const handleTabClick = (value: string) => {
     // Build path-based URL with subtab
@@ -28,8 +28,7 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
 
   const tabs = [
     { value: 'jobs-filings', label: 'Jobs' },
-    { value: 'violations-dob-now', label: 'Violations: DOB Now' },
-    { value: 'violations-bis', label: 'Violations: BIS' },
+    { value: 'violations', label: 'Violations' },
     { value: 'permit-issuance', label: 'Permit Issuance' },
     { value: 'certificate-of-occupancy', label: 'Certificate of Occupancy' },
     { value: 'complaints', label: 'Complaints' },

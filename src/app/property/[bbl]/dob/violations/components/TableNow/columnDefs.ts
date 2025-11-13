@@ -31,8 +31,8 @@ export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
     width: 200,
     sortable: true,
     filter: true,
-    wrapText: true,
-    autoHeight: true,
+    // wrapText: true,
+    // autoHeight: true,
     cellClass: 'multiline-cell',
   },
   {
@@ -55,8 +55,8 @@ export const dobViolationColumnDefs: ColDef<DobViolationRow>[] = [
     width: 600,
     sortable: true,
     filter: true,
-    wrapText: true,
-    autoHeight: true,
+    // wrapText: true,
+    // autoHeight: true,
     cellClass: 'multiline-cell',
     valueFormatter: (p: ValueFormatterParams<DobViolationRow, string>) =>
       p.value || 'N/A',

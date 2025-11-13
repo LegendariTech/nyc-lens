@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { DobTabNav } from '../components/DobTabNav';
-import { DobBISViolationsDisplay } from './components/DobBISViolationsDisplay';
-import { fetchDobViolationsBIS } from '@/data/dobViolations';
+import { DobViolationsDisplay } from './components/DobViolationsDisplay';
+import { fetchDobSafetyViolations, fetchDobViolationsBIS } from '@/data/dobViolations';
 
-interface DobBISViolationsPageProps {
+interface DobViolationsPageProps {
   params: Promise<{
     bbl: string;
   }>;
@@ -13,7 +13,7 @@ interface DobBISViolationsPageProps {
   }>;
 }
 
-export default async function DobBISViolationsPage({ params, searchParams }: DobBISViolationsPageProps) {
+export default async function DobViolationsPage({ params, searchParams }: DobViolationsPageProps) {
   const { bbl } = await params;
   const { address } = await searchParams;
 
@@ -23,14 +23,18 @@ export default async function DobBISViolationsPage({ params, searchParams }: Dob
     notFound();
   }
 
-  // Fetch DOB BIS violations data
-  const bisViolationsResult = await fetchDobViolationsBIS(bbl);
+  // Fetch both violations datasets in parallel
+  const [safetyViolationsResult, bisViolationsResult] = await Promise.all([
+    fetchDobSafetyViolations(bbl),
+    fetchDobViolationsBIS(bbl),
+  ]);
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
-      <DobTabNav bbl={bbl} activeSubTab="violations-bis" />
-      <DobBISViolationsDisplay
+      <DobTabNav bbl={bbl} activeSubTab="violations" />
+      <DobViolationsDisplay
         bbl={bbl}
+        safetyViolations={safetyViolationsResult}
         bisViolations={bisViolationsResult}
       />
     </PropertyPageLayout>

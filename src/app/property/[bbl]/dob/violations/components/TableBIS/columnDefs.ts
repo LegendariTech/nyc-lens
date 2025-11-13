@@ -58,8 +58,8 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
     width: 350,
     sortable: true,
     filter: true,
-    wrapText: true,
-    autoHeight: true,
+    // wrapText: true,
+    // autoHeight: true,
     cellClass: 'multiline-cell',
   },
   {
@@ -68,8 +68,8 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
     width: 400,
     sortable: true,
     filter: true,
-    wrapText: true,
-    autoHeight: true,
+    // wrapText: true,
+    // autoHeight: true,
     cellClass: 'multiline-cell',
     valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) =>
       p.value || 'N/A',
@@ -106,8 +106,8 @@ export const dobViolationBISColumnDefs: ColDef<DobViolationBISRow>[] = [
     width: 400,
     sortable: true,
     filter: true,
-    wrapText: true,
-    autoHeight: true,
+    // wrapText: true,
+    // autoHeight: true,
     cellClass: 'multiline-cell',
     valueFormatter: (p: ValueFormatterParams<DobViolationBISRow, string>) =>
       p.value || 'N/A',
