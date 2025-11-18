@@ -81,12 +81,13 @@ function addTextFilter(b: BodyBuilderLite, field: string, type: string, filter?:
   // For other filter types, require a filter value
   if (!filter) return;
 
-  if (field === 'address' && filter) {
+  // Special handling for address and address_with_unit fields
+  if ((field === 'address' || field === 'address_with_unit') && filter) {
     b.query('dis_max', {
       queries: [
         {
           match_phrase_prefix: {
-            address: {
+            [field]: {
               query: filter,
               analyzer: 'autocomplete',
             },
@@ -435,6 +436,27 @@ const elasticMapping = {
     "numeric_detection": false,
     "properties": {
       "address": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        },
+        "similarity": "BM25",
+        "eager_global_ordinals": true,
+        "fielddata": true,
+        "fielddata_frequency_filter": {
+          "min": 0.01,
+          "max": 1,
+          "min_segment_size": 50
+        },
+        "index_prefixes": {
+          "min_chars": 1,
+          "max_chars": 16
+        },
+        "index_phrases": true
+      },
+      "address_with_unit": {
         "type": "text",
         "fields": {
           "keyword": {

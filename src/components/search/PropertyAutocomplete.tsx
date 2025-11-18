@@ -11,6 +11,7 @@ interface PropertyAutocompleteProps {
   compact?: boolean;
   initialValue?: string;
   autoFocus?: boolean;
+  searchField?: 'address' | 'address_with_unit';
 }
 
 /**
@@ -22,16 +23,17 @@ interface PropertyAutocompleteProps {
 export function PropertyAutocomplete({
   compact = false,
   initialValue = '',
-  autoFocus = true
+  autoFocus = true,
+  searchField = 'address_with_unit'
 }: PropertyAutocompleteProps) {
   const router = useRouter();
 
-  // Helper to find the matched address (main or AKA)
+  // Helper to find the matched address (address_with_unit or AKA)
   const getMatchedAddress = (item: PropertyItem, query: string): string => {
-    // First check if main address matches
-    const mainAddressMatch = findMatchInText(item.address, query);
-    if (mainAddressMatch !== null) {
-      return item.address;
+    // First check if address_with_unit matches
+    const addressWithUnitMatch = findMatchInText(item.address_with_unit, query);
+    if (addressWithUnitMatch !== null) {
+      return item.address_with_unit;
     }
 
     // Otherwise, check all AKA addresses for matches
@@ -47,8 +49,8 @@ export function PropertyAutocomplete({
       return akaMatches[0].address;
     }
 
-    // Fallback to main address
-    return item.address;
+    // Fallback to address_with_unit
+    return item.address_with_unit;
   };
 
   return (
@@ -63,7 +65,7 @@ export function PropertyAutocomplete({
         {
           sourceId: 'properties',
           async getItems() {
-            const items = await fetchProperties(query);
+            const items = await fetchProperties(query, searchField);
             // Add matched address to each item
             return items.map(item => ({
               ...item,
@@ -71,12 +73,12 @@ export function PropertyAutocomplete({
             }));
           },
           getItemInputValue({ item }) {
-            return item.matchedAddress || item.address;
+            return item.matchedAddress || item.address_with_unit;
           },
           onSelect({ item }) {
             // Navigate to property page with BBL format and matched address in query string
             const bbl = `${item.borough}-${item.block}-${item.lot}`;
-            const address = encodeURIComponent(item.matchedAddress || item.address);
+            const address = encodeURIComponent(item.matchedAddress || item.address_with_unit);
             router.push(`/property/${bbl}?address=${address}`);
           },
         },

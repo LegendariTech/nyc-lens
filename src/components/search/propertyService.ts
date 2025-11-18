@@ -3,6 +3,7 @@ import type { AcrisPropertiesRequest, AcrisPropertiesResponse } from '@/types/ap
 
 export interface PropertyItem extends BaseAutocompleteItem {
   address: string;
+  address_with_unit: string;
   borough: string;
   block: string;
   lot: string;
@@ -38,7 +39,10 @@ function parseBBL(query: string): { borough: string; block: string; lot: string 
 /**
  * Fetch properties from Elasticsearch based on search query
  */
-export async function fetchProperties(query: string): Promise<PropertyItem[]> {
+export async function fetchProperties(
+  query: string,
+  searchField: 'address' | 'address_with_unit' = 'address'
+): Promise<PropertyItem[]> {
   if (!query || query.length < 2) {
     return [];
   }
@@ -66,7 +70,7 @@ export async function fetchProperties(query: string): Promise<PropertyItem[]> {
         },
       }
       : {
-        address: {
+        [searchField]: {
           filterType: 'text',
           type: 'startsWith',
           filter: query,
@@ -94,6 +98,7 @@ export async function fetchProperties(query: string): Promise<PropertyItem[]> {
     return data.rows.map((row) => ({
       id: row.id,
       address: row.address,
+      address_with_unit: row.address_with_unit,
       borough: row.borough,
       block: row.block,
       lot: row.lot,

@@ -20,6 +20,7 @@ export type AcrisRecord = {
   avroll_units: number;
   id: string;
   address: string;
+  address_with_unit: string;
   aka: string[];
   aka_address_street_name: string[];
   aka_address_street_number: string[];

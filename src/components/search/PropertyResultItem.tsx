@@ -26,12 +26,12 @@ export function PropertyResultItem({
 
   // Use pre-computed matched address if available, otherwise compute it
   const displayAddress = item.matchedAddress || (() => {
-    // First check if main address matches
-    const mainAddressMatch = findMatchInText(item.address, query);
+    // First check if address_with_unit matches
+    const addressWithUnitMatch = findMatchInText(item.address_with_unit, query);
 
-    // If main address matches, use it
-    if (mainAddressMatch !== null) {
-      return item.address;
+    // If address_with_unit matches, use it
+    if (addressWithUnitMatch !== null) {
+      return item.address_with_unit;
     }
 
     // Otherwise, check all AKA addresses for matches
@@ -47,8 +47,8 @@ export function PropertyResultItem({
       return akaMatches[0].address;
     }
 
-    // Fallback to main address if nothing matched
-    return item.address;
+    // Fallback to address_with_unit if nothing matched
+    return item.address_with_unit;
   })();
 
   return (
