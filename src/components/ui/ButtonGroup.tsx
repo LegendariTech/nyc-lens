@@ -144,6 +144,8 @@ export function ButtonGroup({
         )}
         disabled={disabled || isLoading}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
       >
         <svg
           className={cn(
@@ -153,6 +155,7 @@ export function ButtonGroup({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"

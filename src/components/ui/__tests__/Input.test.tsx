@@ -34,9 +34,45 @@ describe('Input', () => {
       expect(input.className).toContain('border-foreground/20');
     });
 
-    it('renders error variant', () => {
+    it('renders error variant with destructive border', () => {
       render(<Input variant="error" data-testid="input" />);
       const input = screen.getByTestId('input');
+      expect(input.className).toContain('border-destructive');
+    });
+
+    it('renders error variant with destructive focus ring', () => {
+      render(<Input variant="error" data-testid="input" />);
+      const input = screen.getByTestId('input');
+      expect(input.className).toContain('focus:ring-destructive');
+    });
+
+    it('renders error variant with hover state', () => {
+      render(<Input variant="error" data-testid="input" />);
+      const input = screen.getByTestId('input');
+      expect(input.className).toContain('hover:border-destructive');
+    });
+
+    it('combines error variant with aria-invalid', () => {
+      render(<Input variant="error" aria-invalid data-testid="input" />);
+      const input = screen.getByTestId('input');
+      expect(input.className).toContain('border-destructive');
+      expect(input).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    it('combines error variant with aria-describedby for error messages', () => {
+      render(
+        <>
+          <Input
+            variant="error"
+            aria-invalid
+            aria-describedby="error-msg"
+            data-testid="input"
+          />
+          <p id="error-msg">Error message</p>
+        </>
+      );
+      const input = screen.getByTestId('input');
+      expect(input).toHaveAttribute('aria-describedby', 'error-msg');
       expect(input.className).toContain('border-destructive');
     });
   });
@@ -116,6 +152,19 @@ describe('Input', () => {
       rerender(<Input size="md" startIcon="🔍" data-testid="input" />);
       const inputWithIcon = screen.getByTestId('input');
       expect(inputWithIcon.className).toContain('pl-10');
+    });
+
+    it('renders error variant with icons', () => {
+      render(
+        <Input
+          variant="error"
+          startIcon={<span data-testid="error-icon">⚠️</span>}
+          data-testid="input"
+        />
+      );
+      expect(screen.getByTestId('error-icon')).toBeInTheDocument();
+      const input = screen.getByTestId('input');
+      expect(input.className).toContain('border-destructive');
     });
   });
 
