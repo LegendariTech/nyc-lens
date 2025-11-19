@@ -1,6 +1,6 @@
 'use client';
 
-import { DatasetInfoCard } from '@/components/ui';
+import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { DataTabLayout } from '@/components/layout';
 import { DobViolationsTable } from './TableNow';
 import { DobViolationsBISTable } from './TableBIS';
@@ -70,12 +70,14 @@ export function DobViolationsDisplay({ bbl, safetyViolations, bisViolations }: D
         <div id="safety-violations-data">
           {!hasSafetyData ? (
             <div className="max-w-screen-xl">
-              <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-                <h3 className="mb-2 text-lg font-semibold text-foreground">No DOB NOW Violations Found</h3>
-                <p className="text-sm text-foreground/70">
-                  No DOB NOW violations found for BBL {bbl}.
-                </p>
-              </div>
+              <Card>
+                <CardContent>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">No DOB NOW Violations Found</h3>
+                  <p className="text-sm text-foreground/70">
+                    No DOB NOW violations found for BBL {bbl}.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="space-y-4">
@@ -109,12 +111,14 @@ export function DobViolationsDisplay({ bbl, safetyViolations, bisViolations }: D
         <div id="bis-violations-data">
           {!hasBISData ? (
             <div className="max-w-screen-xl">
-              <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-                <h3 className="mb-2 text-lg font-semibold text-foreground">No BIS Violations Found</h3>
-                <p className="text-sm text-foreground/70">
-                  No DOB violations (BIS) found for BBL {bbl}.
-                </p>
-              </div>
+              <Card>
+                <CardContent>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">No BIS Violations Found</h3>
+                  <p className="text-sm text-foreground/70">
+                    No DOB violations (BIS) found for BBL {bbl}.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="space-y-4">

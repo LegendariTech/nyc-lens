@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { PropertyPageLayout } from '../PropertyPageLayout';
 import { TaxTabDisplay } from './components/TaxTabDisplay';
-import { DatasetInfoCard } from '@/components/ui';
+import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { fetchPropertyValuation } from '@/data/valuation';
 import type { DatasourceMetadata } from '../utils/datasourceDisplay';
 
@@ -47,12 +47,14 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
 
       {/* Handle no data state */}
       {!valuationError && (!valuationData || valuationData.length === 0) && (
-        <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-          <h3 className="mb-2 text-lg font-semibold text-foreground">No Valuation Data</h3>
-          <p className="text-sm text-foreground/70">
-            No valuation data available for BBL {bbl}.
-          </p>
-        </div>
+        <Card>
+          <CardContent>
+            <h3 className="mb-2 text-lg font-semibold text-foreground">No Valuation Data</h3>
+            <p className="text-sm text-foreground/70">
+              No valuation data available for BBL {bbl}.
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Display data */}

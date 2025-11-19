@@ -37,7 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       primary: 'bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 active:scale-[0.98]',
       secondary: 'border border-border bg-background text-foreground hover:bg-foreground/5 active:bg-foreground/10 active:scale-[0.98]',
       ghost: 'bg-transparent text-foreground hover:bg-foreground/10 active:bg-foreground/20 active:scale-[0.98]',
-      danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 active:scale-[0.98] dark:bg-red-600 dark:hover:bg-red-700 dark:active:bg-red-800',
+      danger: 'bg-destructive text-destructive-foreground hover:opacity-90 active:opacity-80 active:scale-[0.98]',
       outline: 'border border-border bg-transparent text-foreground hover:bg-foreground/10 active:bg-foreground/20 active:scale-[0.98]',
     };
 

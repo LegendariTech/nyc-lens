@@ -1,6 +1,6 @@
 'use client';
 
-import { DataFieldCard, DatasetInfoCard } from '@/components/ui';
+import { DataFieldCard, DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
 import { getBoroughName } from '@/constants/nyc';
 import { getBuildingClassCategory } from '@/constants/building';
@@ -25,9 +25,11 @@ export function OverviewTab({ data, metadata, error, bbl }: OverviewTabProps) {
 
   if (!data) {
     return (
-      <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-        <p className="text-sm text-foreground/70">No data available for this property.</p>
-      </div>
+      <Card>
+        <CardContent>
+          <p className="text-sm text-foreground/70">No data available for this property.</p>
+        </CardContent>
+      </Card>
     );
   }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { DatasetInfoCard } from '@/components/ui';
+import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { DataTabLayout } from '@/components/layout';
 import { DobJobApplicationsTable } from './Table';
 import { DobJobNowApplicationsTable } from './TableNow';
@@ -74,12 +74,14 @@ export function DobJobApplicationsDisplay({ bbl, jobApplications, jobApplication
         <div id="job-applications-now-data">
           {!hasJobApplicationsNowData ? (
             <div className="max-w-screen-xl">
-              <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-                <h3 className="mb-2 text-lg font-semibold text-foreground">No DOB NOW Job Applications Found</h3>
-                <p className="text-sm text-foreground/70">
-                  No DOB NOW job applications found for BBL {bbl}.
-                </p>
-              </div>
+              <Card>
+                <CardContent>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">No DOB NOW Job Applications Found</h3>
+                  <p className="text-sm text-foreground/70">
+                    No DOB NOW job applications found for BBL {bbl}.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="space-y-4">
@@ -118,12 +120,14 @@ export function DobJobApplicationsDisplay({ bbl, jobApplications, jobApplication
         <div id="job-applications-data">
           {!hasJobApplicationsData ? (
             <div className="max-w-screen-xl">
-              <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-                <h3 className="mb-2 text-lg font-semibold text-foreground">No BIS Job Applications Found</h3>
-                <p className="text-sm text-foreground/70">
-                  No DOB job applications (BIS) found for BBL {bbl}.
-                </p>
-              </div>
+              <Card>
+                <CardContent>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">No BIS Job Applications Found</h3>
+                  <p className="text-sm text-foreground/70">
+                    No DOB job applications (BIS) found for BBL {bbl}.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <div className="space-y-4">

@@ -10,6 +10,7 @@ import {
   BuildingInfo,
   AssessmentInfo,
 } from './AssessmentSections';
+import { Card, CardContent, CardFooter } from '@/components/ui';
 
 interface AssessmentDetailProps {
   valuation: PropertyValuation;
@@ -21,20 +22,22 @@ export function AssessmentDetail({ valuation, bbl }: AssessmentDetailProps) {
   const taxableStatusDate = getTaxableStatusDate(valuation.year);
 
   return (
-    <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm space-y-6">
-      <AssessmentHeader assessmentYear={assessmentYear} taxableStatusDate={taxableStatusDate} />
+    <Card>
+      <CardContent className="space-y-6">
+        <AssessmentHeader assessmentYear={assessmentYear} taxableStatusDate={taxableStatusDate} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <OwnerPropertyInfo valuation={valuation} bbl={bbl} />
-        <div className="space-y-4">
-          <LandInfo valuation={valuation} />
-          <BuildingInfo valuation={valuation} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <OwnerPropertyInfo valuation={valuation} bbl={bbl} />
+          <div className="space-y-4">
+            <LandInfo valuation={valuation} />
+            <BuildingInfo valuation={valuation} />
+          </div>
         </div>
-      </div>
 
-      <AssessmentInfo valuation={valuation} />
+        <AssessmentInfo valuation={valuation} />
+      </CardContent>
 
-      <div className="border-t border-foreground/10 pt-4">
+      <CardFooter>
         <p className="text-xs text-foreground/60 italic">
           Note: For more information about how property taxes are calculated, visit{' '}
           <a
@@ -46,8 +49,8 @@ export function AssessmentDetail({ valuation, bbl }: AssessmentDetailProps) {
             nyc.gov/assessments
           </a>
         </p>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { DatasetInfoCard } from '@/components/ui';
+import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
 
 interface PermitIssuanceDisplayProps {
@@ -50,14 +50,16 @@ export function PermitIssuanceDisplay({ bbl, data, metadata, error }: PermitIssu
         />
 
         {/* Placeholder Content */}
-        <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm" id="permits-data">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">
-            DOB Permit Issuance
-          </h3>
-          <p className="text-sm text-foreground/70">
-            Department of Buildings permit issuance information for BBL {bbl} will be displayed here.
-          </p>
-        </div>
+        <Card id="permits-data">
+          <CardContent>
+            <h3 className="mb-4 text-lg font-semibold text-foreground">
+              DOB Permit Issuance
+            </h3>
+            <p className="text-sm text-foreground/70">
+              Department of Buildings permit issuance information for BBL {bbl} will be displayed here.
+            </p>
+          </CardContent>
+        </Card>
       </DataTabLayout>
     );
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { DatasetInfoCard } from '@/components/ui';
+import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
 
 interface CertificateOfOccupancyDisplayProps {
@@ -50,14 +50,16 @@ export function CertificateOfOccupancyDisplay({ bbl, data, metadata, error }: Ce
         />
 
         {/* Placeholder Content */}
-        <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm" id="certificate-data">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">
-            Certificate of Occupancy
-          </h3>
-          <p className="text-sm text-foreground/70">
-            Certificate of Occupancy information for BBL {bbl} will be displayed here.
-          </p>
-        </div>
+        <Card id="certificate-data">
+          <CardContent>
+            <h3 className="mb-4 text-lg font-semibold text-foreground">
+              Certificate of Occupancy
+            </h3>
+            <p className="text-sm text-foreground/70">
+              Certificate of Occupancy information for BBL {bbl} will be displayed here.
+            </p>
+          </CardContent>
+        </Card>
       </DataTabLayout>
     );
   }

@@ -6,6 +6,7 @@ import { transformValuationToTaxRows } from './utils';
 import { AssessmentDetail } from './AssessmentDetail';
 import { RawDataView } from './RawDataView';
 import { TabControlsBar } from '@/components/layout';
+import { Card, CardContent } from '@/components/ui';
 import type { PropertyValuation } from '@/types/valuation';
 
 interface TaxTabDisplayProps {
@@ -77,35 +78,37 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
 
       {rawView ? (
         /* Raw Data View */
-        <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              Raw Property Valuation Data
-            </h3>
-            <select
-              value={selectedYear || ''}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-foreground/20 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              {valuationData.map((v) => (
-                <option key={v.year} value={v.year || ''}>
-                  Year {v.year || 'N/A'}
-                </option>
-              ))}
-            </select>
-          </div>
-          <p className="text-sm text-foreground/70 mb-4">
-            Complete raw property valuation data from the database for BBL {bbl}.
-            {searchQuery && ` Filtering by: "${searchQuery}"`}
-          </p>
-          {selectedValuation ? (
-            <RawDataView data={[selectedValuation]} searchQuery={searchQuery} />
-          ) : (
-            <div className="text-center py-8 text-foreground/60">
-              Please select a year to view raw data
+        <Card>
+          <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-foreground">
+                Raw Property Valuation Data
+              </h3>
+              <select
+                value={selectedYear || ''}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-foreground/20 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                {valuationData.map((v) => (
+                  <option key={v.year} value={v.year || ''}>
+                    Year {v.year || 'N/A'}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-        </div>
+            <p className="text-sm text-foreground/70 mb-4">
+              Complete raw property valuation data from the database for BBL {bbl}.
+              {searchQuery && ` Filtering by: "${searchQuery}"`}
+            </p>
+            {selectedValuation ? (
+              <RawDataView data={[selectedValuation]} searchQuery={searchQuery} />
+            ) : (
+              <div className="text-center py-8 text-foreground/60">
+                Please select a year to view raw data
+              </div>
+            )}
+          </CardContent>
+        </Card>
       ) : (
         <>
           {/* Assessment Detail - Show above table */}
@@ -114,17 +117,19 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
           )}
 
           {/* Tax History Table */}
-          <div className="rounded-lg border border-foreground/10 bg-background p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">
-              Property Tax History
-            </h3>
-            <p className="text-sm text-foreground/70 mb-4">
-              Historical property valuation and tax data for BBL {bbl} ({taxRows.length} years).
-              {!selectedValuation && ' Click on a row to view detailed assessment information.'}
-            </p>
+          <Card>
+            <CardContent>
+              <h3 className="mb-4 text-lg font-semibold text-foreground">
+                Property Tax History
+              </h3>
+              <p className="text-sm text-foreground/70 mb-4">
+                Historical property valuation and tax data for BBL {bbl} ({taxRows.length} years).
+                {!selectedValuation && ' Click on a row to view detailed assessment information.'}
+              </p>
 
-            <TaxTable data={taxRows} onRowClick={handleRowClick} />
-          </div>
+              <TaxTable data={taxRows} onRowClick={handleRowClick} />
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

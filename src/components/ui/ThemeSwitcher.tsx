@@ -15,7 +15,7 @@ export function ThemeSwitcher() {
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="h-9 w-16 rounded-full bg-slate-700 animate-pulse" />
+      <div className="h-9 w-16 rounded-full bg-muted animate-pulse" />
     );
   }
 
@@ -26,8 +26,8 @@ export function ThemeSwitcher() {
         'relative inline-flex h-9 w-16 items-center rounded-full transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         theme === 'light'
-          ? 'bg-blue-500'
-          : 'bg-slate-700'
+          ? 'bg-accent'
+          : 'bg-muted'
       )}
       aria-label="Toggle theme"
     >
@@ -56,7 +56,7 @@ export function ThemeSwitcher() {
           ) : (
             // Moon icon
             <svg
-              className="h-4 w-4 text-slate-700"
+              className="h-4 w-4 text-muted"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
