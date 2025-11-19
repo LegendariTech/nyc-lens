@@ -10,7 +10,7 @@ import {
 import { Button } from './Button';
 
 const meta = {
-  title: 'UI/Card',
+  title: 'Components/UI/Card',
   component: Card,
   parameters: {
     layout: 'padded',

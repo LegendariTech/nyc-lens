@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { FieldTooltip } from './FieldTooltip';
 
 const meta = {
-  title: 'UI/FieldTooltip',
+  title: 'Components/UI/FieldTooltip',
   component: FieldTooltip,
   parameters: {
     layout: 'centered',

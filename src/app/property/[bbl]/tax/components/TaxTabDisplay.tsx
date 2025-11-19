@@ -6,7 +6,7 @@ import { transformValuationToTaxRows } from './utils';
 import { AssessmentDetail } from './AssessmentDetail';
 import { RawDataView } from './RawDataView';
 import { TabControlsBar } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui';
+import { Card, CardContent, Input, Select } from '@/components/ui';
 import type { PropertyValuation } from '@/types/valuation';
 
 interface TaxTabDisplayProps {
@@ -53,25 +53,28 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
         onRawViewChange={setRawView}
       >
         {rawView && (
-          <div className="relative flex items-center h-full">
-            <input
+          <div className="w-64">
+            <Input
               type="text"
+              size="sm"
               placeholder="Search by field name or value..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64 h-8 px-3 py-0 text-sm border border-foreground/20 rounded-md bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              endIcon={
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className={`text-foreground/50 hover:text-foreground transition-opacity ${
+                    searchQuery ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                  }`}
+                  aria-label="Clear search"
+                  tabIndex={searchQuery ? 0 : -1}
+                >
+                  <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              }
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
           </div>
         )}
       </TabControlsBar>
@@ -84,17 +87,18 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
               <h3 className="text-lg font-semibold text-foreground">
                 Raw Property Valuation Data
               </h3>
-              <select
+              <Select
+                size="sm"
                 value={selectedYear || ''}
                 onChange={(e) => setSelectedYear(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-foreground/20 rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-auto"
               >
                 {valuationData.map((v) => (
                   <option key={v.year} value={v.year || ''}>
                     Year {v.year || 'N/A'}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <p className="text-sm text-foreground/70 mb-4">
               Complete raw property valuation data from the database for BBL {bbl}.
