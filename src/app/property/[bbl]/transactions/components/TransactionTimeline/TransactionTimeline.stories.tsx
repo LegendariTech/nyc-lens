@@ -555,3 +555,31 @@ export const YearAnchorHighlight: Story = {
     ],
 };
 
+/**
+ * Interactive legend with filtering
+ */
+export const InteractiveLegend: Story = {
+    args: {
+        transactions: sampleTransactions,
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: 'The legend at the top shows color indicators for deeds (amber) and mortgages (blue). Click on the legend items to filter the timeline by transaction type. The count badges show the total number of each type.',
+            },
+        },
+    },
+    decorators: [
+        (Story) => (
+            <div>
+                <div className="mb-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <p className="text-sm text-foreground/80">
+                        <strong>🎨 Legend:</strong> Use the filter buttons at the top to show/hide deeds and mortgages. The color indicators help you quickly identify transaction types in the timeline.
+                    </p>
+                </div>
+                <Story />
+            </div>
+        ),
+    ],
+};
+

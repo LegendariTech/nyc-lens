@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/utils/cn';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { OnThisPageSidebar } from '@/components/layout/OnThisPageSidebar';
 import { ClockIcon } from './icons';
 import { DesktopTimeline } from './DesktopTimeline';
 import { MobileTimeline } from './MobileTimeline';
+import { Legend } from './Legend';
 import type { Transaction } from './types';
 
 // Re-export types for consumers
@@ -17,12 +18,32 @@ interface TransactionTimelineProps {
 }
 
 export function TransactionTimeline({ transactions, className }: TransactionTimelineProps) {
-  // Sort transactions by date (newest first)
+  // Filter state
+  const [showDeeds, setShowDeeds] = useState(true);
+  const [showMortgages, setShowMortgages] = useState(true);
+
+  // Count deeds and mortgages
+  const { deedCount, mortgageCount } = useMemo(() => {
+    return transactions.reduce(
+      (acc, t) => {
+        if (t.isDeed) acc.deedCount++;
+        if (t.isMortgage) acc.mortgageCount++;
+        return acc;
+      },
+      { deedCount: 0, mortgageCount: 0 }
+    );
+  }, [transactions]);
+
+  // Sort and filter transactions by date (newest first) and type
   const sortedTransactions = useMemo(
-    () => [...transactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    ),
-    [transactions]
+    () => [...transactions]
+      .filter(t => {
+        if (!showDeeds && t.isDeed) return false;
+        if (!showMortgages && t.isMortgage) return false;
+        return true;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [transactions, showDeeds, showMortgages]
   );
 
   // Extract unique years from transactions for "On This Page" navigation
@@ -85,14 +106,35 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
           <CardTitle className="text-lg">Transaction Timeline</CardTitle>
         </CardHeader>
         <CardContent>
-          <DesktopTimeline
-            transactions={sortedTransactions}
-            firstTransactionOfYear={firstTransactionOfYear}
+          {/* Legend with filters */}
+          <Legend
+            showDeeds={showDeeds}
+            showMortgages={showMortgages}
+            onToggleDeeds={() => setShowDeeds(!showDeeds)}
+            onToggleMortgages={() => setShowMortgages(!showMortgages)}
+            deedCount={deedCount}
+            mortgageCount={mortgageCount}
           />
-          <MobileTimeline
-            transactions={sortedTransactions}
-            firstTransactionOfYear={firstTransactionOfYear}
-          />
+
+          {/* Timeline content */}
+          {sortedTransactions.length === 0 ? (
+            <div className="py-8 text-center">
+              <p className="text-sm text-foreground/70">
+                No transactions match the selected filters.
+              </p>
+            </div>
+          ) : (
+            <>
+              <DesktopTimeline
+                transactions={sortedTransactions}
+                firstTransactionOfYear={firstTransactionOfYear}
+              />
+              <MobileTimeline
+                transactions={sortedTransactions}
+                firstTransactionOfYear={firstTransactionOfYear}
+              />
+            </>
+          )}
         </CardContent>
       </Card>
 
