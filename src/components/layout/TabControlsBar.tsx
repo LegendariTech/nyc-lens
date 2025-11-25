@@ -24,6 +24,16 @@ export function TabControlsBar({
   className,
   children
 }: TabControlsBarProps) {
+  // Check if there are any controls to display
+  const hasEmptyFieldsControl = showEmptyFieldsToggle && onEmptyFieldsChange;
+  const hasRawViewControl = showRawViewToggle && onRawViewChange;
+  const hasAnyControls = hasEmptyFieldsControl || hasRawViewControl || children;
+
+  // Return null if there are no controls to display
+  if (!hasAnyControls) {
+    return null;
+  }
+
   return (
     <div className={cn('flex items-center justify-between h-10', className)}>
       {/* Left side - custom children */}
@@ -33,7 +43,7 @@ export function TabControlsBar({
 
       {/* Right side - Toggles */}
       <div className="flex items-center gap-6">
-        {showEmptyFieldsToggle && onEmptyFieldsChange && (
+        {hasEmptyFieldsControl && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-foreground/70">Hide empty fields</span>
             <Switch
@@ -43,7 +53,7 @@ export function TabControlsBar({
           </div>
         )}
 
-        {showRawViewToggle && onRawViewChange && (
+        {hasRawViewControl && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-foreground/70">Raw View</span>
             <Switch

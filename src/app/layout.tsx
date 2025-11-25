@@ -5,6 +5,7 @@ import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
+import { LocatorInit } from "@/components/LocatorInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+        <LocatorInit />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<SidebarNav />}>
             {children}
