@@ -234,7 +234,8 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
       };
     });
 
-    return transactions;
+    // Filter out transactions with 0 or null/undefined amounts
+    return transactions.filter(t => t.documentAmount && t.documentAmount > 0);
   } catch (error) {
     console.error('Error fetching transactions with parties:', error);
     throw error;

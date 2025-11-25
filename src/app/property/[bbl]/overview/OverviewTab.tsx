@@ -4,13 +4,10 @@ import { Card, CardContent } from '@/components/ui';
 import { getBuildingClassCategory } from '@/constants/building';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
-import { DocumentWithParties } from '@/data/acris';
-import { TransactionTimeline, Transaction } from './components/TransactionTimeline';
 
 interface OverviewTabProps {
   plutoData: PlutoData | null;
   propertyData: AcrisRecord | null;
-  transactions: DocumentWithParties[];
   error?: string;
   bbl?: string;
 }
@@ -37,7 +34,7 @@ function InfoRow({ label, value }: { label: string; value: string | number | boo
   );
 }
 
-export function OverviewTab({ plutoData, propertyData, transactions, error, bbl }: OverviewTabProps) {
+export function OverviewTab({ plutoData, propertyData, error, bbl }: OverviewTabProps) {
   if (error) {
     return (
       <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
@@ -134,22 +131,6 @@ export function OverviewTab({ plutoData, propertyData, transactions, error, bbl 
 
         </CardContent>
       </Card>
-
-      {/* Transaction Timeline */}
-      <TransactionTimeline
-        transactions={transactions.map((t): Transaction => ({
-          id: t.documentId,
-          type: t.documentType === 'DEED' ? 'DEED' : 'MORTGAGE',
-          docType: t.docTypeDescription,
-          date: t.documentDate,
-          amount: t.documentAmount,
-          party1: t.fromParty,
-          party2: t.toParty,
-          party1Type: t.party1Type,
-          party2Type: t.party2Type,
-          documentId: t.documentId,
-        }))}
-      />
     </div>
   );
 }

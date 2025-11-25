@@ -76,6 +76,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
 
   const tabs = [
     { value: 'overview', label: 'Overview' },
+    { value: 'transactions', label: 'Transactions' },
     { value: 'pluto', label: 'PLUTO' },
     { value: 'tax', label: 'Tax' },
     { value: 'dob', label: 'DOB' },
