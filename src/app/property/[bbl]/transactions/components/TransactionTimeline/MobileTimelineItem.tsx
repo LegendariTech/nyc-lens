@@ -11,17 +11,17 @@ export function MobileTimelineItem({ transaction, yearMarker }: MobileTimelineIt
     const isDeed = transaction.type === 'DEED';
 
     return (
-        <div className="flex gap-3">
-            {/* Year marker for mobile */}
-            {yearMarker && (
-                <div id={`year-${yearMarker}-mobile`} className="sr-only" />
-            )}
-
+        <div
+            id={yearMarker ? `year-${yearMarker}` : undefined}
+            className="flex gap-3"
+        >
             {/* Timeline dot */}
             <TimelineDot isDeed={isDeed} />
 
             {/* Transaction card */}
-            <MobileTransactionCard transaction={transaction} />
+            <div className="flex-1">
+                <MobileTransactionCard transaction={transaction} />
+            </div>
         </div>
     );
 }

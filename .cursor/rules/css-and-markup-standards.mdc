@@ -1,17 +1,22 @@
 ---
 alwaysApply: false
 ---
+
 # Tailwind CSS & Component Markup Standards
+
 **Next.js App Router | Tailwind v4 | TypeScript**
 
 ## Scope & Philosophy
+
 These rules govern markup, styling, component architecture, and accessibility standards to ensure:
+
 - **Consistency**: predictable patterns across the codebase
 - **Maintainability**: clear structure and easy-to-understand code
 - **Accessibility**: WCAG 2.1 AA compliance by default
 - **Performance**: optimal bundle size and runtime efficiency
 
 ## Tailwind v4 Configuration
+
 - **Token System**: All design tokens live in `src/app/globals.css` using `@theme inline` and CSS custom properties
 - **Design Tokens First**: Always use semantic tokens (`bg-background`, `text-foreground`) over hard-coded values
 - **Dark Mode**: Tokens automatically adapt via `prefers-color-scheme`; use `dark:*` modifiers only for exceptions
@@ -23,6 +28,7 @@ These rules govern markup, styling, component architecture, and accessibility st
 ## Component Architecture
 
 ### File Structure & Location
+
 ```
 src/components/
 ├── ui/                    # Shared primitives (Button, Input, Card, Badge, etc.)
@@ -34,6 +40,7 @@ src/app/<route>/
 ```
 
 ### Naming Conventions
+
 - **Files**: PascalCase, one component per file (`SearchBar.tsx`, `UserProfile.tsx`)
 - **Components**: Match filename; export as default
 - **Subcomponents**: Export as named exports or compound pattern (`Card.Header`, `Card.Body`)
@@ -44,6 +51,7 @@ src/app/<route>/
   - Names should be self-documenting and easy to reference in prompts/discussions
 
 ### Component Decomposition
+
 - **Break Down Complex Components**: Split large components into focused subcomponents
 - **Single Responsibility**: Each component should do one thing well
 - **Composable**: Design components to work together through composition
@@ -61,9 +69,11 @@ src/app/<route>/
   ```
 
 ### Testing & Documentation Requirements
+
 **Every component MUST have**:
 
 1. **Unit Tests** (`ComponentName.test.tsx`)
+
    - Test all variants/props combinations
    - Test user interactions (clicks, keyboard navigation)
    - Test accessibility (ARIA attributes, focus management)
@@ -79,58 +89,62 @@ src/app/<route>/
    - Place alongside component file
 
 **Example Test Structure**:
+
 ```tsx
 // Button.test.tsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Button } from './Button';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Button } from "./Button";
 
-describe('Button', () => {
-  it('renders children correctly', () => {
+describe("Button", () => {
+  it("renders children correctly", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole('button', { name: 'Click me' })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Click me" })
+    ).toBeInTheDocument();
   });
 
-  it('calls onClick when clicked', async () => {
+  it("calls onClick when clicked", async () => {
     const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole("button"));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('is disabled when disabled prop is true', () => {
+  it("is disabled when disabled prop is true", () => {
     render(<Button disabled>Click me</Button>);
-    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByRole("button")).toBeDisabled();
   });
 
-  it('renders all variants', () => {
+  it("renders all variants", () => {
     const { rerender } = render(<Button variant="primary">Primary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-foreground');
-    
+    expect(screen.getByRole("button")).toHaveClass("bg-foreground");
+
     rerender(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-foreground/10');
+    expect(screen.getByRole("button")).toHaveClass("bg-foreground/10");
   });
 });
 ```
 
 **Example Story Structure**:
+
 ```tsx
 // Button.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './Button';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "./Button";
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Button',
+  title: "UI/Button",
   component: Button,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger'],
+      control: "select",
+      options: ["primary", "secondary", "ghost", "danger"],
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
   },
 };
@@ -140,15 +154,15 @@ type Story = StoryObj<typeof Button>;
 
 export const Primary: Story = {
   args: {
-    children: 'Primary Button',
-    variant: 'primary',
+    children: "Primary Button",
+    variant: "primary",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    children: 'Secondary Button',
-    variant: 'secondary',
+    children: "Secondary Button",
+    variant: "secondary",
   },
 };
 
@@ -164,52 +178,54 @@ export const AllSizes: Story = {
 ```
 
 ### Component Structure Template
-```tsx
-'use client'; // Only if needed (hooks, events, browser APIs)
 
-import { type ComponentPropsWithoutRef } from 'react';
+```tsx
+"use client"; // Only if needed (hooks, events, browser APIs)
+
+import { type ComponentPropsWithoutRef } from "react";
 
 // Props interface with clear documentation
-interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
+interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
   /** Visual style variant */
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: "primary" | "secondary" | "ghost" | "danger";
   /** Size preset */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Show loading spinner */
   isLoading?: boolean;
 }
 
-export function Button({ 
-  variant = 'primary', 
-  size = 'md',
+export function Button({
+  variant = "primary",
+  size = "md",
   isLoading = false,
-  className, 
+  className,
   children,
   disabled,
-  ...props 
+  ...props
 }: ButtonProps) {
   // Build classes in logical groups
-  const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors';
+  const baseClasses =
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors";
   const variantClasses = {
-    primary: 'bg-foreground text-background hover:opacity-90',
-    secondary: 'bg-foreground/10 text-foreground hover:bg-foreground/20',
-    ghost: 'bg-transparent text-foreground hover:bg-foreground/10',
-    danger: 'bg-red-600 text-white hover:bg-red-700',
+    primary: "bg-foreground text-background hover:opacity-90",
+    secondary: "bg-foreground/10 text-foreground hover:bg-foreground/20",
+    ghost: "bg-transparent text-foreground hover:bg-foreground/10",
+    danger: "bg-red-600 text-white hover:bg-red-700",
   };
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg",
   };
-  
+
   return (
     <button
       className={cn(
         baseClasses,
         variantClasses[variant],
         sizeClasses[size],
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
       disabled={disabled || isLoading}
@@ -223,6 +239,7 @@ export function Button({
 ```
 
 ### Key Principles
+
 - **Server-first**: Default to Server Components; add `'use client'` only when necessary
 - **Composition**: Always accept `className` for style extension
 - **Type Safety**: Extend native HTML element props (`ComponentPropsWithoutRef<'button'>`)
@@ -232,12 +249,14 @@ export function Button({
 ## Markup & Accessibility Standards
 
 ### Semantic HTML First
+
 - **Use native elements**: `<button>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<header>`, `<footer>`, `<h1>`-`<h6>`
 - **ARIA as enhancement**: Only add ARIA when native semantics are insufficient
 - **Interactive elements**: Use `<button>` for actions, `<a>` for navigation
 - **Forms**: Always pair `<label>` with inputs using `htmlFor`/`id`
 
 ### Accessibility Checklist
+
 ✅ **Keyboard Navigation**: All interactive elements focusable and operable via keyboard  
 ✅ **Focus Indicators**: Visible focus states using `focus-visible:ring-2` or similar  
 ✅ **Color Contrast**: Minimum 4.5:1 for text, 3:1 for UI components (WCAG AA)  
@@ -248,6 +267,7 @@ export function Button({
 ✅ **Disabled States**: Use `disabled` attribute + visual indicators (`opacity-50`, `cursor-not-allowed`)
 
 ### Class Order Convention
+
 Maintain this order for consistent, readable diffs:
 
 1. **Layout**: `container`, `mx-auto`, `flex`, `grid`, `col-span-*`, `items-*`, `justify-*`, `content-*`, `place-*`
@@ -270,6 +290,7 @@ Maintain this order for consistent, readable diffs:
 ## Design Tokens & Theme System
 
 ### Current Tokens (defined in `globals.css`)
+
 ```css
 :root {
   --background: #ffffff;
@@ -285,133 +306,144 @@ Maintain this order for consistent, readable diffs:
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #141D2C;
+    --background: #141d2c;
     --foreground: #ededed;
   }
 }
 ```
 
 ### Token Usage Rules
+
 - **Always use tokens**: `bg-background`, `text-foreground`, `font-sans`, `font-mono`
 - **Extend, don't override**: Add new tokens to `@theme inline` for brand colors, spacing scales, etc.
 - **Avoid arbitrary values**: `bg-[#123456]` or `w-[37px]` should be rare exceptions
 - **Semantic naming**: Use purpose-based names (`--color-primary`, `--color-danger`) not descriptive (`--color-blue-500`)
 
 ### Adding New Tokens
+
 ```css
 /* In globals.css */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   /* Add semantic color tokens */
   --color-primary: #3b82f6;
   --color-primary-foreground: #ffffff;
   --color-danger: #ef4444;
   --color-success: #10b981;
   --color-muted: #6b7280;
-  
+
   /* Add spacing tokens if needed */
   --spacing-section: 4rem;
-  
+
   /* Add custom shadows */
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1);
 }
 ```
 
 ## Tailwind Utilities Reference
-*Organized by use case with clear explanations for beginners*
+
+_Organized by use case with clear explanations for beginners_
 
 ### 🎯 Layout & Container
-| Class | Purpose | Example Use |
-|-------|---------|-------------|
-| `container` | Centers content, sets responsive max-widths | Page wrappers |
-| `mx-auto` | Horizontally center a fixed-width element | Center a card or section |
-| `max-w-screen-lg` | Limit width for readability (1024px) | Content areas, forms |
-| `max-w-prose` | Optimal reading width (~65ch) | Article text, blog posts |
-| `flex` | Enable flexbox layout | Horizontal/vertical arrangements |
-| `items-center` | Vertically center flex children | Align icons with text |
-| `justify-between` | Space flex children to edges | Header with logo + nav |
-| `justify-center` | Horizontally center flex children | Center buttons in a row |
-| `gap-4` | Consistent spacing between children (1rem) | Preferred over margins |
-| `grid grid-cols-3` | 3-column grid layout | Card grids, dashboards |
-| `col-span-2` | Span 2 grid columns | Featured content |
+
+| Class              | Purpose                                     | Example Use                      |
+| ------------------ | ------------------------------------------- | -------------------------------- |
+| `container`        | Centers content, sets responsive max-widths | Page wrappers                    |
+| `mx-auto`          | Horizontally center a fixed-width element   | Center a card or section         |
+| `max-w-screen-lg`  | Limit width for readability (1024px)        | Content areas, forms             |
+| `max-w-prose`      | Optimal reading width (~65ch)               | Article text, blog posts         |
+| `flex`             | Enable flexbox layout                       | Horizontal/vertical arrangements |
+| `items-center`     | Vertically center flex children             | Align icons with text            |
+| `justify-between`  | Space flex children to edges                | Header with logo + nav           |
+| `justify-center`   | Horizontally center flex children           | Center buttons in a row          |
+| `gap-4`            | Consistent spacing between children (1rem)  | Preferred over margins           |
+| `grid grid-cols-3` | 3-column grid layout                        | Card grids, dashboards           |
+| `col-span-2`       | Span 2 grid columns                         | Featured content                 |
 
 ### 📦 Spacing
-| Class | Purpose | Scale (1 unit = 0.25rem) |
-|-------|---------|--------------------------|
-| `p-4` | Padding all sides | 1rem (16px) |
-| `px-6` | Horizontal padding (left + right) | 1.5rem (24px) |
-| `py-3` | Vertical padding (top + bottom) | 0.75rem (12px) |
-| `m-4` | Margin all sides | 1rem |
-| `gap-2` | Gap between flex/grid children | 0.5rem (8px) |
-| `space-y-4` | Vertical spacing between stacked children | 1rem between each |
+
+| Class       | Purpose                                   | Scale (1 unit = 0.25rem) |
+| ----------- | ----------------------------------------- | ------------------------ |
+| `p-4`       | Padding all sides                         | 1rem (16px)              |
+| `px-6`      | Horizontal padding (left + right)         | 1.5rem (24px)            |
+| `py-3`      | Vertical padding (top + bottom)           | 0.75rem (12px)           |
+| `m-4`       | Margin all sides                          | 1rem                     |
+| `gap-2`     | Gap between flex/grid children            | 0.5rem (8px)             |
+| `space-y-4` | Vertical spacing between stacked children | 1rem between each        |
 
 **Best Practice**: Use `gap-*` for flex/grid spacing instead of margins on children
 
 ### ✍️ Typography
-| Class | Purpose | Output |
-|-------|---------|--------|
-| `text-sm` | Small text | 14px |
-| `text-base` | Body text (default) | 16px |
-| `text-lg` | Large text | 18px |
-| `text-xl` | Extra large | 20px |
-| `text-3xl` | Heading size | 30px |
-| `font-medium` | Medium weight | 500 |
-| `font-semibold` | Semi-bold weight | 600 |
-| `font-bold` | Bold weight | 700 |
-| `leading-6` | Line height | 1.5rem (24px) |
-| `leading-tight` | Tight line height | 1.25 (good for headings) |
-| `tracking-tight` | Tighter letter spacing | -0.025em (headlines) |
-| `truncate` | Ellipsis overflow | "Long text..." |
+
+| Class            | Purpose                | Output                   |
+| ---------------- | ---------------------- | ------------------------ |
+| `text-sm`        | Small text             | 14px                     |
+| `text-base`      | Body text (default)    | 16px                     |
+| `text-lg`        | Large text             | 18px                     |
+| `text-xl`        | Extra large            | 20px                     |
+| `text-3xl`       | Heading size           | 30px                     |
+| `font-medium`    | Medium weight          | 500                      |
+| `font-semibold`  | Semi-bold weight       | 600                      |
+| `font-bold`      | Bold weight            | 700                      |
+| `leading-6`      | Line height            | 1.5rem (24px)            |
+| `leading-tight`  | Tight line height      | 1.25 (good for headings) |
+| `tracking-tight` | Tighter letter spacing | -0.025em (headlines)     |
+| `truncate`       | Ellipsis overflow      | "Long text..."           |
 
 ### 🎨 Colors & Surfaces
-| Class | Purpose | Notes |
-|-------|---------|-------|
-| `bg-background` | Surface color (token) | Auto dark mode |
-| `text-foreground` | Text color (token) | Auto dark mode |
-| `text-foreground/80` | 80% opacity text | Muted/secondary text |
-| `bg-white` | Pure white background | Use sparingly |
-| `border` | Add 1px border | Default gray |
-| `border-foreground/20` | Subtle border | 20% opacity |
-| `shadow-sm` | Subtle shadow | Cards, elevated surfaces |
-| `shadow-md` | Medium shadow | Dropdowns, modals |
+
+| Class                  | Purpose               | Notes                    |
+| ---------------------- | --------------------- | ------------------------ |
+| `bg-background`        | Surface color (token) | Auto dark mode           |
+| `text-foreground`      | Text color (token)    | Auto dark mode           |
+| `text-foreground/80`   | 80% opacity text      | Muted/secondary text     |
+| `bg-white`             | Pure white background | Use sparingly            |
+| `border`               | Add 1px border        | Default gray             |
+| `border-foreground/20` | Subtle border         | 20% opacity              |
+| `shadow-sm`            | Subtle shadow         | Cards, elevated surfaces |
+| `shadow-md`            | Medium shadow         | Dropdowns, modals        |
 
 ### 🔘 Borders & Radius
-| Class | Purpose | Radius |
-|-------|---------|--------|
-| `rounded` | Small corners | 0.25rem (4px) |
-| `rounded-md` | Medium corners | 0.375rem (6px) |
-| `rounded-lg` | Large corners | 0.5rem (8px) |
-| `rounded-full` | Pill shape / circle | 9999px |
-| `ring-2` | 2px outline ring | Focus states |
-| `ring-offset-2` | Space between ring and element | 2px gap |
+
+| Class           | Purpose                        | Radius         |
+| --------------- | ------------------------------ | -------------- |
+| `rounded`       | Small corners                  | 0.25rem (4px)  |
+| `rounded-md`    | Medium corners                 | 0.375rem (6px) |
+| `rounded-lg`    | Large corners                  | 0.5rem (8px)   |
+| `rounded-full`  | Pill shape / circle            | 9999px         |
+| `ring-2`        | 2px outline ring               | Focus states   |
+| `ring-offset-2` | Space between ring and element | 2px gap        |
 
 ### ⚡ Interactions & States
-| Class | Purpose | When to Use |
-|-------|---------|-------------|
-| `hover:bg-foreground/10` | Subtle hover effect | Buttons, links, cards |
-| `hover:opacity-90` | Fade on hover | Images, solid buttons |
-| `focus-visible:outline-none` | Remove default outline | Pair with custom focus |
-| `focus-visible:ring-2` | Custom focus ring | Keyboard accessibility |
-| `active:scale-95` | Press effect | Buttons |
-| `disabled:opacity-50` | Disabled visual | Disabled buttons/inputs |
-| `disabled:cursor-not-allowed` | Disabled cursor | Disabled elements |
-| `transition-colors` | Smooth color transitions | Hover effects |
-| `duration-200` | Transition duration | 200ms (default) |
+
+| Class                         | Purpose                  | When to Use             |
+| ----------------------------- | ------------------------ | ----------------------- |
+| `hover:bg-foreground/10`      | Subtle hover effect      | Buttons, links, cards   |
+| `hover:opacity-90`            | Fade on hover            | Images, solid buttons   |
+| `focus-visible:outline-none`  | Remove default outline   | Pair with custom focus  |
+| `focus-visible:ring-2`        | Custom focus ring        | Keyboard accessibility  |
+| `active:scale-95`             | Press effect             | Buttons                 |
+| `disabled:opacity-50`         | Disabled visual          | Disabled buttons/inputs |
+| `disabled:cursor-not-allowed` | Disabled cursor          | Disabled elements       |
+| `transition-colors`           | Smooth color transitions | Hover effects           |
+| `duration-200`                | Transition duration      | 200ms (default)         |
 
 ### 📱 Responsive Design
-| Breakpoint | Min Width | Usage |
-|------------|-----------|-------|
-| `sm:` | 640px | Small tablets |
-| `md:` | 768px | Tablets |
-| `lg:` | 1024px | Desktops |
-| `xl:` | 1280px | Large desktops |
-| `2xl:` | 1536px | Extra large |
+
+| Breakpoint | Min Width | Usage          |
+| ---------- | --------- | -------------- |
+| `sm:`      | 640px     | Small tablets  |
+| `md:`      | 768px     | Tablets        |
+| `lg:`      | 1024px    | Desktops       |
+| `xl:`      | 1280px    | Large desktops |
+| `2xl:`     | 1536px    | Extra large    |
 
 **Example**: `text-sm md:text-base lg:text-lg` (scales up on larger screens)
 
 ### 🌙 Dark Mode
+
 - **Automatic**: Use tokens (`bg-background`, `text-foreground`) for auto dark mode
 - **Manual**: Use `dark:` prefix for specific overrides
   - `dark:bg-gray-800` (only applies in dark mode)
@@ -420,6 +452,7 @@ Maintain this order for consistent, readable diffs:
 ## Best Practices & Patterns
 
 ### ✅ Do This
+
 - **Composition over duplication**: Accept `className` prop on all components for extension
 - **Token-first**: Use design tokens (`bg-background`) over arbitrary values (`bg-[#fff]`)
 - **Gap over margin**: Use `gap-*` for flex/grid spacing instead of margins on children
@@ -430,6 +463,7 @@ Maintain this order for consistent, readable diffs:
 - **Focus-visible**: Use `focus-visible:*` for keyboard-only focus indicators
 
 ### ❌ Avoid This
+
 - **Duplicate utilities**: `px-4 px-6` (conflicting classes)
 - **Important overrides**: `!important` indicates architectural issues
 - **Inline styles**: `style={{}}` bypasses Tailwind's optimization
@@ -439,6 +473,7 @@ Maintain this order for consistent, readable diffs:
 - **Margin for layout**: Use `gap-*` or padding on containers instead
 
 ### Class Merging Helper (Recommended)
+
 Install and use a class merging utility to handle conditional classes cleanly:
 
 ```bash
@@ -447,8 +482,8 @@ npm install clsx tailwind-merge
 
 ```ts
 // lib/utils.ts
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -456,22 +491,27 @@ export function cn(...inputs: ClassValue[]) {
 ```
 
 **Usage**:
+
 ```tsx
-<div className={cn(
-  'base-classes',
-  variant === 'primary' && 'primary-classes',
-  isActive && 'active-classes',
-  className // User-provided classes override
-)} />
+<div
+  className={cn(
+    "base-classes",
+    variant === "primary" && "primary-classes",
+    isActive && "active-classes",
+    className // User-provided classes override
+  )}
+/>
 ```
 
 ## Real-World Examples
-*Each example includes detailed explanations of classes used*
+
+_Each example includes detailed explanations of classes used_
 
 ### Example 1: Page Section Container
+
 ```tsx
 // Purpose: Reusable page section with responsive padding and max-width
-// 
+//
 // Classes explained:
 // - container: Centers content and applies responsive max-widths
 // - mx-auto: Horizontally centers the container
@@ -487,13 +527,15 @@ interface SectionProps {
 
 export function Section({ children, className }: SectionProps) {
   return (
-    <section className={cn(
-      'container mx-auto max-w-screen-lg',
-      'px-4 md:px-6',
-      'py-8 md:py-12',
-      'bg-background text-foreground',
-      className
-    )}>
+    <section
+      className={cn(
+        "container mx-auto max-w-screen-lg",
+        "px-4 md:px-6",
+        "py-8 md:py-12",
+        "bg-background text-foreground",
+        className
+      )}
+    >
       {children}
     </section>
   );
@@ -501,6 +543,7 @@ export function Section({ children, className }: SectionProps) {
 ```
 
 ### Example 2: Accessible Button with Variants
+
 ```tsx
 // Purpose: Flexible button component with multiple visual styles
 //
@@ -522,39 +565,42 @@ export function Section({ children, className }: SectionProps) {
 // - disabled:opacity-50: 50% transparency when disabled
 // - disabled:cursor-not-allowed: Show "not allowed" cursor
 
-interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
 }
 
-export function Button({ 
-  variant = 'primary',
-  size = 'md',
+export function Button({
+  variant = "primary",
+  size = "md",
   className,
-  ...props 
+  ...props
 }: ButtonProps) {
   return (
     <button
       className={cn(
         // Base styles
-        'inline-flex items-center justify-center gap-2',
-        'rounded-md font-medium transition-colors',
-        
+        "inline-flex items-center justify-center gap-2",
+        "rounded-md font-medium transition-colors",
+
         // Size variants
-        size === 'sm' && 'px-3 py-1.5 text-sm',
-        size === 'md' && 'px-4 py-2 text-base',
-        size === 'lg' && 'px-6 py-3 text-lg',
-        
+        size === "sm" && "px-3 py-1.5 text-sm",
+        size === "md" && "px-4 py-2 text-base",
+        size === "lg" && "px-6 py-3 text-lg",
+
         // Visual variants
-        variant === 'primary' && 'bg-foreground text-background hover:opacity-90',
-        variant === 'secondary' && 'bg-foreground/10 text-foreground hover:bg-foreground/20',
-        variant === 'ghost' && 'bg-transparent text-foreground hover:bg-foreground/10',
-        variant === 'danger' && 'bg-red-600 text-white hover:bg-red-700',
-        
+        variant === "primary" &&
+          "bg-foreground text-background hover:opacity-90",
+        variant === "secondary" &&
+          "bg-foreground/10 text-foreground hover:bg-foreground/20",
+        variant === "ghost" &&
+          "bg-transparent text-foreground hover:bg-foreground/10",
+        variant === "danger" && "bg-red-600 text-white hover:bg-red-700",
+
         // Focus & disabled states
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+
         className
       )}
       {...props}
@@ -564,6 +610,7 @@ export function Button({
 ```
 
 ### Example 3: Card Component with Composition
+
 ```tsx
 // Purpose: Flexible card container with optional header and footer
 //
@@ -588,11 +635,13 @@ interface CardProps {
 
 export function Card({ children, className }: CardProps) {
   return (
-    <div className={cn(
-      'rounded-lg border border-foreground/10',
-      'bg-background shadow-sm overflow-hidden',
-      className
-    )}>
+    <div
+      className={cn(
+        "rounded-lg border border-foreground/10",
+        "bg-background shadow-sm overflow-hidden",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -600,22 +649,16 @@ export function Card({ children, className }: CardProps) {
 
 Card.Header = function CardHeader({ children, className }: CardProps) {
   return (
-    <div className={cn(
-      'px-6 py-4',
-      'border-b border-foreground/10',
-      className
-    )}>
+    <div
+      className={cn("px-6 py-4", "border-b border-foreground/10", className)}
+    >
       {children}
     </div>
   );
 };
 
 Card.Content = function CardContent({ children, className }: CardProps) {
-  return (
-    <div className={cn('p-6', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("p-6", className)}>{children}</div>;
 };
 
 // Usage:
@@ -630,6 +673,7 @@ Card.Content = function CardContent({ children, className }: CardProps) {
 ```
 
 ### Example 4: Form Input with Label
+
 ```tsx
 // Purpose: Accessible form input with proper label association
 //
@@ -648,39 +692,39 @@ Card.Content = function CardContent({ children, className }: CardProps) {
 // - focus:ring-2 focus:ring-foreground/50: Custom focus ring
 // - disabled:opacity-50 disabled:cursor-not-allowed: Disabled state
 
-interface InputProps extends ComponentPropsWithoutRef<'input'> {
+interface InputProps extends ComponentPropsWithoutRef<"input"> {
   label: string;
   error?: string;
 }
 
 export function Input({ label, error, className, id, ...props }: InputProps) {
-  const inputId = id || label.toLowerCase().replace(/\s+/g, '-');
-  
+  const inputId = id || label.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <div className="space-y-2">
-      <label 
+      <label
         htmlFor={inputId}
         className="block text-sm font-medium text-foreground"
       >
         {label}
       </label>
-      
+
       <input
         id={inputId}
         className={cn(
-          'w-full px-3 py-2 rounded-md',
-          'border border-foreground/20',
-          'bg-background text-foreground',
-          'focus:outline-none focus:ring-2 focus:ring-foreground/50',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          error && 'border-red-500 focus:ring-red-500',
+          "w-full px-3 py-2 rounded-md",
+          "border border-foreground/20",
+          "bg-background text-foreground",
+          "focus:outline-none focus:ring-2 focus:ring-foreground/50",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
+          error && "border-red-500 focus:ring-red-500",
           className
         )}
-        aria-invalid={error ? 'true' : 'false'}
+        aria-invalid={error ? "true" : "false"}
         aria-describedby={error ? `${inputId}-error` : undefined}
         {...props}
       />
-      
+
       {error && (
         <p id={`${inputId}-error`} className="text-sm text-red-600">
           {error}
@@ -694,12 +738,14 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
 ## Project-Specific Notes
 
 ### ag-Grid Integration
+
 - Place ag-Grid style overrides in `globals.css`
 - Scope overrides to `.ag-theme-*` classes
 - Use Tailwind utilities for containers around grids
 - Keep grid-specific CSS minimal and well-commented
 
 ### Performance Considerations
+
 - Tailwind purges unused classes in production automatically
 - Avoid dynamic class construction: `text-${size}` (won't be purged correctly)
 - Use complete class names: `text-sm`, `text-base`, `text-lg`
@@ -710,6 +756,7 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
 **Spacing Scale**: `0` = 0, `1` = 0.25rem, `2` = 0.5rem, `4` = 1rem, `6` = 1.5rem, `8` = 2rem, `12` = 3rem
 
 **Common Patterns**:
+
 - Center content: `flex items-center justify-center`
 - Card: `rounded-lg border border-foreground/10 bg-background p-6 shadow-sm`
 - Button: `px-4 py-2 rounded-md bg-foreground text-background hover:opacity-90`
@@ -719,11 +766,13 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
 ## Recommended Tools
 
 1. **Prettier Plugin**: Auto-sort Tailwind classes
+
    ```bash
    npm install -D prettier prettier-plugin-tailwindcss
    ```
 
 2. **Class Merging**: Handle conditional classes
+
    ```bash
    npm install clsx tailwind-merge
    ```
@@ -731,5 +780,3 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
 3. **VS Code Extensions**:
    - Tailwind CSS IntelliSense (official)
    - Headwind (class sorting)
-
-

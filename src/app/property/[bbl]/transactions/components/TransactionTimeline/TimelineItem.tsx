@@ -14,21 +14,10 @@ export function TimelineItem({ transaction, yearMarker }: TimelineItemProps) {
 
     return (
         <div
+            id={yearMarker ? `year-${yearMarker}` : undefined}
             className="relative flex items-center"
             style={{ minHeight: `${TIMELINE_CONFIG.ITEM_MIN_HEIGHT}px` }}
         >
-            {/* Year marker (invisible anchor for scrolling) */}
-            {yearMarker && (
-                <div
-                    id={`year-${yearMarker}`}
-                    className="absolute"
-                    style={{
-                        left: `${TIMELINE_CONFIG.TIMELINE_AXIS_OFFSET}px`,
-                        top: `${TIMELINE_CONFIG.YEAR_MARKER_TOP_OFFSET}px`
-                    }}
-                />
-            )}
-
             {/* Date bubble - positioned so the vertical line goes through its center */}
             <div
                 className="relative flex items-center justify-center shrink-0"

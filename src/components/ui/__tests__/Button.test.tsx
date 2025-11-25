@@ -54,7 +54,7 @@ describe('Button', () => {
     it('renders danger variant', () => {
       render(<Button variant="danger">Danger</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-red-600');
+      expect(button).toHaveClass('bg-destructive');
     });
 
     it('renders outline variant', () => {
@@ -275,7 +275,7 @@ describe('Button', () => {
     it('combines variant and size correctly', () => {
       render(<Button variant="danger" size="lg">Large Danger</Button>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-red-600'); // danger variant
+      expect(button).toHaveClass('bg-destructive'); // danger variant
       expect(button).toHaveClass('h-12'); // lg size
     });
   });
