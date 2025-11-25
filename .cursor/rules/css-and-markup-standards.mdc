@@ -38,6 +38,130 @@ src/app/<route>/
 - **Components**: Match filename; export as default
 - **Subcomponents**: Export as named exports or compound pattern (`Card.Header`, `Card.Body`)
 - **Props**: Use descriptive names; suffix types with `Props` (`ButtonProps`, `CardProps`)
+- **Clear, Descriptive Names**: Use straightforward names that clearly indicate purpose
+  - ✅ Good: `TransactionCard`, `TimelineDot`, `ConnectorLine`, `PropertySearchBar`
+  - ❌ Avoid: `Item`, `Thing`, `Component`, `Wrapper`, `Container` (too generic)
+  - Names should be self-documenting and easy to reference in prompts/discussions
+
+### Component Decomposition
+- **Break Down Complex Components**: Split large components into focused subcomponents
+- **Single Responsibility**: Each component should do one thing well
+- **Composable**: Design components to work together through composition
+- **Maximum Size**: If a component exceeds ~150 lines, consider splitting it
+- **Example Structure**:
+  ```
+  TransactionTimeline/
+  ├── index.tsx              # Main component (orchestration)
+  ├── TimelineItem.tsx       # Individual timeline entry
+  ├── TimelineDot.tsx        # Visual indicator dot
+  ├── ConnectorLine.tsx      # Line between items
+  ├── TransactionCard.tsx    # Transaction details card
+  ├── types.ts               # Shared types
+  └── utils.ts               # Helper functions
+  ```
+
+### Testing & Documentation Requirements
+**Every component MUST have**:
+
+1. **Unit Tests** (`ComponentName.test.tsx`)
+   - Test all variants/props combinations
+   - Test user interactions (clicks, keyboard navigation)
+   - Test accessibility (ARIA attributes, focus management)
+   - Test edge cases and error states
+   - Place in `__tests__/` folder alongside component
+
+2. **Storybook Stories** (`ComponentName.stories.tsx`)
+   - Document all variants and states
+   - Provide interactive examples
+   - Include usage documentation
+   - Show responsive behavior
+   - Demonstrate accessibility features
+   - Place alongside component file
+
+**Example Test Structure**:
+```tsx
+// Button.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Button } from './Button';
+
+describe('Button', () => {
+  it('renders children correctly', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByRole('button', { name: 'Click me' })).toBeInTheDocument();
+  });
+
+  it('calls onClick when clicked', async () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    await userEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('is disabled when disabled prop is true', () => {
+    render(<Button disabled>Click me</Button>);
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('renders all variants', () => {
+    const { rerender } = render(<Button variant="primary">Primary</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-foreground');
+    
+    rerender(<Button variant="secondary">Secondary</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-foreground/10');
+  });
+});
+```
+
+**Example Story Structure**:
+```tsx
+// Button.stories.tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
+
+const meta: Meta<typeof Button> = {
+  title: 'UI/Button',
+  component: Button,
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'ghost', 'danger'],
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Primary: Story = {
+  args: {
+    children: 'Primary Button',
+    variant: 'primary',
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    children: 'Secondary Button',
+    variant: 'secondary',
+  },
+};
+
+export const AllSizes: Story = {
+  render: () => (
+    <div className="flex gap-4 items-center">
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+    </div>
+  ),
+};
+```
 
 ### Component Structure Template
 ```tsx

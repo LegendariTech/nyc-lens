@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import { PropertyPageLayout } from '../PropertyPageLayout';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
-import { TransactionTimeline, Transaction } from './components/TransactionTimeline';
+import { TransactionTimeline } from './components/TransactionTimeline';
+import { mapDocumentToTransaction } from './components/TransactionTimeline/utils';
 
 interface TransactionsPageProps {
   params: Promise<{
@@ -43,18 +44,7 @@ export default async function TransactionsPage({ params, searchParams }: Transac
           </div>
         ) : (
           <TransactionTimeline
-            transactions={transactions.map((t): Transaction => ({
-              id: t.documentId,
-              type: t.documentType === 'DEED' ? 'DEED' : 'MORTGAGE',
-              docType: t.docTypeDescription,
-              date: t.documentDate,
-              amount: t.documentAmount,
-              party1: t.fromParty,
-              party2: t.toParty,
-              party1Type: t.party1Type,
-              party2Type: t.party2Type,
-              documentId: t.documentId,
-            }))}
+            transactions={transactions.map(mapDocumentToTransaction)}
           />
         )}
       </div>
