@@ -8,7 +8,7 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ transaction }: TransactionCardProps) {
-    const isDeed = transaction.type === 'DEED';
+    const { isDeed } = transaction;
 
     return (
         <div

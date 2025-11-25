@@ -8,7 +8,7 @@ interface MobileTimelineItemProps {
 }
 
 export function MobileTimelineItem({ transaction, yearMarker }: MobileTimelineItemProps) {
-    const isDeed = transaction.type === 'DEED';
+    const { isDeed } = transaction;
 
     return (
         <div

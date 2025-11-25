@@ -10,7 +10,7 @@ interface TimelineItemProps {
 }
 
 export function TimelineItem({ transaction, yearMarker }: TimelineItemProps) {
-    const isDeed = transaction.type === 'DEED';
+    const { isDeed } = transaction;
 
     return (
         <div

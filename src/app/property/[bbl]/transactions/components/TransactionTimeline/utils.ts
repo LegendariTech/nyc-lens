@@ -38,6 +38,9 @@ export function mapDocumentToTransaction(doc: DocumentWithParties): Transaction 
     party1Type: doc.party1Type,
     party2Type: doc.party2Type,
     documentId: doc.documentId,
+    classCodeDescription: doc.classCodeDescription,
+    isDeed: doc.isDeed,
+    isMortgage: doc.isMortgage,
   };
 }
 

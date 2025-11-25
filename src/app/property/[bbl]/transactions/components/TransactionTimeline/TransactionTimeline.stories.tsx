@@ -2,6 +2,24 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TransactionTimeline } from './index';
 import type { Transaction } from './types';
 
+// Helper to add computed fields based on document type
+const enrichTransactions = (txs: Omit<Transaction, 'classCodeDescription' | 'isDeed' | 'isMortgage'>[]): Transaction[] => {
+    return txs.map(tx => {
+        const isDeed = tx.type === 'DEED';
+        const isMortgage = tx.type === 'MORTGAGE' || tx.type === 'MTGE';
+        return {
+            ...tx,
+            classCodeDescription: isDeed
+                ? 'DEEDS AND OTHER CONVEYANCES'
+                : isMortgage
+                    ? 'MORTGAGES & INSTRUMENTS'
+                    : 'OTHER DOCUMENTS',
+            isDeed,
+            isMortgage,
+        };
+    });
+};
+
 const meta = {
     title: 'Features/Property/TransactionTimeline',
     component: TransactionTimeline,
@@ -20,7 +38,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Sample transaction data
-const sampleTransactions: Transaction[] = [
+const sampleTransactions: Transaction[] = enrichTransactions([
     {
         id: '1',
         type: 'DEED',
@@ -81,9 +99,9 @@ const sampleTransactions: Transaction[] = [
         party2Type: 'SELLER',
         documentId: 'FT_2018111000001',
     },
-];
+]);
 
-const multiYearTransactions: Transaction[] = [
+const multiYearTransactions: Transaction[] = enrichTransactions([
     {
         id: '1',
         type: 'DEED',
@@ -192,9 +210,9 @@ const multiYearTransactions: Transaction[] = [
         party2Type: 'SELLER',
         documentId: 'FT_2015052200001',
     },
-];
+]);
 
-const singleTransaction: Transaction[] = [
+const singleTransaction: Transaction[] = enrichTransactions([
     {
         id: '1',
         type: 'DEED',
@@ -207,9 +225,9 @@ const singleTransaction: Transaction[] = [
         party2Type: 'SELLER',
         documentId: 'FT_2023061500001',
     },
-];
+]);
 
-const longPartyNames: Transaction[] = [
+const longPartyNames: Transaction[] = enrichTransactions([
     {
         id: '1',
         type: 'DEED',
@@ -234,9 +252,9 @@ const longPartyNames: Transaction[] = [
         party2Type: 'LENDER',
         documentId: 'FT_2023061500002',
     },
-];
+]);
 
-const highValueTransactions: Transaction[] = [
+const highValueTransactions: Transaction[] = enrichTransactions([
     {
         id: '1',
         type: 'DEED',
@@ -273,7 +291,7 @@ const highValueTransactions: Transaction[] = [
         party2Type: 'SELLER',
         documentId: 'FT_2019081500001',
     },
-];
+]);
 
 /**
  * Default timeline with multiple transactions across different years
@@ -461,7 +479,7 @@ export const RecentTransactions: Story = {
  */
 export const SameDateTransactions: Story = {
     args: {
-        transactions: [
+        transactions: enrichTransactions([
             {
                 id: '1',
                 type: 'DEED',
@@ -498,7 +516,7 @@ export const SameDateTransactions: Story = {
                 party2Type: 'LENDER',
                 documentId: 'FT_2023061500003',
             },
-        ],
+        ]),
     },
     parameters: {
         docs: {

@@ -8,7 +8,7 @@ interface MobileTransactionCardProps {
 }
 
 export function MobileTransactionCard({ transaction }: MobileTransactionCardProps) {
-  const isDeed = transaction.type === 'DEED';
+  const { isDeed } = transaction;
 
   return (
     <div className="flex-1 pb-4">

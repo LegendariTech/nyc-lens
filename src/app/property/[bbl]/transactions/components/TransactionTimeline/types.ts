@@ -9,5 +9,8 @@ export interface Transaction {
   party1Type: string;
   party2Type: string;
   documentId?: string;
+  classCodeDescription: string;
+  isDeed: boolean;
+  isMortgage: boolean;
 }
 

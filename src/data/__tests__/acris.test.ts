@@ -128,16 +128,18 @@ describe('acris data layer', () => {
                 const result = await fetchTransactionsWithParties('1-13-1');
 
                 const deedTransaction = result.find(t => t.documentType === 'DEED');
-                expect(deedTransaction?.party1Type).toBe('Seller');
-                expect(deedTransaction?.party2Type).toBe('Buyer');
+                // Party types now come from ACRIS control codes (using last part of slash-separated types)
+                expect(deedTransaction?.party1Type).toBe('SELLER');
+                expect(deedTransaction?.party2Type).toBe('BUYER');
             });
 
             it('should set correct party types for MORTGAGE transactions', async () => {
                 const result = await fetchTransactionsWithParties('1-13-1');
 
                 const mortgageTransaction = result.find(t => t.documentType === 'MTGE');
-                expect(mortgageTransaction?.party1Type).toBe('Borrower');
-                expect(mortgageTransaction?.party2Type).toBe('Lender');
+                // Party types now come from ACRIS control codes (using last part of slash-separated types)
+                expect(mortgageTransaction?.party1Type).toBe('BORROWER');
+                expect(mortgageTransaction?.party2Type).toBe('LENDER');
             });
 
             it('should query Elasticsearch with correct BBL components', async () => {
@@ -325,39 +327,6 @@ describe('acris data layer', () => {
                 expect(result[0].toParty).toBe('Unknown');
             });
 
-            it('should match parties by description keywords', async () => {
-                const partiesWithKeywords: AcrisParty[] = [
-                    {
-                        party_document_id: 'DOC123',
-                        party_party_type: undefined,
-                        party_party_type_description: 'GRANTOR',
-                        party_name: 'GRANTOR PARTY',
-                    } as AcrisParty,
-                    {
-                        party_document_id: 'DOC123',
-                        party_party_type: undefined,
-                        party_party_type_description: 'GRANTEE',
-                        party_name: 'GRANTEE PARTY',
-                    } as AcrisParty,
-                ];
-
-                vi.mocked(search)
-                    .mockResolvedValueOnce({
-                        hits: {
-                            hits: [{ _source: mockDocuments[0] }],
-                        },
-                    })
-                    .mockResolvedValueOnce({
-                        hits: {
-                            hits: partiesWithKeywords.map(party => ({ _source: party })),
-                        },
-                    });
-
-                const result = await fetchTransactionsWithParties('1-13-1');
-
-                expect(result[0].fromParty).toBe('GRANTOR PARTY');
-                expect(result[0].toParty).toBe('GRANTEE PARTY');
-            });
         });
 
         describe('Error handling', () => {

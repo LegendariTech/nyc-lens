@@ -1,6 +1,7 @@
 import 'server-only';
 import { search } from './elasticsearch';
 import { AcrisRecord, AcrisDoc, AcrisParty } from '@/types/acris';
+import acrisControlCodes from '@/constants/acris_control_code.json';
 
 /**
  * Fetch a single ACRIS property record by BBL
@@ -102,6 +103,41 @@ export interface DocumentWithParties {
   toParty: string;
   party1Type: string;
   party2Type: string;
+  isDeed: boolean;
+  isMortgage: boolean;
+}
+
+/**
+ * Get party type labels for a specific document type from ACRIS control codes
+ * @param docType - Document type code (e.g., 'DEED', 'MTGE')
+ * @returns Object with party1Type and party2Type labels, or defaults if not found
+ */
+function getPartyTypeLabels(docType: string): { party1Type: string; party2Type: string } {
+  // Find the document type in the control codes
+  const controlCode = acrisControlCodes.find(
+    (code) => code['DOC. TYPE'] === docType
+  );
+
+  if (controlCode) {
+    // Extract the last part of slash-separated types (e.g., "MORTGAGOR/BORROWER" -> "BORROWER")
+    const extractLastType = (type: string | null): string => {
+      if (!type) return 'Party';
+      const parts = type.split('/');
+      return parts[parts.length - 1].trim();
+    };
+
+    return {
+      party1Type: extractLastType(controlCode['PARTY1 TYPE']),
+      party2Type: extractLastType(controlCode['PARTY2 TYPE']),
+    };
+  }
+
+  // Fallback defaults based on class code description
+  // This handles cases where the specific doc type isn't in the control codes
+  return {
+    party1Type: 'Party 1',
+    party2Type: 'Party 2',
+  };
 }
 
 /**
@@ -118,7 +154,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     }
 
     const [borough, block, lot] = bblParts;
-    
+
     // Validate BBL components are numeric
     if (isNaN(parseInt(borough)) || isNaN(parseInt(block)) || isNaN(parseInt(lot))) {
       throw new Error(`Invalid BBL components: borough=${borough}, block=${block}, lot=${lot}. All must be numeric.`);
@@ -151,7 +187,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
           },
         },
         sort: [{ document_date: { order: 'desc' } }],
-        size: 50,
+        size: 10000,
       });
     } catch (error) {
       console.error(`Error querying documents index for BBL ${bbl}:`, error);
@@ -178,14 +214,14 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     }
 
     // Fetch all parties associated with these documents
-    // Size 500 should handle most cases (typically 2-4 parties per document)
+    // Size 10000 to handle large transaction histories (typically 2-4 parties per document)
     let partiesResult;
     try {
       partiesResult = await search(partiesIndexName, {
         query: {
           terms: { 'party_document_id.keyword': documentIds },
         },
-        size: 500,
+        size: 10000,
       });
     } catch (error) {
       console.error(`Error querying parties index for document IDs:`, error);
@@ -197,7 +233,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
 
     const partiesHits = (partiesResult as { hits: { hits: Array<{ _source: AcrisParty }> } }).hits.hits;
     const parties = partiesHits.map(hit => hit._source);
-    
+
     if (parties.length === 0) {
       console.warn(`No parties found for ${documentIds.length} documents for BBL ${bbl}`);
     }
@@ -218,41 +254,37 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     // Combine documents with their associated parties
     const transactions: DocumentWithParties[] = documents.map(doc => {
       const docParties = partiesByDocId.get(doc.master_document_id || '') || [];
-      const isMortgage = doc.document_type === 'MTGE';
 
-      // Determine display labels based on transaction type
-      // DEED: Seller (party 1) transfers property to Buyer (party 2)
-      // MORTGAGE: Borrower (party 1) receives loan from Lender (party 2)
-      const party1Type = isMortgage ? 'Borrower' : 'Seller';
-      const party2Type = isMortgage ? 'Lender' : 'Buyer';
+      // Get party type labels from ACRIS control codes based on document type
+      const { party1Type, party2Type } = getPartyTypeLabels(doc.document_type);
 
       // Extract party names from ACRIS party records
-      // ACRIS uses two systems to identify party roles:
-      // 1. party_party_type: Numeric codes ('1' for grantor/seller/borrower, '2' for grantee/buyer/lender)
-      // 2. party_party_type_description: Text descriptions (e.g., "GRANTOR", "GRANTEE", "MORTGAGOR", "MORTGAGEE")
-      // We check both to ensure we capture all parties correctly
+      // ACRIS uses numeric codes to identify party roles:
+      // '1' for party1 (grantor/seller/borrower), '2' for party2 (grantee/buyer/lender), '3' for party3
       let party1 = '';
       let party2 = '';
 
       for (const party of docParties) {
-        const partyType = party.party_party_type?.toUpperCase() || '';
-        const partyTypeDesc = party.party_party_type_description?.toUpperCase() || '';
+        const partyType = party.party_party_type?.trim() || '';
+        const partyName = party.party_name?.trim() || '';
 
-        // Party 1: The seller (in deeds) or borrower (in mortgages)
-        // Match by: numeric code '1', or keywords like GRANTOR, SELLER, BORROWER, MORTGAGOR
-        if (partyType === '1' || partyTypeDesc.includes('GRANTOR') || partyTypeDesc.includes('SELLER') ||
-          partyTypeDesc.includes('BORROWER') || partyTypeDesc.includes('MORTGAGOR')) {
+        if (!partyName) continue; // Skip parties without names
+
+        // Party 1: Typically grantor/seller/borrower/assignor
+        if (partyType === '1') {
           if (party1) party1 += ', '; // Multiple parties are comma-separated
-          party1 += party.party_name || '';
+          party1 += partyName;
         }
-        // Party 2: The buyer (in deeds) or lender (in mortgages)
-        // Match by: numeric code '2', or keywords like GRANTEE, BUYER, LENDER, MORTGAGEE
-        else if (partyType === '2' || partyTypeDesc.includes('GRANTEE') || partyTypeDesc.includes('BUYER') ||
-          partyTypeDesc.includes('LENDER') || partyTypeDesc.includes('MORTGAGEE')) {
+        // Party 2: Typically grantee/buyer/lender/assignee
+        else if (partyType === '2') {
           if (party2) party2 += ', '; // Multiple parties are comma-separated
-          party2 += party.party_name || '';
+          party2 += partyName;
         }
       }
+
+      // Determine document category based on ACRIS class code
+      const isDeed = doc.class_code_description === 'DEEDS AND OTHER CONVEYANCES';
+      const isMortgage = doc.class_code_description === 'MORTGAGES & INSTRUMENTS';
 
       return {
         documentId: doc.master_document_id || '',
@@ -265,6 +297,8 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
         toParty: party2 || 'Unknown',   // Default to 'Unknown' if no party found
         party1Type,
         party2Type,
+        isDeed,
+        isMortgage,
       };
     });
 
@@ -272,19 +306,19 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     // Excludes transactions where amount is 0, null, or undefined
     // (These are often administrative filings without monetary value)
     const filteredTransactions = transactions.filter(t => t.documentAmount && t.documentAmount > 0);
-    
+
     console.info(`Fetched ${filteredTransactions.length} valid transactions for BBL ${bbl} (filtered from ${transactions.length} total)`);
-    
+
     return filteredTransactions;
   } catch (error) {
     // Log the full error for debugging
     console.error('Error fetching transactions with parties:', error);
-    
+
     // Re-throw with context if it's not already a custom error
     if (error instanceof Error && !error.message.includes('BBL')) {
       throw new Error(`Failed to fetch transactions for BBL ${bbl}: ${error.message}`);
     }
-    
+
     throw error;
   }
 }
