@@ -146,17 +146,12 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     const docsHits = (docsResult as { hits: { hits: Array<{ _source: AcrisDoc }> } }).hits.hits;
     const documents = docsHits.map(hit => hit._source);
 
-    // Filter to only DEED and MTGE document types for cleaner display
-    const filteredDocs = documents.filter(doc =>
-      doc.document_type === 'DEED' || doc.document_type === 'MTGE'
-    );
-
-    if (filteredDocs.length === 0) {
+    if (documents.length === 0) {
       return [];
     }
 
     // Get unique document IDs
-    const documentIds = filteredDocs
+    const documentIds = documents
       .map(doc => doc.master_document_id)
       .filter((id): id is string => !!id);
 
@@ -188,7 +183,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     }
 
     // Combine documents with parties
-    const transactions: DocumentWithParties[] = filteredDocs.map(doc => {
+    const transactions: DocumentWithParties[] = documents.map(doc => {
       const docParties = partiesByDocId.get(doc.master_document_id || '') || [];
       const isMortgage = doc.document_type === 'MTGE';
 

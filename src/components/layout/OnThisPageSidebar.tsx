@@ -58,9 +58,9 @@ export function OnThisPageSidebar({ sections, className, scrollContainer }: OnTh
 
   return (
     <div className={cn(
-      'hidden xl:block sticky top-6 self-start',
+      'hidden xl:block sticky top-20 self-start',
       'bg-background border border-foreground/10 rounded-lg shadow-lg',
-      'p-4 max-h-[calc(100vh-3rem)] overflow-y-auto',
+      'p-4 max-h-[calc(100vh-6rem)] overflow-y-auto',
       className
     )}>
       <h3 className="text-sm font-semibold text-foreground mb-3">On This Page</h3>
