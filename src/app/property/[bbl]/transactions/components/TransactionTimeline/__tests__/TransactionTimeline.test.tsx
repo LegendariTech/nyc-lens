@@ -24,11 +24,16 @@ describe('TransactionTimeline', () => {
             docType: 'DEED',
             date: '2025-06-16',
             amount: 1000000,
-            party1: 'SELLER A',
-            party2: 'BUYER A',
+            party1: ['SELLER A'],
+            party2: ['BUYER A'],
             party1Type: 'Seller',
             party2Type: 'Buyer',
             documentId: 'doc-1',
+            classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
+            isDeed: true,
+            isMortgage: false,
+            isUccLien: false,
+            isOtherDocument: false,
         },
         {
             id: 'tx-2',
@@ -36,11 +41,16 @@ describe('TransactionTimeline', () => {
             docType: 'MORTGAGE',
             date: '2024-03-15',
             amount: 5000000,
-            party1: 'BORROWER B',
-            party2: 'LENDER B',
+            party1: ['BORROWER B'],
+            party2: ['LENDER B'],
             party1Type: 'Borrower',
             party2Type: 'Lender',
             documentId: 'doc-2',
+            classCodeDescription: 'MORTGAGES & INSTRUMENTS',
+            isDeed: false,
+            isMortgage: true,
+            isUccLien: false,
+            isOtherDocument: false,
         },
         {
             id: 'tx-3',
@@ -48,11 +58,16 @@ describe('TransactionTimeline', () => {
             docType: 'DEED',
             date: '2023-10-10',
             amount: 2000000,
-            party1: 'SELLER C',
-            party2: 'BUYER C',
+            party1: ['SELLER C'],
+            party2: ['BUYER C'],
             party1Type: 'Seller',
             party2Type: 'Buyer',
             documentId: 'doc-3',
+            classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
+            isDeed: true,
+            isMortgage: false,
+            isUccLien: false,
+            isOtherDocument: false,
         },
     ];
 
@@ -60,7 +75,6 @@ describe('TransactionTimeline', () => {
         it('should render empty state when no transactions provided', () => {
             render(<TransactionTimeline transactions={[]} />);
 
-            expect(screen.getByText('Transaction Timeline')).toBeInTheDocument();
             expect(screen.getByText('No deed or mortgage transactions found for this property.')).toBeInTheDocument();
         });
 
@@ -75,7 +89,6 @@ describe('TransactionTimeline', () => {
         it('should render timeline with transactions', () => {
             render(<TransactionTimeline transactions={mockTransactions} />);
 
-            expect(screen.getByText('Transaction Timeline')).toBeInTheDocument();
             // Elements appear in both desktop and mobile views
             expect(screen.getAllByText('SELLER A').length).toBeGreaterThan(0);
             expect(screen.getAllByText('BORROWER B').length).toBeGreaterThan(0);
@@ -147,13 +160,6 @@ describe('TransactionTimeline', () => {
             const region = container.querySelector('[role="region"]');
             expect(region).toBeInTheDocument();
             expect(region).toHaveAttribute('aria-label', 'Property transaction timeline');
-        });
-
-        it('should have aria-hidden on decorative icon', () => {
-            const { container } = render(<TransactionTimeline transactions={mockTransactions} />);
-
-            const icon = container.querySelector('[aria-hidden="true"]');
-            expect(icon).toBeInTheDocument();
         });
     });
 

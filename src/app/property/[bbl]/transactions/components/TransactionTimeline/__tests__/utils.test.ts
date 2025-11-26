@@ -61,6 +61,8 @@ describe('TransactionTimeline Utils', () => {
                 toParty: 'BUYER INC',
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
+                isDeed: true,
+                isMortgage: false,
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -76,6 +78,9 @@ describe('TransactionTimeline Utils', () => {
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 documentId: 'DOC123',
+                classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
+                isDeed: true,
+                isMortgage: false,
             });
         });
 
@@ -91,6 +96,8 @@ describe('TransactionTimeline Utils', () => {
                 toParty: 'LENDER BANK',
                 party1Type: 'Borrower',
                 party2Type: 'Lender',
+                isDeed: false,
+                isMortgage: true,
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -106,6 +113,9 @@ describe('TransactionTimeline Utils', () => {
                 party1Type: 'Borrower',
                 party2Type: 'Lender',
                 documentId: 'DOC456',
+                classCodeDescription: 'MORTGAGES & INSTRUMENTS',
+                isDeed: false,
+                isMortgage: true,
             });
         });
 
@@ -121,6 +131,8 @@ describe('TransactionTimeline Utils', () => {
                 toParty: 'Unknown',
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
+                isDeed: true,
+                isMortgage: false,
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -141,6 +153,8 @@ describe('TransactionTimeline Utils', () => {
                 toParty: 'PARTY B',
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
+                isDeed: true,
+                isMortgage: false,
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -161,12 +175,17 @@ describe('TransactionTimeline Utils', () => {
                 toParty: 'B',
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
+                isDeed: true,
+                isMortgage: false,
             };
 
             const mtgeDoc: DocumentWithParties = {
                 ...deedDoc,
                 documentId: 'DOC2',
                 documentType: 'MTGE',
+                classCodeDescription: 'MORTGAGES & INSTRUMENTS',
+                isDeed: false,
+                isMortgage: true,
             };
 
             expect(mapDocumentToTransaction(deedDoc).type).toBe('DEED');

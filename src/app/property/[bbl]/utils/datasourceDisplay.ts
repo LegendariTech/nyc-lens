@@ -51,7 +51,7 @@ export function getFieldMetadata(
   return metadata?.columns.find((col) => col.fieldName === fieldName);
 }
 
-type SectionFieldFormat = 'currency' | 'number' | 'percentage';
+type SectionFieldFormat = 'currency' | 'number' | 'percentage' | 'year';
 
 /**
  * Generic section structure for data display

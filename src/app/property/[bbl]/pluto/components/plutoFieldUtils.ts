@@ -48,7 +48,7 @@ export function formatPlutoField(field: DataField, metadata: DatasourceMetadata 
   let formattedValue = formatValue(
     field.value as string | number | boolean | null | undefined,
     columnMetadata,
-    field.format as 'number' | 'currency' | 'percentage' | undefined
+    field.format as 'number' | 'currency' | 'percentage' | 'year' | undefined
   );
 
   if (field.fieldName === 'cd' && typeof field.value === 'number') {

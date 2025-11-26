@@ -99,12 +99,14 @@ export interface DocumentWithParties {
   documentDate: string;
   documentAmount: number;
   classCodeDescription: string;
-  fromParty: string;
-  toParty: string;
+  fromParty: string[];
+  toParty: string[];
   party1Type: string;
   party2Type: string;
   isDeed: boolean;
   isMortgage: boolean;
+  isUccLien: boolean;
+  isOtherDocument: boolean;
 }
 
 /**
@@ -141,7 +143,7 @@ function getPartyTypeLabels(docType: string): { party1Type: string; party2Type: 
 }
 
 /**
- * Fetch deed and mortgage transactions with party information
+ * Fetch all ACRIS transactions with party information
  * @param bbl - BBL in format "1-13-1" (borough-block-lot with hyphens)
  * @returns Array of documents with party information
  */
@@ -160,14 +162,13 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
       throw new Error(`Invalid BBL components: borough=${borough}, block=${block}, lot=${lot}. All must be numeric.`);
     }
 
-    // Query for DEED and MORTGAGE documents
+    // Query for all documents
     const documentsIndexName = process.env.ELASTICSEARCH_DOCUMENTS_INDEX_NAME || 'acris_documents_v_7_1';
     const partiesIndexName = 'acris_parties_v_8_1';
 
-    // Fetch documents that are DEEDs or MORTGAGEs
+    // Fetch all documents for this BBL
     // Using Elasticsearch boolean query with:
     // - must: BBL components must match exactly
-    // - should: Document must be either a DEED or MORTGAGE (minimum_should_match: 1)
     // - sort: Most recent transactions first
     let docsResult;
     try {
@@ -179,11 +180,6 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
               { term: { 'block.integer': parseInt(block) } },
               { term: { 'lot.integer': parseInt(lot) } },
             ],
-            should: [
-              { term: { 'class_code_description.keyword': 'DEEDS AND OTHER CONVEYANCES' } },
-              { term: { 'class_code_description.keyword': 'MORTGAGES & INSTRUMENTS' } },
-            ],
-            minimum_should_match: 1,
           },
         },
         sort: [{ document_date: { order: 'desc' } }],
@@ -198,7 +194,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     const documents = docsHits.map(hit => hit._source);
 
     if (documents.length === 0) {
-      console.info(`No deed or mortgage documents found for BBL ${bbl}`);
+      console.info(`No documents found for BBL ${bbl}`);
       return [];
     }
 
@@ -261,8 +257,8 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
       // Extract party names from ACRIS party records
       // ACRIS uses numeric codes to identify party roles:
       // '1' for party1 (grantor/seller/borrower), '2' for party2 (grantee/buyer/lender), '3' for party3
-      let party1 = '';
-      let party2 = '';
+      const party1: string[] = [];
+      const party2: string[] = [];
 
       for (const party of docParties) {
         const partyType = party.party_party_type?.trim() || '';
@@ -272,19 +268,19 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
 
         // Party 1: Typically grantor/seller/borrower/assignor
         if (partyType === '1') {
-          if (party1) party1 += ', '; // Multiple parties are comma-separated
-          party1 += partyName;
+          party1.push(partyName);
         }
         // Party 2: Typically grantee/buyer/lender/assignee
         else if (partyType === '2') {
-          if (party2) party2 += ', '; // Multiple parties are comma-separated
-          party2 += partyName;
+          party2.push(partyName);
         }
       }
 
       // Determine document category based on ACRIS class code
       const isDeed = doc.class_code_description === 'DEEDS AND OTHER CONVEYANCES';
       const isMortgage = doc.class_code_description === 'MORTGAGES & INSTRUMENTS';
+      const isUccLien = doc.class_code_description === 'UCC AND FEDERAL LIENS';
+      const isOtherDocument = doc.class_code_description === 'OTHER DOCUMENTS';
 
       return {
         documentId: doc.master_document_id || '',
@@ -293,23 +289,18 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
         documentDate: doc.document_date,
         documentAmount: doc.document_amount,
         classCodeDescription: doc.class_code_description,
-        fromParty: party1 || 'Unknown', // Default to 'Unknown' if no party found
-        toParty: party2 || 'Unknown',   // Default to 'Unknown' if no party found
+        fromParty: party1.length > 0 ? party1 : ['Unknown'], // Default to ['Unknown'] if no party found
+        toParty: party2.length > 0 ? party2 : ['Unknown'],   // Default to ['Unknown'] if no party found
         party1Type,
         party2Type,
         isDeed,
         isMortgage,
+        isUccLien,
+        isOtherDocument,
       };
     });
 
-    // Filter out transactions with invalid amounts
-    // Excludes transactions where amount is 0, null, or undefined
-    // (These are often administrative filings without monetary value)
-    const filteredTransactions = transactions.filter(t => t.documentAmount && t.documentAmount > 0);
-
-    console.info(`Fetched ${filteredTransactions.length} valid transactions for BBL ${bbl} (filtered from ${transactions.length} total)`);
-
-    return filteredTransactions;
+    return transactions;
   } catch (error) {
     // Log the full error for debugging
     console.error('Error fetching transactions with parties:', error);

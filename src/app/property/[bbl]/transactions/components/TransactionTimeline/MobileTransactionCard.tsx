@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn';
 import { Transaction } from './types';
-import { formatCurrency, formatDate } from './utils';
+import { formatCurrency, formatDate, getCategoryMetadata } from './utils';
 import { DocumentIcon } from './icons';
 
 interface MobileTransactionCardProps {
@@ -8,14 +8,14 @@ interface MobileTransactionCardProps {
 }
 
 export function MobileTransactionCard({ transaction }: MobileTransactionCardProps) {
-  const { isDeed } = transaction;
+  const categoryMetadata = getCategoryMetadata(transaction);
 
   return (
     <div className="flex-1 pb-4">
       <div
         className={cn(
           'relative rounded-lg border bg-card p-3 shadow-md',
-          isDeed ? 'border-amber-500/40' : 'border-blue-500/40'
+          `${categoryMetadata.borderColor}/40`
         )}
       >
         <div className="space-y-2">
@@ -23,9 +23,13 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             <span
               className={cn(
                 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold uppercase border',
-                isDeed
+                categoryMetadata.key === 'deed'
                   ? 'border-amber-500/50 text-amber-500 bg-amber-500/10'
-                  : 'bg-blue-500 text-white border-blue-500'
+                  : categoryMetadata.key === 'mortgage'
+                    ? 'bg-blue-500 text-white border-blue-500'
+                    : categoryMetadata.key === 'ucc-lien'
+                      ? 'border-red-500/50 text-red-500 bg-red-500/10'
+                      : 'border-gray-500/50 text-gray-500 bg-gray-500/10'
               )}
             >
               {transaction.type}
@@ -33,7 +37,8 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             <span
               className={cn(
                 'text-xs font-semibold',
-                isDeed ? 'text-amber-500' : 'text-blue-500'
+                categoryMetadata.textColor,
+                categoryMetadata.darkTextColor
               )}
             >
               {formatDate(transaction.date)}
@@ -48,13 +53,13 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             <div className="flex items-start gap-1">
               <span className="text-foreground/50 shrink-0">{transaction.party1Type}:</span>
               <span className="font-medium text-foreground">
-                {transaction.party1}
+                {transaction.party1.join(', ')}
               </span>
             </div>
             <div className="flex items-start gap-1">
               <span className="text-foreground/50 shrink-0">{transaction.party2Type}:</span>
               <span className="font-medium text-foreground">
-                {transaction.party2}
+                {transaction.party2.join(', ')}
               </span>
             </div>
             <div className="flex items-start gap-1 pt-1 border-t border-foreground/10">

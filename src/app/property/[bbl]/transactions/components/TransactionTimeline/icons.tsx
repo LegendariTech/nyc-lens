@@ -26,15 +26,23 @@ export function DocumentIcon({ className }: { className?: string }) {
             xmlns="http://www.w3.org/2000/svg"
             className={className}
         >
+            {/* External link icon - indicates opening in new tab/platform */}
             <path
-                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
             />
             <path
-                d="M14 2v6h6"
+                d="M15 3h6v6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M10 14L21 3"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"

@@ -1,20 +1,61 @@
 import { cn } from '@/utils/cn';
 import { Transaction } from './types';
-import { formatCurrency } from './utils';
+import { formatCurrency, getCategoryMetadata } from './utils';
 import { DocumentIcon } from './icons';
+import { useState } from 'react';
 
 interface TransactionCardProps {
     transaction: Transaction;
 }
 
+interface PartyListProps {
+    parties: string[];
+}
+
+function PartyList({ parties }: PartyListProps) {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    if (parties.length <= 1) {
+        return (
+            <div className="font-medium text-foreground flex flex-col">
+                {parties.map((name, index) => (
+                    <span key={index}>{name}</span>
+                ))}
+            </div>
+        );
+    }
+
+    return (
+        <div className="font-medium text-foreground">
+            <div className="flex flex-wrap items-center gap-1">
+                <span>{parties[0]}</span>
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-foreground/60 hover:text-foreground transition-colors text-xs cursor-pointer"
+                    type="button"
+                >
+                    {isExpanded ? '- show less' : `+ ${parties.length - 1} more`}
+                </button>
+            </div>
+            {isExpanded && (
+                <div className="flex flex-col mt-1">
+                    {parties.slice(1).map((name, index) => (
+                        <span key={index + 1}>{name}</span>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export function TransactionCard({ transaction }: TransactionCardProps) {
-    const { isDeed } = transaction;
+    const categoryMetadata = getCategoryMetadata(transaction);
 
     return (
         <div
             className={cn(
-                'relative w-full max-w-md rounded-lg border bg-card p-3 shadow-md transition-all hover:shadow-lg hover:scale-[1.02]',
-                isDeed ? 'border-amber-500/40' : 'border-blue-500/40'
+                'relative w-full max-w-md rounded-lg border bg-card p-3 shadow-md',
+                `${categoryMetadata.borderColor}/40`
             )}
         >
             <div className="space-y-2">
@@ -23,9 +64,13 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                     <span
                         className={cn(
                             'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border',
-                            isDeed
+                            categoryMetadata.key === 'deed'
                                 ? 'border-amber-500/50 text-amber-500 bg-amber-500/10'
-                                : 'bg-blue-500 text-white border-blue-500'
+                                : categoryMetadata.key === 'mortgage'
+                                    ? 'bg-blue-500 text-white border-blue-500'
+                                    : categoryMetadata.key === 'ucc-lien'
+                                        ? 'border-red-500/50 text-red-500 bg-red-500/10'
+                                        : 'border-gray-500/50 text-gray-500 bg-gray-500/10'
                         )}
                     >
                         {transaction.type}
@@ -39,11 +84,11 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                 <div className="space-y-1 text-[11px]">
                     <div className="flex items-start gap-1">
                         <span className="text-foreground/50 shrink-0">{transaction.party1Type}:</span>
-                        <span className="font-medium text-foreground">{transaction.party1}</span>
+                        <PartyList parties={transaction.party1} />
                     </div>
                     <div className="flex items-start gap-1">
                         <span className="text-foreground/50 shrink-0">{transaction.party2Type}:</span>
-                        <span className="font-medium text-foreground">{transaction.party2}</span>
+                        <PartyList parties={transaction.party2} />
                     </div>
                     <div className="flex items-start gap-1 pt-1 border-t border-foreground/10">
                         <span className="text-foreground/50 shrink-0">Doc Type:</span>

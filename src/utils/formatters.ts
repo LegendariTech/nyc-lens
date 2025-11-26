@@ -20,7 +20,7 @@ export interface DatasourceColumnMetadata {
 export function formatValue(
   value: string | number | boolean | null | undefined,
   column?: DatasourceColumnMetadata,
-  fieldFormat?: 'currency' | 'number' | 'percentage'
+  fieldFormat?: 'currency' | 'number' | 'percentage' | 'year'
 ): string {
   if (value === null || value === undefined || value === '') {
     return 'N/A';
@@ -33,6 +33,11 @@ export function formatValue(
 
   // Handle numeric values with formatting
   if (typeof value === 'number') {
+    // Check for year formatting - always display without commas
+    if (fieldFormat === 'year') {
+      return value.toString();
+    }
+
     // Check for currency formatting first
     if (fieldFormat === 'currency') {
       return new Intl.NumberFormat('en-US', {
@@ -56,6 +61,14 @@ export function formatValue(
       return value.toString();
     }
     return value.toLocaleString();
+  }
+
+  // Handle string values that should be formatted as years
+  if (typeof value === 'string' && fieldFormat === 'year') {
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      return numericValue.toString();
+    }
   }
 
   // Handle string values that should be formatted as currency

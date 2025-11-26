@@ -74,6 +74,36 @@ describe('utils/formatters', () => {
       expect(formatValue('not a number', mockColumn, 'currency')).toBe('not a number');
       expect(formatValue('not a number', mockColumn, 'number')).toBe('not a number');
     });
+
+    it('formats year values without commas', () => {
+      expect(formatValue(1998, mockColumn, 'year')).toBe('1998');
+      expect(formatValue(2024, mockColumn, 'year')).toBe('2024');
+      expect(formatValue(1900, mockColumn, 'year')).toBe('1900');
+      expect(formatValue(2100, mockColumn, 'year')).toBe('2100');
+    });
+
+    it('formats string year values without commas', () => {
+      expect(formatValue('1998', mockColumn, 'year')).toBe('1998');
+      expect(formatValue('2024', mockColumn, 'year')).toBe('2024');
+      expect(formatValue('1900.0', mockColumn, 'year')).toBe('1900');
+    });
+
+    it('handles invalid year values', () => {
+      expect(formatValue('not a year', mockColumn, 'year')).toBe('not a year');
+      expect(formatValue('', mockColumn, 'year')).toBe('N/A');
+      expect(formatValue(null, mockColumn, 'year')).toBe('N/A');
+      expect(formatValue(undefined, mockColumn, 'year')).toBe('N/A');
+    });
+
+    it('formats year values ignoring noCommas metadata', () => {
+      const columnWithNoCommas: DatasourceColumnMetadata = {
+        ...mockColumn,
+        format: { noCommas: 'true' },
+      };
+      // Year format should always display without commas regardless of metadata
+      expect(formatValue(1998, columnWithNoCommas, 'year')).toBe('1998');
+      expect(formatValue(2024, columnWithNoCommas, 'year')).toBe('2024');
+    });
   });
 
   describe('formatTimestamp', () => {

@@ -1,5 +1,5 @@
 import type { DocumentWithParties } from '@/data/acris';
-import type { Transaction } from './types';
+import type { Transaction, DocumentCategory, CategoryMetadata } from './types';
 
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -17,6 +17,82 @@ export function formatDate(dateStr: string): string {
     day: 'numeric',
     year: 'numeric',
   });
+}
+
+/**
+ * Category metadata for different document types
+ */
+export const CATEGORY_METADATA: Record<DocumentCategory, CategoryMetadata> = {
+  deed: {
+    key: 'deed',
+    label: 'Deed',
+    pluralLabel: 'Deeds',
+    color: 'amber-500',
+    borderColor: 'border-amber-500',
+    bgColor: 'bg-amber-500',
+    textColor: 'text-amber-600',
+    darkTextColor: 'dark:text-amber-400',
+    filterBgActive: 'bg-amber-500/10',
+    filterTextActive: 'text-amber-600 dark:text-amber-400',
+    filterBorderActive: 'border-amber-500/50',
+  },
+  mortgage: {
+    key: 'mortgage',
+    label: 'Mortgage',
+    pluralLabel: 'Mortgages',
+    color: 'blue-500',
+    borderColor: 'border-blue-500',
+    bgColor: 'bg-blue-500',
+    textColor: 'text-blue-600',
+    darkTextColor: 'dark:text-blue-400',
+    filterBgActive: 'bg-blue-500/10',
+    filterTextActive: 'text-blue-600 dark:text-blue-400',
+    filterBorderActive: 'border-blue-500/50',
+  },
+  'ucc-lien': {
+    key: 'ucc-lien',
+    label: 'UCC/Lien',
+    pluralLabel: 'UCC & Liens',
+    color: 'red-500',
+    borderColor: 'border-red-500',
+    bgColor: 'bg-red-500',
+    textColor: 'text-red-600',
+    darkTextColor: 'dark:text-red-400',
+    filterBgActive: 'bg-red-500/10',
+    filterTextActive: 'text-red-600 dark:text-red-400',
+    filterBorderActive: 'border-red-500/50',
+  },
+  other: {
+    key: 'other',
+    label: 'Other',
+    pluralLabel: 'Other Documents',
+    color: 'gray-500',
+    borderColor: 'border-gray-500',
+    bgColor: 'bg-gray-500',
+    textColor: 'text-gray-600',
+    darkTextColor: 'dark:text-gray-400',
+    filterBgActive: 'bg-gray-500/10',
+    filterTextActive: 'text-gray-600 dark:text-gray-400',
+    filterBorderActive: 'border-gray-500/50',
+  },
+};
+
+/**
+ * Get the category of a transaction
+ */
+export function getTransactionCategory(transaction: Transaction): DocumentCategory {
+  if (transaction.isDeed) return 'deed';
+  if (transaction.isMortgage) return 'mortgage';
+  if (transaction.isUccLien) return 'ucc-lien';
+  return 'other';
+}
+
+/**
+ * Get category metadata for a transaction
+ */
+export function getCategoryMetadata(transaction: Transaction): CategoryMetadata {
+  const category = getTransactionCategory(transaction);
+  return CATEGORY_METADATA[category];
 }
 
 /**
@@ -41,6 +117,8 @@ export function mapDocumentToTransaction(doc: DocumentWithParties): Transaction 
     classCodeDescription: doc.classCodeDescription,
     isDeed: doc.isDeed,
     isMortgage: doc.isMortgage,
+    isUccLien: doc.isUccLien,
+    isOtherDocument: doc.isOtherDocument,
   };
 }
 

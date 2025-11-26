@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import { cn } from '@/utils/cn';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { OnThisPageSidebar } from '@/components/layout/OnThisPageSidebar';
-import { ClockIcon } from './icons';
 import { DesktopTimeline } from './DesktopTimeline';
 import { MobileTimeline } from './MobileTimeline';
 import { Legend } from './Legend';
-import type { Transaction } from './types';
+import type { Transaction, DocumentCategory } from './types';
+import { getTransactionCategory } from './utils';
 
 // Re-export types for consumers
 
@@ -18,32 +18,73 @@ interface TransactionTimelineProps {
 }
 
 export function TransactionTimeline({ transactions, className }: TransactionTimelineProps) {
-  // Filter state
-  const [showDeeds, setShowDeeds] = useState(true);
-  const [showMortgages, setShowMortgages] = useState(true);
+  // Filter state - by default show only deeds and mortgages
+  const [visibleCategories, setVisibleCategories] = useState<Set<DocumentCategory>>(
+    new Set(['deed', 'mortgage'])
+  );
 
-  // Count deeds and mortgages
-  const { deedCount, mortgageCount } = useMemo(() => {
-    return transactions.reduce(
-      (acc, t) => {
-        if (t.isDeed) acc.deedCount++;
-        if (t.isMortgage) acc.mortgageCount++;
-        return acc;
-      },
-      { deedCount: 0, mortgageCount: 0 }
-    );
-  }, [transactions]);
+  // State for showing/hiding zero amount documents (default: hide them)
+  const [showZeroAmount, setShowZeroAmount] = useState(false);
 
-  // Sort and filter transactions by date (newest first) and type
+  // Toggle category visibility
+  const toggleCategory = (category: DocumentCategory) => {
+    setVisibleCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
+
+  // Toggle zero amount filter
+  const toggleZeroAmount = () => {
+    setShowZeroAmount(prev => !prev);
+  };
+
+  // Count transactions by category (respecting the zero amount filter)
+  const categoryCounts = useMemo(() => {
+    return transactions
+      .filter(t => {
+        // Apply the same amount filter as sortedTransactions
+        return showZeroAmount || (t.amount && t.amount > 0);
+      })
+      .reduce(
+        (acc, t) => {
+          const category = getTransactionCategory(t);
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        },
+        {} as Record<DocumentCategory, number>
+      );
+  }, [transactions, showZeroAmount]);
+
+  // Create filter data for Legend component
+  const filters = useMemo(() => {
+    const categories: DocumentCategory[] = ['deed', 'mortgage', 'ucc-lien', 'other'];
+    return categories.map(category => ({
+      category,
+      isVisible: visibleCategories.has(category),
+      count: categoryCounts[category] || 0,
+    }));
+  }, [visibleCategories, categoryCounts]);
+
+  // Sort and filter transactions by date (newest first), category, and amount
   const sortedTransactions = useMemo(
     () => [...transactions]
       .filter(t => {
-        if (!showDeeds && t.isDeed) return false;
-        if (!showMortgages && t.isMortgage) return false;
-        return true;
+        const category = getTransactionCategory(t);
+        const categoryMatch = visibleCategories.has(category);
+        
+        // Filter by amount if showZeroAmount is false
+        const amountMatch = showZeroAmount || (t.amount && t.amount > 0);
+        
+        return categoryMatch && amountMatch;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-    [transactions, showDeeds, showMortgages]
+    [transactions, visibleCategories, showZeroAmount]
   );
 
   // Extract unique years from transactions for "On This Page" navigation
@@ -76,19 +117,13 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
     return result;
   }, [sortedTransactions]);
 
-  // Empty state
-  if (sortedTransactions.length === 0) {
+  // Empty state - no transactions at all
+  if (transactions.length === 0) {
     return (
       <Card className={className}>
-        <CardHeader className="flex flex-row items-center gap-3 pb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500">
-            <ClockIcon className="h-4 w-4 text-white" />
-          </div>
-          <CardTitle className="text-lg">Transaction Timeline</CardTitle>
-        </CardHeader>
         <CardContent>
           <p className="text-sm text-foreground/70">
-            No deed or mortgage transactions found for this property.
+            No transactions found for this property.
           </p>
         </CardContent>
       </Card>
@@ -99,21 +134,13 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
     <div className="flex xl:gap-6">
       {/* Main timeline content */}
       <Card className={cn('flex-1 min-w-0', className)} role="region" aria-label="Property transaction timeline">
-        <CardHeader className="flex flex-row items-center gap-2 pb-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500" aria-hidden="true">
-            <ClockIcon className="h-4 w-4 text-white" />
-          </div>
-          <CardTitle className="text-lg">Transaction Timeline</CardTitle>
-        </CardHeader>
         <CardContent>
           {/* Legend with filters */}
           <Legend
-            showDeeds={showDeeds}
-            showMortgages={showMortgages}
-            onToggleDeeds={() => setShowDeeds(!showDeeds)}
-            onToggleMortgages={() => setShowMortgages(!showMortgages)}
-            deedCount={deedCount}
-            mortgageCount={mortgageCount}
+            filters={filters}
+            onToggleCategory={toggleCategory}
+            showZeroAmount={showZeroAmount}
+            onToggleZeroAmount={toggleZeroAmount}
           />
 
           {/* Timeline content */}

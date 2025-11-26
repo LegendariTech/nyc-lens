@@ -28,9 +28,9 @@ export const plutoSections: SectionDefinition<PlutoData>[] = [
     title: 'Building Information',
     fields: [
       { label: 'Building Class', fieldName: 'bldgclass' },
-      { label: 'Year Built', fieldName: 'yearbuilt' },
-      { label: 'Year Altered 1', fieldName: 'yearalter1' },
-      { label: 'Year Altered 2', fieldName: 'yearalter2' },
+      { label: 'Year Built', fieldName: 'yearbuilt', format: 'year' },
+      { label: 'Year Altered 1', fieldName: 'yearalter1', format: 'year' },
+      { label: 'Year Altered 2', fieldName: 'yearalter2', format: 'year' },
       { label: 'Number of Buildings', fieldName: 'numbldgs' },
       { label: 'Number of Floors', fieldName: 'numfloors', format: 'number' },
       { label: 'Building Area (sq ft)', fieldName: 'bldgarea', format: 'number' },

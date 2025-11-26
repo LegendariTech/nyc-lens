@@ -10,11 +10,16 @@ describe('TransactionCard', () => {
         docType: 'DEED',
         date: '2025-06-16',
         amount: 1000000,
-        party1: 'SELLER LLC',
-        party2: 'BUYER INC',
+        party1: ['SELLER LLC'],
+        party2: ['BUYER INC'],
         party1Type: 'Seller',
         party2Type: 'Buyer',
         documentId: 'deed-123',
+        classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
+        isDeed: true,
+        isMortgage: false,
+        isUccLien: false,
+        isOtherDocument: false,
     };
 
     const mockMortgageTransaction: Transaction = {
@@ -23,11 +28,16 @@ describe('TransactionCard', () => {
         docType: 'MORTGAGE',
         date: '2023-10-10',
         amount: 10403747,
-        party1: 'BORROWER CORP',
-        party2: 'LENDER BANK',
+        party1: ['BORROWER CORP'],
+        party2: ['LENDER BANK'],
         party1Type: 'Borrower',
         party2Type: 'Lender',
         documentId: 'mtge-456',
+        classCodeDescription: 'MORTGAGES & INSTRUMENTS',
+        isDeed: false,
+        isMortgage: true,
+        isUccLien: false,
+        isOtherDocument: false,
     };
 
     describe('DEED transactions', () => {
@@ -72,6 +82,54 @@ describe('TransactionCard', () => {
             expect(screen.getByText('BORROWER CORP')).toBeInTheDocument();
             expect(screen.getByText('Lender:')).toBeInTheDocument();
             expect(screen.getByText('LENDER BANK')).toBeInTheDocument();
+        });
+    });
+
+    describe('UCC LIEN transactions', () => {
+        it('should render UCC lien transaction with correct styling', () => {
+            const mockUccTransaction: Transaction = {
+                ...mockDeedTransaction,
+                id: 'ucc-789',
+                type: 'UCC3',
+                docType: 'UCC3 FINANCING STATEMENT',
+                classCodeDescription: 'UCC AND FEDERAL LIENS',
+                isDeed: false,
+                isMortgage: false,
+                isUccLien: true,
+                isOtherDocument: false,
+            };
+
+            const { container } = render(<TransactionCard transaction={mockUccTransaction} />);
+
+            expect(screen.getByText('UCC3')).toBeInTheDocument();
+
+            // Check for red border (UCC lien color)
+            const card = container.querySelector('.border-red-500\\/40');
+            expect(card).toBeInTheDocument();
+        });
+    });
+
+    describe('OTHER DOCUMENTS transactions', () => {
+        it('should render other document transaction with correct styling', () => {
+            const mockOtherTransaction: Transaction = {
+                ...mockDeedTransaction,
+                id: 'other-999',
+                type: 'CERT',
+                docType: 'CERTIFICATE',
+                classCodeDescription: 'OTHER DOCUMENTS',
+                isDeed: false,
+                isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: true,
+            };
+
+            const { container } = render(<TransactionCard transaction={mockOtherTransaction} />);
+
+            expect(screen.getByText('CERT')).toBeInTheDocument();
+
+            // Check for gray border (other document color)
+            const card = container.querySelector('.border-gray-500\\/40');
+            expect(card).toBeInTheDocument();
         });
     });
 
@@ -156,8 +214,8 @@ describe('TransactionCard', () => {
         it('should handle long party names', () => {
             const transaction: Transaction = {
                 ...mockDeedTransaction,
-                party1: 'VERY LONG COMPANY NAME LLC WITH MANY WORDS AND CHARACTERS',
-                party2: 'ANOTHER EXTREMELY LONG BUSINESS NAME INCORPORATED',
+                party1: ['VERY LONG COMPANY NAME LLC WITH MANY WORDS AND CHARACTERS'],
+                party2: ['ANOTHER EXTREMELY LONG BUSINESS NAME INCORPORATED'],
             };
 
             render(<TransactionCard transaction={transaction} />);
@@ -166,24 +224,29 @@ describe('TransactionCard', () => {
             expect(screen.getByText('ANOTHER EXTREMELY LONG BUSINESS NAME INCORPORATED')).toBeInTheDocument();
         });
 
-        it('should handle multiple parties separated by commas', () => {
+        it('should handle multiple parties with show more button', () => {
             const transaction: Transaction = {
                 ...mockDeedTransaction,
-                party1: 'PARTY A, PARTY B, PARTY C',
-                party2: 'PARTY X, PARTY Y',
+                party1: ['PARTY A', 'PARTY B', 'PARTY C'],
+                party2: ['PARTY X', 'PARTY Y'],
             };
 
             render(<TransactionCard transaction={transaction} />);
 
-            expect(screen.getByText('PARTY A, PARTY B, PARTY C')).toBeInTheDocument();
-            expect(screen.getByText('PARTY X, PARTY Y')).toBeInTheDocument();
+            // First party should be visible
+            expect(screen.getByText('PARTY A')).toBeInTheDocument();
+            expect(screen.getByText('PARTY X')).toBeInTheDocument();
+
+            // Should show "show more" buttons
+            expect(screen.getByText('+ 2 more')).toBeInTheDocument();
+            expect(screen.getByText('+ 1 more')).toBeInTheDocument();
         });
 
         it('should handle unknown parties', () => {
             const transaction: Transaction = {
                 ...mockDeedTransaction,
-                party1: 'Unknown',
-                party2: 'Unknown',
+                party1: ['Unknown'],
+                party2: ['Unknown'],
             };
 
             render(<TransactionCard transaction={transaction} />);
@@ -193,15 +256,14 @@ describe('TransactionCard', () => {
         });
     });
 
-    describe('Hover effects', () => {
-        it('should have hover classes for card', () => {
+    describe('Card styling', () => {
+        it('should have proper card structure with shadow', () => {
             const { container } = render(<TransactionCard transaction={mockDeedTransaction} />);
 
-            const card = container.querySelector('.hover\\:shadow-lg');
+            const card = container.querySelector('.shadow-md');
             expect(card).toBeInTheDocument();
-
-            const scaleCard = container.querySelector('.hover\\:scale-\\[1\\.02\\]');
-            expect(scaleCard).toBeInTheDocument();
+            expect(card).toHaveClass('rounded-lg');
+            expect(card).toHaveClass('bg-card');
         });
     });
 });
