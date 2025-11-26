@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { PropertyPageLayout } from '../PropertyPageLayout';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
-import { TransactionTimeline } from './components/TransactionTimeline';
+import { TransactionsView } from './components/TransactionsView';
 import { mapDocumentToTransaction } from './components/TransactionTimeline/utils';
 
 interface TransactionsPageProps {
@@ -36,18 +36,18 @@ export default async function TransactionsPage({ params, searchParams }: Transac
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="transactions" address={address}>
-      <div className="space-y-6">
-        {error ? (
-          <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
-            <h3 className="mb-2 text-lg font-semibold text-red-600">Error Loading Transactions</h3>
-            <p className="text-sm text-red-600/80">{error}</p>
-          </div>
-        ) : (
-          <TransactionTimeline
-            transactions={transactions.map(mapDocumentToTransaction)}
-          />
-        )}
-      </div>
+      {error ? (
+        <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
+          <h3 className="mb-2 text-lg font-semibold text-red-600">Error Loading Transactions</h3>
+          <p className="text-sm text-red-600/80">{error}</p>
+        </div>
+      ) : (
+        <TransactionsView
+          transactions={transactions.map(mapDocumentToTransaction)}
+          bbl={bbl}
+          address={address}
+        />
+      )}
     </PropertyPageLayout>
   );
 }

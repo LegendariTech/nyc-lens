@@ -2,26 +2,14 @@
 
 import { AgGridReact } from 'ag-grid-react';
 import { useCallback, useImperativeHandle, useRef, forwardRef } from 'react';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { GridApi, GridReadyEvent, PaginationChangedEvent } from 'ag-grid-community';
-import { ServerSideRowModelModule, SetFilterModule, ColumnMenuModule, ContextMenuModule, SideBarModule, ColumnsToolPanelModule, FiltersToolPanelModule, MasterDetailModule, LicenseManager } from 'ag-grid-enterprise';
 import { myTheme } from '../theme';
 import { MAIN_MENU_ITEMS } from '../constants/menu';
 import { colDefs } from './columnDefs';
 import { createDatasource } from './datasource';
 import DetailCellRenderer from '../document/DocumentTable';
 
-LicenseManager.setLicenseKey('Using_this_{AG_Grid}_Enterprise_key_{AG-073142}_in_excess_of_the_licence_granted_is_not_permitted___Please_report_misuse_to_legal@ag-grid.com___For_help_with_changing_this_key_please_contact_info@ag-grid.com___{Tyler_Technologies}_is_granted_a_{Single_Application}_Developer_License_for_the_application_{Socrata}_only_for_{38}_Front-End_JavaScript_developers___All_Front-End_JavaScript_developers_working_on_{Socrata}_need_to_be_licensed___{Socrata}_has_been_granted_a_Deployment_License_Add-on_for_{2}_Production_Environments___This_key_works_with_{AG_Grid}_Enterprise_versions_released_before_{14_July_2026}____[v3]_[01]_MTc4Mzk4MzYwMDAwMA==953dd63b704319b712726e8a48b3898f')
-
-
-ModuleRegistry.registerModules([
-  AllCommunityModule,
-  SetFilterModule, ServerSideRowModelModule, ColumnMenuModule, ContextMenuModule,
-  SideBarModule,
-  ColumnsToolPanelModule,
-  FiltersToolPanelModule,
-  MasterDetailModule,
-]);
+// Note: AG Grid modules are registered globally in AgGridRegistry component
 
 export interface PropertyTableRef {
   resetFilters: () => void;

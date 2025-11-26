@@ -9,7 +9,20 @@ import { detailColDefs } from './columnDefs';
 import { myTheme } from '../theme';
 import PartiesDetailRenderer from '../party/PartyTable';
 
-function DetailCellRenderer(props: CustomCellRendererProps<AcrisRecord>) {
+// Minimal interface for what DocumentTable actually needs
+interface DocumentTableData {
+  borough: string;
+  block: string;
+  lot: string;
+  address?: string;
+}
+
+// Props can be either ag-Grid cell renderer props OR standalone props
+type DocumentTableProps =
+  | CustomCellRendererProps<AcrisRecord>
+  | { data: DocumentTableData };
+
+export function DocumentTable(props: DocumentTableProps) {
   const [rows, setRows] = useState<AcrisDoc[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,30 +67,24 @@ function DetailCellRenderer(props: CustomCellRendererProps<AcrisRecord>) {
   const defaultColDef = useMemo(() => ({ sortable: true, resizable: true }), []);
 
   return (
-    <div className='p-12 bg-background'>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 12 }}>
-        <div>
-          <b style={{}}>Recorded Documents:</b> {parent?.address}
-        </div>
-      </div>
-      <div style={{ width: '100%' }}>
-        <AgGridReact
-          theme={myTheme}
-          domLayout="autoHeight"
-          detailRowAutoHeight={true}
-          defaultColDef={defaultColDef}
-          columnDefs={detailColDefs}
-          rowData={rows}
-          loading={loading}
-          masterDetail={true}
-          isRowMaster={() => true}
-          detailCellRenderer={PartiesDetailRenderer}
-        />
-      </div>
+    <div style={{ width: '100%' }}>
+      <AgGridReact
+        theme={myTheme}
+        domLayout="autoHeight"
+        detailRowAutoHeight={true}
+        defaultColDef={defaultColDef}
+        columnDefs={detailColDefs}
+        rowData={rows}
+        loading={loading}
+        masterDetail={true}
+        isRowMaster={() => true}
+        detailCellRenderer={PartiesDetailRenderer}
+      />
     </div>
   );
 }
 
-export default DetailCellRenderer;
+// Default export for ag-Grid cell renderer compatibility
+export default DocumentTable;
 
 

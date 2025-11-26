@@ -6,6 +6,7 @@ import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { LocatorInit } from "@/components/LocatorInit";
+import { AgGridRegistry } from "@/components/AgGridRegistry";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+        <AgGridRegistry />
         <LocatorInit />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<SidebarNav />}>
