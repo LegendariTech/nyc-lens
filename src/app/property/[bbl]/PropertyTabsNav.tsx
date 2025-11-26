@@ -84,9 +84,9 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   ];
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Tabs */}
-      <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1">
+      <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1 overflow-x-auto overflow-y-hidden scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.value}
@@ -95,7 +95,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
               inline-flex items-center justify-center gap-2
               whitespace-nowrap rounded-sm px-3 py-1.5
               text-sm font-medium transition-all
-              cursor-pointer
+              cursor-pointer shrink-0
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
               ${currentTab === tab.value
                 ? 'bg-background text-foreground shadow-sm'
@@ -108,38 +108,40 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
         ))}
       </div>
 
-      {/* Ask AI Button */}
-      <ButtonGroup
-        label="Ask AI"
-        icon={
-          <svg className="size-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12 2L2 7L12 12L22 7L12 2Z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M2 17L12 22L22 17"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M2 12L12 17L22 12"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        }
-        items={aiOptions}
-        variant="outline"
-        size="sm"
-      />
+      {/* Ask AI Button - Hidden on mobile */}
+      <div className="hidden lg:flex lg:justify-end">
+        <ButtonGroup
+          label="Ask AI"
+          icon={
+            <svg className="size-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 2L2 7L12 12L22 7L12 2Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M2 17L12 22L22 17"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M2 12L12 17L22 12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          items={aiOptions}
+          variant="outline"
+          size="sm"
+        />
+      </div>
     </div>
   );
 }

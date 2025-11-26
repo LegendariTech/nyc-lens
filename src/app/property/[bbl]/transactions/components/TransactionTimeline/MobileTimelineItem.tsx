@@ -1,5 +1,4 @@
 import { Transaction } from './types';
-import { TimelineDot } from './TimelineDot';
 import { MobileTransactionCard } from './MobileTransactionCard';
 
 interface MobileTimelineItemProps {
@@ -8,20 +7,12 @@ interface MobileTimelineItemProps {
 }
 
 export function MobileTimelineItem({ transaction, yearMarker }: MobileTimelineItemProps) {
-    const { isDeed } = transaction;
-
     return (
         <div
             id={yearMarker ? `year-${yearMarker}` : undefined}
-            className="flex gap-3"
         >
-            {/* Timeline dot */}
-            <TimelineDot isDeed={isDeed} />
-
-            {/* Transaction card */}
-            <div className="flex-1">
-                <MobileTransactionCard transaction={transaction} />
-            </div>
+            {/* Transaction card - full width */}
+            <MobileTransactionCard transaction={transaction} />
         </div>
     );
 }

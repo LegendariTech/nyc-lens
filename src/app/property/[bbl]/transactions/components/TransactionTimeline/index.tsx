@@ -77,10 +77,10 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
       .filter(t => {
         const category = getTransactionCategory(t);
         const categoryMatch = visibleCategories.has(category);
-        
+
         // Filter by amount if showZeroAmount is false
         const amountMatch = showZeroAmount || (t.amount && t.amount > 0);
-        
+
         return categoryMatch && amountMatch;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
@@ -133,8 +133,8 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
   return (
     <div className="flex xl:gap-6">
       {/* Main timeline content */}
-      <Card className={cn('flex-1 min-w-0', className)} role="region" aria-label="Property transaction timeline">
-        <CardContent>
+      <Card className={cn('flex-1 min-w-0 xl:border xl:shadow-sm border-none shadow-none', className)} role="region" aria-label="Property transaction timeline">
+        <CardContent className="p-3 xl:p-6">
           {/* Legend with filters */}
           <Legend
             filters={filters}

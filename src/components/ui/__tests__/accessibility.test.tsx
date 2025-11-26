@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -11,6 +12,15 @@ import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription }
 import { ButtonGroup } from '../ButtonGroup';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../Collapsible';
 import { DataFieldCard } from '../DataFieldCard';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from '../Dialog';
 
 describe('Accessibility Tests', () => {
   describe('Button', () => {
@@ -307,6 +317,127 @@ describe('Accessibility Tests', () => {
     it('should not have violations with empty state', async () => {
       const { container } = render(<DataFieldCard title="Details" fields={[]} />);
       const results = await axe(container);
+      expect(results.violations).toEqual([]);
+    });
+  });
+
+  describe('Dialog', () => {
+    it('should not have accessibility violations', async () => {
+      const user = userEvent.setup();
+      const { getByText } = render(
+        <Dialog>
+          <DialogTrigger asChild>
+            <button>Open Dialog</button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Accessible Dialog</DialogTitle>
+              <DialogDescription>This is an accessible dialog</DialogDescription>
+            </DialogHeader>
+            <DialogClose asChild>
+              <button>Close</button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
+      );
+
+      await user.click(getByText('Open Dialog'));
+
+      await waitFor(() => {
+        const dialog = document.querySelector('[role="dialog"]');
+        expect(dialog).toBeTruthy();
+      });
+
+      // Test the dialog element directly since it renders in a portal
+      const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
+      const results = await axe(dialog);
+      expect(results.violations).toEqual([]);
+    });
+
+    it('should have proper ARIA attributes', async () => {
+      const user = userEvent.setup();
+      const { getByText } = render(
+        <Dialog>
+          <DialogTrigger asChild>
+            <button>Open Dialog</button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>ARIA Dialog</DialogTitle>
+              <DialogDescription>Dialog with ARIA attributes</DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      );
+
+      await user.click(getByText('Open Dialog'));
+
+      await waitFor(() => {
+        const dialog = document.querySelector('[role="dialog"]');
+        expect(dialog).toBeTruthy();
+        expect(dialog?.getAttribute('aria-labelledby')).toBeTruthy();
+        expect(dialog?.getAttribute('aria-describedby')).toBeTruthy();
+      });
+    });
+
+    it('should not have violations with all size variants', async () => {
+      const sizes = ['sm', 'md', 'lg', 'xl', 'full'] as const;
+      for (const size of sizes) {
+        const user = userEvent.setup();
+        const { getByText, unmount } = render(
+          <Dialog>
+            <DialogTrigger asChild>
+              <button>Open Dialog {size}</button>
+            </DialogTrigger>
+            <DialogContent size={size}>
+              <DialogHeader>
+                <DialogTitle>Dialog</DialogTitle>
+                <DialogDescription>Size variant {size}</DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        );
+
+        await user.click(getByText(`Open Dialog ${size}`));
+
+        await waitFor(() => {
+          const dialog = document.querySelector('[role="dialog"]');
+          expect(dialog).toBeTruthy();
+        });
+
+        const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
+        const results = await axe(dialog);
+        expect(results.violations).toEqual([]);
+
+        unmount();
+      }
+    });
+
+    it('should not have violations without close button', async () => {
+      const user = userEvent.setup();
+      const { getByText } = render(
+        <Dialog>
+          <DialogTrigger asChild>
+            <button>Open Dialog</button>
+          </DialogTrigger>
+          <DialogContent showClose={false}>
+            <DialogHeader>
+              <DialogTitle>Dialog</DialogTitle>
+              <DialogDescription>Dialog without close button</DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      );
+
+      await user.click(getByText('Open Dialog'));
+
+      await waitFor(() => {
+        const dialog = document.querySelector('[role="dialog"]');
+        expect(dialog).toBeTruthy();
+      });
+
+      const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
+      const results = await axe(dialog);
       expect(results.violations).toEqual([]);
     });
   });

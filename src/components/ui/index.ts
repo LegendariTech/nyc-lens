@@ -21,6 +21,19 @@ export { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription }
 export { DataFieldCard } from './DataFieldCard';
 export type { DataField } from './DataFieldCard';
 export { DatasetInfoCard } from './DatasetInfoCard';
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './Dialog';
+export type { DialogContentProps } from './Dialog';
 export { FieldTooltip } from './FieldTooltip';
 export type { FieldTooltipProps } from './FieldTooltip';
 export { ThemeProvider, useTheme } from './ThemeProvider';

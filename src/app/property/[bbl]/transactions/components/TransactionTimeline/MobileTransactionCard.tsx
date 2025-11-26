@@ -2,9 +2,50 @@ import { cn } from '@/utils/cn';
 import { Transaction } from './types';
 import { formatCurrency, formatDate, getCategoryMetadata } from './utils';
 import { DocumentIcon } from './icons';
+import { useState } from 'react';
 
 interface MobileTransactionCardProps {
   transaction: Transaction;
+}
+
+interface PartyListProps {
+  parties: string[];
+}
+
+function PartyList({ parties }: PartyListProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (parties.length <= 1) {
+    return (
+      <div className="font-medium text-foreground flex flex-col">
+        {parties.map((name, index) => (
+          <span key={index}>{name}</span>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="font-medium text-foreground">
+      <div className="flex flex-wrap items-center gap-1">
+        <span>{parties[0]}</span>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-foreground/60 hover:text-foreground transition-colors text-xs cursor-pointer"
+          type="button"
+        >
+          {isExpanded ? '- show less' : `+ ${parties.length - 1} more`}
+        </button>
+      </div>
+      {isExpanded && (
+        <div className="flex flex-col mt-1">
+          {parties.slice(1).map((name, index) => (
+            <span key={index + 1}>{name}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function MobileTransactionCard({ transaction }: MobileTransactionCardProps) {
@@ -49,24 +90,20 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             {formatCurrency(transaction.amount)}
           </div>
 
-          <div className="space-y-1 text-sm">
-            <div className="flex items-start gap-1">
-              <span className="text-foreground/50 shrink-0">{transaction.party1Type}:</span>
-              <span className="font-medium text-foreground">
-                {transaction.party1.join(', ')}
-              </span>
+          <div className="space-y-2 text-sm">
+            <div>
+              <div className="text-foreground/50 text-xs mb-0.5">{transaction.party1Type}:</div>
+              <PartyList parties={transaction.party1} />
             </div>
-            <div className="flex items-start gap-1">
-              <span className="text-foreground/50 shrink-0">{transaction.party2Type}:</span>
-              <span className="font-medium text-foreground">
-                {transaction.party2.join(', ')}
-              </span>
+            <div>
+              <div className="text-foreground/50 text-xs mb-0.5">{transaction.party2Type}:</div>
+              <PartyList parties={transaction.party2} />
             </div>
-            <div className="flex items-start gap-1 pt-1 border-t border-foreground/10">
-              <span className="text-foreground/50 shrink-0">Doc Type:</span>
-              <span className="font-medium text-foreground">
+            <div className="pt-1 border-t border-foreground/10">
+              <div className="text-foreground/50 text-xs mb-0.5">Doc Type:</div>
+              <div className="font-medium text-foreground">
                 {transaction.docType}
-              </span>
+              </div>
             </div>
           </div>
         </div>
