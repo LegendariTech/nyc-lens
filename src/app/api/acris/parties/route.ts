@@ -43,9 +43,20 @@ export async function POST(req: NextRequest) {
 
     const res = await search(index, constrained);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];
-    const total = (res as { hits?: { total?: { value: number } } })?.hits?.total?.value ?? hits.length;
-    const rows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisParty[];
-    
+    const allRows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisParty[];
+
+    // Deduplicate parties by name - keep first occurrence
+    const seenNames = new Set<string>();
+    const rows = allRows.filter(party => {
+      const name = party.party_name?.trim();
+      if (!name || seenNames.has(name)) {
+        return false;
+      }
+      seenNames.add(name);
+      return true;
+    });
+
+    const total = rows.length;
     const response: AcrisPartiesResponse = { rows, total };
     return NextResponse.json(response);
   } catch (e) {

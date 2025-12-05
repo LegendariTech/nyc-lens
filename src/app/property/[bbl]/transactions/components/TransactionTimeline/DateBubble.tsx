@@ -1,19 +1,25 @@
 import { cn } from '@/utils/cn';
 import { formatDate } from './utils';
+import type { CategoryMetadata, DocumentCategory } from './types';
 
 interface DateBubbleProps {
   date: string;
-  isDeed: boolean;
+  categoryMetadata: CategoryMetadata;
 }
 
-export function DateBubble({ date, isDeed }: DateBubbleProps) {
+const categoryStyles: Record<DocumentCategory, string> = {
+  deed: 'border-amber-500 text-amber-500',
+  mortgage: 'border-blue-500 text-blue-500',
+  'ucc-lien': 'border-red-500 text-red-500',
+  other: 'border-gray-500 text-gray-500',
+};
+
+export function DateBubble({ date, categoryMetadata }: DateBubbleProps) {
   return (
     <div
       className={cn(
         'flex items-center justify-center rounded-full border-[3px] px-3 py-1 bg-card',
-        isDeed
-          ? 'border-amber-500 text-amber-500'
-          : 'border-blue-500 text-blue-500'
+        categoryStyles[categoryMetadata.key]
       )}
     >
       <span className="text-xs font-semibold whitespace-nowrap">

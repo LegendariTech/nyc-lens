@@ -21,10 +21,9 @@ describe('Legend', () => {
   it('renders all category buttons with counts', () => {
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    expect(screen.getByRole('button', { name: /deeds/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /mortgages/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ucc.*liens/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /other documents/i })).toBeInTheDocument();
+    // Check desktop version (hidden xl:flex)
+    const desktopButtons = screen.getAllByRole('button', { name: /deeds/i });
+    expect(desktopButtons.length).toBeGreaterThan(0);
 
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
@@ -36,8 +35,8 @@ describe('Legend', () => {
     const user = userEvent.setup();
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const deedButton = screen.getByRole('button', { name: /deeds/i });
-    await user.click(deedButton);
+    const deedButtons = screen.getAllByRole('button', { name: /deeds/i });
+    await user.click(deedButtons[0]);
 
     expect(mockOnToggleCategory).toHaveBeenCalledWith('deed');
   });
@@ -46,8 +45,8 @@ describe('Legend', () => {
     const user = userEvent.setup();
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const mortgageButton = screen.getByRole('button', { name: /mortgages/i });
-    await user.click(mortgageButton);
+    const mortgageButtons = screen.getAllByRole('button', { name: /mortgages/i });
+    await user.click(mortgageButtons[0]);
 
     expect(mockOnToggleCategory).toHaveBeenCalledWith('mortgage');
   });
@@ -56,8 +55,8 @@ describe('Legend', () => {
     const user = userEvent.setup();
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const uccButton = screen.getByRole('button', { name: /ucc.*liens/i });
-    await user.click(uccButton);
+    const uccButtons = screen.getAllByRole('button', { name: /ucc.*liens/i });
+    await user.click(uccButtons[0]);
 
     expect(mockOnToggleCategory).toHaveBeenCalledWith('ucc-lien');
   });
@@ -66,8 +65,8 @@ describe('Legend', () => {
     const user = userEvent.setup();
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const otherButton = screen.getByRole('button', { name: /other documents/i });
-    await user.click(otherButton);
+    const otherButtons = screen.getAllByRole('button', { name: /other documents/i });
+    await user.click(otherButtons[0]);
 
     expect(mockOnToggleCategory).toHaveBeenCalledWith('other');
   });
@@ -75,29 +74,30 @@ describe('Legend', () => {
   it('shows active state for visible categories', () => {
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const deedButton = screen.getByRole('button', { name: /deeds/i });
-    const mortgageButton = screen.getByRole('button', { name: /mortgages/i });
+    const deedButtons = screen.getAllByRole('button', { name: /deeds/i });
+    const mortgageButtons = screen.getAllByRole('button', { name: /mortgages/i });
 
-    expect(deedButton).toHaveAttribute('aria-pressed', 'true');
-    expect(mortgageButton).toHaveAttribute('aria-pressed', 'true');
+    expect(deedButtons[0]).toHaveAttribute('aria-pressed', 'true');
+    expect(mortgageButtons[0]).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('shows inactive state for hidden categories', () => {
     render(<Legend filters={defaultFilters} onToggleCategory={mockOnToggleCategory} />);
 
-    const uccButton = screen.getByRole('button', { name: /show ucc.*liens/i });
-    const otherButton = screen.getByRole('button', { name: /show other documents/i });
+    const uccButtons = screen.getAllByRole('button', { name: /show ucc.*liens/i });
+    const otherButtons = screen.getAllByRole('button', { name: /show other documents/i });
 
-    expect(uccButton).toHaveAttribute('aria-pressed', 'false');
-    expect(otherButton).toHaveAttribute('aria-pressed', 'false');
+    expect(uccButtons[0]).toHaveAttribute('aria-pressed', 'false');
+    expect(otherButtons[0]).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('displays correct counts for zero transactions', () => {
     const zeroFilters = defaultFilters.map(f => ({ ...f, count: 0 }));
     render(<Legend filters={zeroFilters} onToggleCategory={mockOnToggleCategory} />);
 
+    // There are both desktop and mobile versions of each button, so we get 8 elements
     const counts = screen.getAllByText('0');
-    expect(counts).toHaveLength(4);
+    expect(counts).toHaveLength(8);
   });
 });
 

@@ -3,6 +3,7 @@ import { DateBubble } from './DateBubble';
 import { TransactionCard } from './TransactionCard';
 import { ConnectorLine } from './ConnectorLine';
 import { TIMELINE_CONFIG } from './constants';
+import { getCategoryMetadata } from './utils';
 
 interface TimelineItemProps {
     transaction: Transaction;
@@ -10,7 +11,7 @@ interface TimelineItemProps {
 }
 
 export function TimelineItem({ transaction, yearMarker }: TimelineItemProps) {
-    const { isDeed } = transaction;
+    const categoryMetadata = getCategoryMetadata(transaction);
 
     return (
         <div
@@ -23,12 +24,12 @@ export function TimelineItem({ transaction, yearMarker }: TimelineItemProps) {
                 className="relative flex items-center justify-center shrink-0"
                 style={{ width: `${TIMELINE_CONFIG.DATE_BUBBLE_WIDTH}px` }}
             >
-                <DateBubble date={transaction.date} isDeed={isDeed} />
+                <DateBubble date={transaction.date} categoryMetadata={categoryMetadata} />
             </div>
 
             {/* Connector line - connected to middle of card */}
             <div className="-ml-1 flex items-center">
-                <ConnectorLine isDeed={isDeed} />
+                <ConnectorLine categoryMetadata={categoryMetadata} />
             </div>
 
             {/* Transaction card */}

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Autocomplete } from '@/components/ui/Autocomplete';
 import { fetchProperties, type PropertyItem } from './propertyService';
 import { PropertyResultItem } from './PropertyResultItem';
@@ -27,6 +27,7 @@ export function PropertyAutocomplete({
   searchField = 'address_with_unit'
 }: PropertyAutocompleteProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   // Helper to find the matched address (address_with_unit or AKA)
   const getMatchedAddress = (item: PropertyItem, query: string): string => {
@@ -51,6 +52,22 @@ export function PropertyAutocomplete({
 
     // Fallback to address_with_unit
     return item.address_with_unit;
+  };
+
+  // Helper to determine the target path based on current location
+  const getTargetPath = (bbl: string): string => {
+    // If we're already on a property page, preserve the current tab/section
+    if (pathname?.startsWith('/property/')) {
+      // Extract the path after the BBL (e.g., /transactions, /tax, /dob/jobs-filings)
+      const currentBblMatch = pathname.match(/^\/property\/[^/]+(\/.*)?$/);
+      if (currentBblMatch && currentBblMatch[1]) {
+        // Keep the same page/tab for the new property
+        return `/property/${bbl}${currentBblMatch[1]}`;
+      }
+    }
+
+    // Default to base property page (which redirects to transactions)
+    return `/property/${bbl}`;
   };
 
   return (
@@ -79,7 +96,8 @@ export function PropertyAutocomplete({
             // Navigate to property page with BBL format and matched address in query string
             const bbl = `${item.borough}-${item.block}-${item.lot}`;
             const address = encodeURIComponent(item.matchedAddress || item.address_with_unit);
-            router.push(`/property/${bbl}?address=${address}`);
+            const targetPath = getTargetPath(bbl);
+            router.push(`${targetPath}?address=${address}`);
           },
         },
       ]}

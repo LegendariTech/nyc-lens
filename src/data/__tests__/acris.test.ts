@@ -117,11 +117,11 @@ describe('acris data layer', () => {
 
                 expect(result).toHaveLength(2);
                 expect(result[0].documentId).toBe('DOC123');
-                expect(result[0].fromParty).toBe('SELLER LLC');
-                expect(result[0].toParty).toBe('BUYER INC');
+                expect(result[0].fromParty).toEqual(['SELLER LLC']);
+                expect(result[0].toParty).toEqual(['BUYER INC']);
                 expect(result[1].documentId).toBe('DOC456');
-                expect(result[1].fromParty).toBe('BORROWER CORP');
-                expect(result[1].toParty).toBe('LENDER BANK');
+                expect(result[1].fromParty).toEqual(['BORROWER CORP']);
+                expect(result[1].toParty).toEqual(['LENDER BANK']);
             });
 
             it('should set correct party types for DEED transactions', async () => {
@@ -295,8 +295,8 @@ describe('acris data layer', () => {
 
                 const result = await fetchTransactionsWithParties('1-13-1');
 
-                expect(result[0].fromParty).toBe('SELLER A, SELLER B');
-                expect(result[0].toParty).toBe('BUYER C');
+                expect(result[0].fromParty).toEqual(['SELLER A', 'SELLER B']);
+                expect(result[0].toParty).toEqual(['BUYER C']);
             });
 
             it('should handle parties with no type information', async () => {
@@ -323,8 +323,8 @@ describe('acris data layer', () => {
 
                 const result = await fetchTransactionsWithParties('1-13-1');
 
-                expect(result[0].fromParty).toBe('Unknown');
-                expect(result[0].toParty).toBe('Unknown');
+                expect(result[0].fromParty).toEqual(['Unknown']);
+                expect(result[0].toParty).toEqual(['Unknown']);
             });
 
         });
@@ -351,8 +351,8 @@ describe('acris data layer', () => {
 
                 // Should still return documents with 'Unknown' parties
                 expect(result).toHaveLength(1);
-                expect(result[0].fromParty).toBe('Unknown');
-                expect(result[0].toParty).toBe('Unknown');
+                expect(result[0].fromParty).toEqual(['Unknown']);
+                expect(result[0].toParty).toEqual(['Unknown']);
             });
 
             it('should include BBL in error message', async () => {

@@ -14,6 +14,6 @@ export default async function PropertyPage({ params, searchParams }: PropertyPag
   const { address } = await searchParams;
 
   // Redirect to pluto tab by default
-  redirect(`/property/${bbl}/pluto${address ? `?address=${address}` : ''}`);
+  redirect(`/property/${bbl}/transactions${address ? `?address=${address}` : ''}`);
 }
 

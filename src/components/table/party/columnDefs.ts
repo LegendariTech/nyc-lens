@@ -15,7 +15,7 @@ export const partyColDefs: ColDef<AcrisParty>[] = [
   {
     field: 'party_party_type',
     headerName: 'Type',
-    width: 180,
+    width: 100,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     sortable: false,
@@ -42,6 +42,7 @@ export const partyColDefs: ColDef<AcrisParty>[] = [
   {
     field: 'party_address_2',
     headerName: 'Address 2',
+    hide: true,
     minWidth: 300,
     filter: 'agTextColumnFilter',
     floatingFilter: true,

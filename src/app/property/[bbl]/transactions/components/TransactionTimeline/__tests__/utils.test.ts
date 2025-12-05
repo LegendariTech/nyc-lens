@@ -57,12 +57,32 @@ describe('TransactionTimeline Utils', () => {
                 documentDate: '2025-06-16',
                 documentAmount: 1000000,
                 classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
-                fromParty: 'SELLER LLC',
-                toParty: 'BUYER INC',
+                fromParty: ['SELLER LLC'],
+                toParty: ['BUYER INC'],
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 isDeed: true,
                 isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [
+                    {
+                        name: 'SELLER LLC',
+                        type: 'Seller',
+                        address1: '123 Main St',
+                        city: 'New York',
+                        state: 'NY',
+                        zip: '10001',
+                    },
+                    {
+                        name: 'BUYER INC',
+                        type: 'Buyer',
+                        address1: '456 Oak Ave',
+                        city: 'Brooklyn',
+                        state: 'NY',
+                        zip: '11201',
+                    },
+                ],
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -73,14 +93,34 @@ describe('TransactionTimeline Utils', () => {
                 docType: 'DEED',
                 date: '2025-06-16',
                 amount: 1000000,
-                party1: 'SELLER LLC',
-                party2: 'BUYER INC',
+                party1: ['SELLER LLC'],
+                party2: ['BUYER INC'],
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 documentId: 'DOC123',
                 classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
                 isDeed: true,
                 isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [
+                    {
+                        name: 'SELLER LLC',
+                        type: 'Seller',
+                        address1: '123 Main St',
+                        city: 'New York',
+                        state: 'NY',
+                        zip: '10001',
+                    },
+                    {
+                        name: 'BUYER INC',
+                        type: 'Buyer',
+                        address1: '456 Oak Ave',
+                        city: 'Brooklyn',
+                        state: 'NY',
+                        zip: '11201',
+                    },
+                ],
             });
         });
 
@@ -92,12 +132,32 @@ describe('TransactionTimeline Utils', () => {
                 documentDate: '2023-10-10',
                 documentAmount: 10403747,
                 classCodeDescription: 'MORTGAGES & INSTRUMENTS',
-                fromParty: 'BORROWER CORP',
-                toParty: 'LENDER BANK',
+                fromParty: ['BORROWER CORP'],
+                toParty: ['LENDER BANK'],
                 party1Type: 'Borrower',
                 party2Type: 'Lender',
                 isDeed: false,
                 isMortgage: true,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [
+                    {
+                        name: 'BORROWER CORP',
+                        type: 'Borrower',
+                        address1: '789 Business Blvd',
+                        city: 'Manhattan',
+                        state: 'NY',
+                        zip: '10004',
+                    },
+                    {
+                        name: 'LENDER BANK',
+                        type: 'Lender',
+                        address1: '100 Wall St',
+                        city: 'New York',
+                        state: 'NY',
+                        zip: '10005',
+                    },
+                ],
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -108,14 +168,34 @@ describe('TransactionTimeline Utils', () => {
                 docType: 'MORTGAGE',
                 date: '2023-10-10',
                 amount: 10403747,
-                party1: 'BORROWER CORP',
-                party2: 'LENDER BANK',
+                party1: ['BORROWER CORP'],
+                party2: ['LENDER BANK'],
                 party1Type: 'Borrower',
                 party2Type: 'Lender',
                 documentId: 'DOC456',
                 classCodeDescription: 'MORTGAGES & INSTRUMENTS',
                 isDeed: false,
                 isMortgage: true,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [
+                    {
+                        name: 'BORROWER CORP',
+                        type: 'Borrower',
+                        address1: '789 Business Blvd',
+                        city: 'Manhattan',
+                        state: 'NY',
+                        zip: '10004',
+                    },
+                    {
+                        name: 'LENDER BANK',
+                        type: 'Lender',
+                        address1: '100 Wall St',
+                        city: 'New York',
+                        state: 'NY',
+                        zip: '10005',
+                    },
+                ],
             });
         });
 
@@ -127,18 +207,21 @@ describe('TransactionTimeline Utils', () => {
                 documentDate: '2020-01-01',
                 documentAmount: 500000,
                 classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
-                fromParty: 'Unknown',
-                toParty: 'Unknown',
+                fromParty: ['Unknown'],
+                toParty: ['Unknown'],
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 isDeed: true,
                 isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [],
             };
 
             const result = mapDocumentToTransaction(doc);
 
-            expect(result.party1).toBe('Unknown');
-            expect(result.party2).toBe('Unknown');
+            expect(result.party1).toEqual(['Unknown']);
+            expect(result.party2).toEqual(['Unknown']);
         });
 
         it('should preserve document ID', () => {
@@ -149,12 +232,15 @@ describe('TransactionTimeline Utils', () => {
                 documentDate: '2025-01-01',
                 documentAmount: 1000000,
                 classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
-                fromParty: 'PARTY A',
-                toParty: 'PARTY B',
+                fromParty: ['PARTY A'],
+                toParty: ['PARTY B'],
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 isDeed: true,
                 isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [],
             };
 
             const result = mapDocumentToTransaction(doc);
@@ -171,12 +257,15 @@ describe('TransactionTimeline Utils', () => {
                 documentDate: '2025-01-01',
                 documentAmount: 1000000,
                 classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
-                fromParty: 'A',
-                toParty: 'B',
+                fromParty: ['A'],
+                toParty: ['B'],
                 party1Type: 'Seller',
                 party2Type: 'Buyer',
                 isDeed: true,
                 isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [],
             };
 
             const mtgeDoc: DocumentWithParties = {
@@ -190,6 +279,60 @@ describe('TransactionTimeline Utils', () => {
 
             expect(mapDocumentToTransaction(deedDoc).type).toBe('DEED');
             expect(mapDocumentToTransaction(mtgeDoc).type).toBe('MTGE');
+        });
+
+        it('should map partyDetails correctly', () => {
+            const doc: DocumentWithParties = {
+                documentId: 'DOC999',
+                documentType: 'DEED',
+                docTypeDescription: 'DEED',
+                documentDate: '2025-01-01',
+                documentAmount: 1500000,
+                classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
+                fromParty: ['SELLER A', 'SELLER B'],
+                toParty: ['BUYER X'],
+                party1Type: 'Seller',
+                party2Type: 'Buyer',
+                isDeed: true,
+                isMortgage: false,
+                isUccLien: false,
+                isOtherDocument: false,
+                partyDetails: [
+                    {
+                        name: 'SELLER A',
+                        type: 'Seller',
+                        address1: '111 First St',
+                        city: 'Queens',
+                        state: 'NY',
+                        zip: '11101',
+                    },
+                    {
+                        name: 'SELLER B',
+                        type: 'Seller',
+                        address1: '222 Second Ave',
+                        address2: 'Suite 300',
+                        city: 'Bronx',
+                        state: 'NY',
+                        zip: '10451',
+                    },
+                    {
+                        name: 'BUYER X',
+                        type: 'Buyer',
+                        address1: '333 Third Pl',
+                        city: 'Staten Island',
+                        state: 'NY',
+                        zip: '10301',
+                        country: 'US',
+                    },
+                ],
+            };
+
+            const result = mapDocumentToTransaction(doc);
+
+            expect(result.partyDetails).toEqual(doc.partyDetails);
+            expect(result.partyDetails).toHaveLength(3);
+            expect(result.partyDetails?.[0].name).toBe('SELLER A');
+            expect(result.partyDetails?.[1].address2).toBe('Suite 300');
         });
     });
 });

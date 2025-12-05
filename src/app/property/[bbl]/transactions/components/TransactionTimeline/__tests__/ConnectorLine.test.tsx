@@ -2,11 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { ConnectorLine } from '../ConnectorLine';
 import { TIMELINE_CONFIG } from '../constants';
+import { CATEGORY_METADATA } from '../utils';
 
 describe('ConnectorLine', () => {
     describe('SVG rendering', () => {
         it('should render SVG with correct dimensions', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const svg = container.querySelector('svg');
             expect(svg).toBeInTheDocument();
@@ -17,7 +18,7 @@ describe('ConnectorLine', () => {
         });
 
         it('should render dashed line', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const line = container.querySelector('line');
             expect(line).toBeInTheDocument();
@@ -25,7 +26,7 @@ describe('ConnectorLine', () => {
         });
 
         it('should render end circle', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const circle = container.querySelector('circle');
             expect(circle).toBeInTheDocument();
@@ -35,7 +36,7 @@ describe('ConnectorLine', () => {
 
     describe('Styling based on transaction type', () => {
         it('should apply amber color for DEED transactions', () => {
-            const { container } = render(<ConnectorLine isDeed={true} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.deed} />);
 
             const line = container.querySelector('line');
             expect(line).toHaveClass('text-amber-500/50');
@@ -45,7 +46,7 @@ describe('ConnectorLine', () => {
         });
 
         it('should apply blue color for MORTGAGE transactions', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const line = container.querySelector('line');
             expect(line).toHaveClass('text-blue-500/50');
@@ -53,11 +54,31 @@ describe('ConnectorLine', () => {
             const circle = container.querySelector('circle');
             expect(circle).toHaveClass('text-blue-500');
         });
+
+        it('should apply red color for UCC/LIEN transactions', () => {
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA['ucc-lien']} />);
+
+            const line = container.querySelector('line');
+            expect(line).toHaveClass('text-red-500/50');
+
+            const circle = container.querySelector('circle');
+            expect(circle).toHaveClass('text-red-500');
+        });
+
+        it('should apply gray color for OTHER transactions', () => {
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.other} />);
+
+            const line = container.querySelector('line');
+            expect(line).toHaveClass('text-gray-500/50');
+
+            const circle = container.querySelector('circle');
+            expect(circle).toHaveClass('text-gray-500');
+        });
     });
 
     describe('Line positioning', () => {
         it('should position line horizontally at center', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const line = container.querySelector('line');
             const centerY = TIMELINE_CONFIG.CONNECTOR_LINE_HEIGHT / 2;
@@ -67,7 +88,7 @@ describe('ConnectorLine', () => {
         });
 
         it('should span full width', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const line = container.querySelector('line');
 
@@ -78,7 +99,7 @@ describe('ConnectorLine', () => {
 
     describe('Circle positioning', () => {
         it('should position circle at end of line', () => {
-            const { container } = render(<ConnectorLine isDeed={false} />);
+            const { container } = render(<ConnectorLine categoryMetadata={CATEGORY_METADATA.mortgage} />);
 
             const circle = container.querySelector('circle');
             const centerY = TIMELINE_CONFIG.CONNECTOR_LINE_HEIGHT / 2;

@@ -3,6 +3,7 @@ import { Transaction } from './types';
 import { formatCurrency, formatDate, getCategoryMetadata } from './utils';
 import { DocumentIcon } from './icons';
 import { useState } from 'react';
+import { PartyDetailsDialog } from './PartyDetailsDialog';
 
 interface MobileTransactionCardProps {
   transaction: Transaction;
@@ -50,15 +51,27 @@ function PartyList({ parties }: PartyListProps) {
 
 export function MobileTransactionCard({ transaction }: MobileTransactionCardProps) {
   const categoryMetadata = getCategoryMetadata(transaction);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't open dialog if clicking on the document link or party expand button
+    if ((e.target as HTMLElement).closest('a') || (e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    setDialogOpen(true);
+  };
 
   return (
-    <div className="flex-1 pb-4">
-      <div
-        className={cn(
-          'relative rounded-lg border bg-card p-3 shadow-md',
-          `${categoryMetadata.borderColor}/40`
-        )}
-      >
+    <>
+      <div className="flex-1 pb-4">
+        <div
+          onClick={handleCardClick}
+          className={cn(
+            'relative rounded-lg border bg-card p-3 shadow-md cursor-pointer',
+            'hover:shadow-lg hover:border-foreground/20 transition-all',
+            `${categoryMetadata.borderColor}/40`
+          )}
+        >
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <span
@@ -121,8 +134,18 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             <DocumentIcon className="w-5 h-5 text-foreground/60 group-hover:text-foreground transition-colors" />
           </a>
         )}
+        </div>
       </div>
-    </div>
+
+      {/* Party Details Dialog */}
+      <PartyDetailsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        parties={transaction.partyDetails || []}
+        transactionType={transaction.type}
+        transactionDate={transaction.date}
+      />
+    </>
   );
 }
 

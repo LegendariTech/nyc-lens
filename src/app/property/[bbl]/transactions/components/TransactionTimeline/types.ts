@@ -1,3 +1,14 @@
+export interface PartyDetail {
+  name: string;
+  type: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  country?: string;
+}
+
 export interface Transaction {
   id: string;
   type: string;
@@ -14,6 +25,7 @@ export interface Transaction {
   isMortgage: boolean;
   isUccLien: boolean;
   isOtherDocument: boolean;
+  partyDetails?: PartyDetail[];
 }
 
 export type DocumentCategory = 'deed' | 'mortgage' | 'ucc-lien' | 'other';

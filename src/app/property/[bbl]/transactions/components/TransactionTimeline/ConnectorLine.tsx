@@ -1,10 +1,25 @@
 import { TIMELINE_CONFIG } from './constants';
+import type { CategoryMetadata, DocumentCategory } from './types';
 
 interface ConnectorLineProps {
-    isDeed: boolean;
+    categoryMetadata: CategoryMetadata;
 }
 
-export function ConnectorLine({ isDeed }: ConnectorLineProps) {
+const lineColorStyles: Record<DocumentCategory, string> = {
+    deed: 'text-amber-500/50',
+    mortgage: 'text-blue-500/50',
+    'ucc-lien': 'text-red-500/50',
+    other: 'text-gray-500/50',
+};
+
+const dotColorStyles: Record<DocumentCategory, string> = {
+    deed: 'text-amber-500',
+    mortgage: 'text-blue-500',
+    'ucc-lien': 'text-red-500',
+    other: 'text-gray-500',
+};
+
+export function ConnectorLine({ categoryMetadata }: ConnectorLineProps) {
     const centerY = TIMELINE_CONFIG.CONNECTOR_LINE_HEIGHT / 2;
 
     return (
@@ -24,7 +39,7 @@ export function ConnectorLine({ isDeed }: ConnectorLineProps) {
                     stroke="currentColor"
                     strokeWidth="1.5"
                     strokeDasharray="4 3"
-                    className={isDeed ? 'text-amber-500/50' : 'text-blue-500/50'}
+                    className={lineColorStyles[categoryMetadata.key]}
                 />
                 {/* Dot at the end of the line where it meets the card */}
                 <circle
@@ -32,7 +47,7 @@ export function ConnectorLine({ isDeed }: ConnectorLineProps) {
                     cy={centerY}
                     r={TIMELINE_CONFIG.CONNECTOR_DOT_RADIUS}
                     fill="currentColor"
-                    className={isDeed ? 'text-amber-500' : 'text-blue-500'}
+                    className={dotColorStyles[categoryMetadata.key]}
                 />
             </svg>
         </div>

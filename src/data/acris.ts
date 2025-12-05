@@ -90,6 +90,20 @@ export async function fetchDocumentsByBBL(bbl: string): Promise<AcrisDoc[]> {
 }
 
 /**
+ * Party detail with address information
+ */
+export interface PartyDetail {
+  name: string;
+  type: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  country?: string;
+}
+
+/**
  * Document with party information for timeline display
  */
 export interface DocumentWithParties {
@@ -107,6 +121,7 @@ export interface DocumentWithParties {
   isMortgage: boolean;
   isUccLien: boolean;
   isOtherDocument: boolean;
+  partyDetails: PartyDetail[];
 }
 
 /**
@@ -193,19 +208,26 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     const docsHits = (docsResult as { hits: { hits: Array<{ _source: AcrisDoc }> } }).hits.hits;
     const documents = docsHits.map(hit => hit._source);
 
-    if (documents.length === 0) {
-      console.info(`No documents found for BBL ${bbl}`);
+    // Filter out documents with zero or null amounts
+    const validDocuments = documents.filter(doc =>
+      doc.document_amount !== null &&
+      doc.document_amount !== undefined &&
+      doc.document_amount > 0
+    );
+
+    if (validDocuments.length === 0) {
+      console.info(`No valid documents found for BBL ${bbl} (all filtered out due to zero/null amounts)`);
       return [];
     }
 
     // Get unique document IDs to fetch associated parties
     // Filter out any documents without a master_document_id
-    const documentIds = documents
+    const documentIds = validDocuments
       .map(doc => doc.master_document_id)
       .filter((id): id is string => !!id);
 
     if (documentIds.length === 0) {
-      console.warn(`Found ${documents.length} documents for BBL ${bbl} but none have master_document_id`);
+      console.warn(`Found ${validDocuments.length} documents for BBL ${bbl} but none have master_document_id`);
       return [];
     }
 
@@ -248,7 +270,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     }
 
     // Combine documents with their associated parties
-    const transactions: DocumentWithParties[] = documents.map(doc => {
+    const transactions: DocumentWithParties[] = validDocuments.map(doc => {
       const docParties = partiesByDocId.get(doc.master_document_id || '') || [];
 
       // Get party type labels from ACRIS control codes based on document type
@@ -257,8 +279,9 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
       // Extract party names from ACRIS party records
       // ACRIS uses numeric codes to identify party roles:
       // '1' for party1 (grantor/seller/borrower), '2' for party2 (grantee/buyer/lender), '3' for party3
-      const party1: string[] = [];
-      const party2: string[] = [];
+      const party1Set = new Set<string>();
+      const party2Set = new Set<string>();
+      const partyDetailsMap = new Map<string, PartyDetail>();
 
       for (const party of docParties) {
         const partyType = party.party_party_type?.trim() || '';
@@ -268,13 +291,32 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
 
         // Party 1: Typically grantor/seller/borrower/assignor
         if (partyType === '1') {
-          party1.push(partyName);
+          party1Set.add(partyName);
         }
         // Party 2: Typically grantee/buyer/lender/assignee
         else if (partyType === '2') {
-          party2.push(partyName);
+          party2Set.add(partyName);
+        }
+
+        // Store party details for all parties (only once per unique name)
+        if (!partyDetailsMap.has(partyName)) {
+          partyDetailsMap.set(partyName, {
+            name: partyName,
+            type: party.party_party_type_description || `Party ${partyType}`,
+            address1: party.party_address_1?.trim(),
+            address2: party.party_address_2?.trim(),
+            city: party.party_city?.trim(),
+            state: party.party_state?.trim(),
+            zip: party.party_zip?.trim(),
+            country: party.party_country?.trim(),
+          });
         }
       }
+
+      // Convert sets to arrays for the final output
+      const party1 = Array.from(party1Set);
+      const party2 = Array.from(party2Set);
+      const partyDetails = Array.from(partyDetailsMap.values());
 
       // Determine document category based on ACRIS class code
       const isDeed = doc.class_code_description === 'DEEDS AND OTHER CONVEYANCES';
@@ -297,6 +339,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
         isMortgage,
         isUccLien,
         isOtherDocument,
+        partyDetails,
       };
     });
 

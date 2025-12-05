@@ -75,7 +75,7 @@ describe('TransactionTimeline', () => {
         it('should render empty state when no transactions provided', () => {
             render(<TransactionTimeline transactions={[]} />);
 
-            expect(screen.getByText('No deed or mortgage transactions found for this property.')).toBeInTheDocument();
+            expect(screen.getByText('No transactions found for this property.')).toBeInTheDocument();
         });
 
         it('should not render sidebar when no transactions', () => {

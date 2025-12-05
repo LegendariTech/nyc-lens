@@ -119,6 +119,7 @@ export function mapDocumentToTransaction(doc: DocumentWithParties): Transaction 
     isMortgage: doc.isMortgage,
     isUccLien: doc.isUccLien,
     isOtherDocument: doc.isOtherDocument,
+    partyDetails: doc.partyDetails,
   };
 }
 
