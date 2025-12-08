@@ -11,11 +11,23 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatDate(dateStr: string): string {
+  // Parse the date string as UTC to avoid timezone conversion
+  // For ISO strings like "2025-11-19T00:00:00.000Z", we want to display Nov 19, not Nov 18
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', {
+
+  // Extract UTC date components to avoid local timezone conversion
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
+
+  // Create a new date using UTC components
+  const utcDate = new Date(Date.UTC(year, month, day));
+
+  return utcDate.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   });
 }
 

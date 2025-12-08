@@ -1,0 +1,1 @@
+export { ContactsTabDisplay } from './ContactsTabDisplay';
