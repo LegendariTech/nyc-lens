@@ -9,7 +9,7 @@ export type ContactCategory =
   | 'permits'
   | 'sale'
   | 'mortgage'
-  | 'past-sale'
+  | 'prior-sale'
   | 'prior-mortgage';
 
 /**
@@ -19,6 +19,7 @@ export interface CategoryMetadata {
   key: ContactCategory;
   label: string;
   pluralLabel: string;
+  abbreviation: string;
   color: string;
   borderColor: string;
   bgColor: string;

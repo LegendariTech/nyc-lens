@@ -1,6 +1,7 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { OwnerContactRow } from './types';
 import { formatDate } from '@/utils/formatters';
+import { CategoryChip } from './CategoryChip';
 
 /**
  * Get the best available full name: prefer owner_full_name, then compile from first/middle/last
@@ -79,6 +80,12 @@ function formatUSPhone(phone: string): string {
 
 export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
     {
+        field: 'category',
+        headerName: 'Source',
+        width: 100,
+        cellRenderer: CategoryChip,
+    },
+    {
         field: 'date',
         headerName: 'Date',
         width: 140,
@@ -118,18 +125,6 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         width: 380,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => getBestAddress(p.data!),
         cellClass: 'multiline-cell',
-    },
-    {
-        field: 'agency',
-        headerName: 'Agency',
-        width: 200,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
-    {
-        field: 'source',
-        headerName: 'Source',
-        width: 250,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     // Hidden columns - available via column menu
     {
@@ -215,6 +210,20 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         field: 'owner_zip_2',
         headerName: 'Secondary ZIP',
         width: 120,
+        hide: true,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+    },
+    {
+        field: 'agency',
+        headerName: 'Agency (Raw)',
+        width: 150,
+        hide: true,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+    },
+    {
+        field: 'source',
+        headerName: 'Source (Raw)',
+        width: 250,
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
