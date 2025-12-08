@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui';
 import { ContactsTable } from './Table';
-import { Legend } from './Legend';
+import { FilterLegend } from '@/components/FilterLegend';
 import type { OwnerContact } from '@/types/contacts';
 import type { ContactCategory } from './types';
-import { enrichContactsWithCategory, getDefaultVisibleCategories, CATEGORY_ORDER } from './utils';
+import { enrichContactsWithCategory, getDefaultVisibleCategories, CATEGORY_ORDER, CATEGORY_METADATA } from './utils';
 
 interface ContactsTabDisplayProps {
     contactsData: OwnerContact[];
@@ -72,8 +72,9 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
             <Card>
                 <CardContent>
                     {/* Legend with filters */}
-                    <Legend
+                    <FilterLegend
                         filters={filters}
+                        categoryMetadata={CATEGORY_METADATA}
                         onToggleCategory={toggleCategory}
                     />
 

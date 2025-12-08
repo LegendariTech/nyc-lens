@@ -6,9 +6,9 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { OnThisPageSidebar } from '@/components/layout/OnThisPageSidebar';
 import { DesktopTimeline } from './DesktopTimeline';
 import { MobileTimeline } from './MobileTimeline';
-import { Legend } from './Legend';
+import { FilterLegend } from '@/components/FilterLegend';
 import type { Transaction, DocumentCategory } from './types';
-import { getTransactionCategory } from './utils';
+import { getTransactionCategory, CATEGORY_METADATA } from './utils';
 
 // Re-export types for consumers
 
@@ -136,11 +136,13 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
       <Card className={cn('flex-1 min-w-0 xl:border xl:shadow-sm border-none shadow-none', className)} role="region" aria-label="Property transaction timeline">
         <CardContent className="p-3 xl:p-6">
           {/* Legend with filters */}
-          <Legend
+          <FilterLegend
             filters={filters}
+            categoryMetadata={CATEGORY_METADATA}
             onToggleCategory={toggleCategory}
             showZeroAmount={showZeroAmount}
             onToggleZeroAmount={toggleZeroAmount}
+            zeroAmountLabel="Show $0 documents"
           />
 
           {/* Timeline content */}
