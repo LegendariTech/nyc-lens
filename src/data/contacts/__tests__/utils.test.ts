@@ -217,6 +217,81 @@ describe('contacts/utils', () => {
                 expect(cleaned.owner_full_name).toBe('SMITH,');
             });
 
+            it('should not reformat business names with INC suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'MENEMSHOVITZ NY REALTY, INC',
+                });
+                const cleaned = cleanupContact(contact);
+
+                // Should NOT be reversed - business suffix should be preserved
+                expect(cleaned.owner_full_name).toBe('MENEMSHOVITZ NY REALTY, INC');
+            });
+
+            it('should not reformat business names with LLC suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'ABC PROPERTY MANAGEMENT, LLC',
+                });
+                const cleaned = cleanupContact(contact);
+
+                expect(cleaned.owner_full_name).toBe('ABC PROPERTY MANAGEMENT, LLC');
+            });
+
+            it('should not reformat business names with CORP suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'SMITH ENTERPRISES, CORP',
+                });
+                const cleaned = cleanupContact(contact);
+
+                expect(cleaned.owner_full_name).toBe('SMITH ENTERPRISES, CORP');
+            });
+
+            it('should not reformat business names with LTD suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'GLOBAL HOLDINGS, LTD',
+                });
+                const cleaned = cleanupContact(contact);
+
+                expect(cleaned.owner_full_name).toBe('GLOBAL HOLDINGS, LTD');
+            });
+
+            it('should not reformat business names with LP suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'REAL ESTATE PARTNERS, LP',
+                });
+                const cleaned = cleanupContact(contact);
+
+                expect(cleaned.owner_full_name).toBe('REAL ESTATE PARTNERS, LP');
+            });
+
+            it('should not reformat business names with L.L.C. suffix (with periods)', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'ABC COMPANY, L.L.C.',
+                });
+                const cleaned = cleanupContact(contact);
+
+                expect(cleaned.owner_full_name).toBe('ABC COMPANY, L.L.C.');
+            });
+
+            it('should not reformat business names with lowercase suffix', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'DOWNTOWN PROPERTIES, inc',
+                });
+                const cleaned = cleanupContact(contact);
+
+                // Should handle case-insensitive suffix matching
+                expect(cleaned.owner_full_name).toBe('DOWNTOWN PROPERTIES, inc');
+            });
+
+            it('should still reformat personal names with commas', () => {
+                const contact = createMockContact({
+                    owner_full_name: 'DOE, JOHN',
+                });
+                const cleaned = cleanupContact(contact);
+
+                // Should still reformat personal names (not business suffixes)
+                expect(cleaned.owner_full_name).toBe('JOHN DOE');
+            });
+
             it('should handle comma with no last name', () => {
                 const contact = createMockContact({
                     owner_full_name: ', JOHN',
@@ -2761,6 +2836,70 @@ describe('contacts/utils', () => {
                 expect(deduplicated).toHaveLength(1);
                 expect(deduplicated[0].date).toEqual(new Date('2024-07-22'));
             });
+        });
+
+        it('should sort deduplicated contacts by date (most recent first)', () => {
+            const contacts: OwnerContact[] = [
+                createMockContact({
+                    owner_full_name: 'John Doe',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: new Date('2023-01-15'), // Oldest
+                }),
+                createMockContact({
+                    owner_full_name: 'Jane Smith',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: new Date('2024-06-20'), // Most recent
+                }),
+                createMockContact({
+                    owner_full_name: 'Bob Johnson',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: new Date('2024-03-10'), // Middle
+                }),
+            ];
+
+            const formatted = formatContacts(contacts);
+            const deduplicated = deduplicateContacts(formatted, 0.85);
+
+            // Should be sorted by date descending (most recent first)
+            expect(deduplicated).toHaveLength(3);
+            expect(deduplicated[0].owner_full_name).toBe('Jane Smith'); // 2024-06-20
+            expect(deduplicated[1].owner_full_name).toBe('Bob Johnson'); // 2024-03-10
+            expect(deduplicated[2].owner_full_name).toBe('John Doe'); // 2023-01-15
+        });
+
+        it('should handle contacts with missing dates when sorting', () => {
+            const contacts: OwnerContact[] = [
+                createMockContact({
+                    owner_full_name: 'John Doe',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: new Date('2024-01-15'),
+                }),
+                createMockContact({
+                    owner_full_name: 'Jane Smith',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: null as any, // No date
+                }),
+                createMockContact({
+                    owner_full_name: 'Bob Johnson',
+                    agency: 'DOF',
+                    source: 'property_valuation',
+                    date: new Date('2024-06-20'),
+                }),
+            ];
+
+            const formatted = formatContacts(contacts);
+            const deduplicated = deduplicateContacts(formatted, 0.85);
+
+            // Should sort contacts with dates first, then contacts without dates
+            expect(deduplicated).toHaveLength(3);
+            expect(deduplicated[0].owner_full_name).toBe('Bob Johnson'); // 2024-06-20
+            expect(deduplicated[1].owner_full_name).toBe('John Doe'); // 2024-01-15
+            expect(deduplicated[2].owner_full_name).toBe('Jane Smith'); // no date (sorted last)
         });
     });
 });

@@ -56,7 +56,8 @@ function isNAValue(value: string | null | undefined): boolean {
  *   "SMITH, JOHN" -> "JOHN SMITH"
  *   "DOE, JANE MARIE" -> "JANE MARIE DOE"
  *   '"KEONG, LUCIAN   "' -> "LUCIAN KEONG"
- * 
+ *   "MENEMSHOVITZ NY REALTY, INC" -> "MENEMSHOVITZ NY REALTY, INC" (unchanged - business suffix)
+ *
  * @param name - Name string that may be in "LASTNAME, FIRSTNAME" format
  * @returns Reformatted name or original if not in the expected format
  */
@@ -83,7 +84,30 @@ function reformatName(name: string | null | undefined): string | null {
 
     // Only reformat if we have exactly 2 parts (lastname, firstname)
     if (parts.length === 2 && parts[0] && parts[1]) {
-        // Return as "FIRSTNAME LASTNAME" with normalized spacing
+        // Check if the second part is a business suffix - if so, don't reformat
+        // Common business suffixes that appear after commas
+        const businessSuffixes = [
+            'INC', 'INCORPORATED',
+            'LLC', 'L.L.C.', 'L.L.C', 'LLP', 'L.L.P.',
+            'CORP', 'CORPORATION', 'CORP.',
+            'LTD', 'LIMITED', 'LTD.',
+            'CO', 'COMPANY', 'CO.',
+            'LP', 'L.P.', 'L.P',
+            'PC', 'P.C.', 'P.C',
+            'PLLC', 'P.L.L.C.',
+        ];
+
+        const secondPartUpper = parts[1].toUpperCase();
+        const isBusinessSuffix = businessSuffixes.some(suffix =>
+            secondPartUpper === suffix || secondPartUpper === suffix.replace(/\./g, '')
+        );
+
+        // If it's a business suffix, don't reformat - return original
+        if (isBusinessSuffix) {
+            return trimmed;
+        }
+
+        // Otherwise, reformat as "FIRSTNAME LASTNAME"
         return `${parts[1]} ${parts[0]}`.trim();
     }
 
@@ -819,6 +843,13 @@ export function deduplicateContacts(
             }
         }
     }
+
+    // Sort deduplicated contacts by date (most recent first)
+    deduplicated.sort((a, b) => {
+        const dateA = a.date ? (a.date instanceof Date ? a.date : new Date(a.date)) : new Date(0);
+        const dateB = b.date ? (b.date instanceof Date ? b.date : new Date(b.date)) : new Date(0);
+        return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+    });
 
     return deduplicated;
 }
