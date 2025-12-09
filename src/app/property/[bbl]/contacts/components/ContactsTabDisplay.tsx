@@ -25,7 +25,7 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
             // Format contacts (cleanup + address/phone arrays)
             const formatted = formatContacts(contactsData);
             // Deduplicate contacts by similar name, matching agency and source
-            const deduplicated = deduplicateContacts(formatted, 0.85);
+            const deduplicated = deduplicateContacts(formatted, 0.65);
             // Convert back to OwnerContact format for the table
             // Combine all addresses into a single field for display
             return deduplicated.map(contact => {

@@ -455,13 +455,52 @@ export class DuplicateDetector {
     }
 
     private tokenSimilarity(str1: string, str2: string): number {
-        const tokens1 = new Set(str1.split(/\s+/).filter(Boolean));
-        const tokens2 = new Set(str2.split(/\s+/).filter(Boolean));
+        const tokens1 = str1.split(/\s+/).filter(Boolean);
+        const tokens2 = str2.split(/\s+/).filter(Boolean);
 
-        const intersection = new Set([...tokens1].filter(x => tokens2.has(x)));
-        const union = new Set([...tokens1, ...tokens2]);
+        if (tokens1.length === 0 && tokens2.length === 0) return 1;
+        if (tokens1.length === 0 || tokens2.length === 0) return 0;
 
-        return union.size === 0 ? 1 : intersection.size / union.size;
+        // For each token in the smaller set, find the best match in the larger set
+        const [smaller, larger] = tokens1.length <= tokens2.length
+            ? [tokens1, tokens2]
+            : [tokens2, tokens1];
+
+        let totalSimilarity = 0;
+        const used = new Set<number>();
+
+        for (const token1 of smaller) {
+            let bestMatch = 0;
+            let bestIndex = -1;
+
+            for (let i = 0; i < larger.length; i++) {
+                if (used.has(i)) continue;
+
+                const token2 = larger[i];
+
+                // Exact match
+                if (token1 === token2) {
+                    bestMatch = 1;
+                    bestIndex = i;
+                    break;
+                }
+
+                // Fuzzy match using Dice coefficient for individual tokens
+                const similarity = compareTwoStrings(token1, token2);
+                if (similarity > bestMatch) {
+                    bestMatch = similarity;
+                    bestIndex = i;
+                }
+            }
+
+            if (bestIndex !== -1) {
+                used.add(bestIndex);
+                totalSimilarity += bestMatch;
+            }
+        }
+
+        // Average similarity across all tokens in the smaller set
+        return totalSimilarity / smaller.length;
     }
 
     // ============ BLOCKING (Performance Optimization) ============

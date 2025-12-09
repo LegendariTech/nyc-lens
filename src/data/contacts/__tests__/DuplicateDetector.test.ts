@@ -568,4 +568,136 @@ describe('DuplicateDetector', () => {
             expect(duplicatesResult.stats.duplicateClusters).toBeGreaterThanOrEqual(1);
         });
     });
+
+    describe('Real-world Edge Cases - Typos and Truncations', () => {
+        it('should detect duplicates with single-letter typos in last names', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('Richard Hiler', 'Richard Hiller');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+            expect(result.name1.normalized).toBe('richard hiler');
+            expect(result.name2.normalized).toBe('richard hiller');
+        });
+
+        it('should detect duplicates with case variations and typos', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('RICHARD HILER', 'Richard Hiller');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should cluster all three variations of Richard Hiler/Hiller', () => {
+            const detector = new DuplicateDetector();
+            const names = ['RICHARD HILER', 'Richard Hiler', 'Richard Hiller'];
+            const result = detector.findDuplicates(names);
+
+            expect(result.clusters.length).toBe(1);
+            expect(result.clusters[0].items.length).toBe(3);
+            expect(result.stats.totalDuplicates).toBe(3);
+        });
+
+        it('should detect duplicates with truncated last names', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('KATE HEMMERDINGER GOODMAN', 'KATE HEMMERDINGER GOODMA');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+            expect(result.name1.normalized).toBe('kate hemmerdinger goodman');
+            expect(result.name2.normalized).toBe('kate hemmerdinger goodma');
+        });
+
+        it('should detect duplicates with truncated middle names', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('John Michael Smith', 'John Micha Smith');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should detect duplicates with truncated first names', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('Christopher Johnson', 'Christophe Johnson');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should handle single character typo in names', () => {
+            const detector = new DuplicateDetector();
+            // Single character difference in last name (like Hiler vs Hiller)
+            const result = detector.compare('David Miller', 'David Miler');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should detect duplicates with common OCR/typo errors', () => {
+            const detector = new DuplicateDetector();
+
+            // l vs I (lowercase L vs uppercase i)
+            const result1 = detector.compare('William Smith', 'WiIliam Smith');
+            expect(result1.isDuplicate).toBe(true);
+
+            // o vs 0 (letter O vs zero)
+            const result2 = detector.compare('Robert Johnson', 'R0bert Johnson');
+            expect(result2.isDuplicate).toBe(true);
+        });
+
+        it('should handle truncation in longer names', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('Elizabeth MacDonald', 'Elizabeth MacDonal');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should not match completely different names despite similar length', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('John Smith', 'Jane Brown');
+
+            expect(result.isDuplicate).toBe(false);
+            expect(result.similarity.score).toBeLessThan(0.85);
+        });
+
+        it('should handle token-level fuzzy matching correctly', () => {
+            const detector = new DuplicateDetector();
+
+            // Single token with typo
+            const result = detector.compare('Mary Ann Wilson', 'Mary Anne Wilson');
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBeGreaterThanOrEqual(0.85);
+        });
+
+        it('should find matches for truncated names in a list', () => {
+            const detector = new DuplicateDetector();
+            const matches = detector.findMatches('KATE HEMMERDINGER GOODMAN', [
+                'John Smith',
+                'KATE HEMMERDINGER GOODMA',
+                'Jane Doe',
+                'Kate Hemmerdinger Goodman'
+            ]);
+
+            expect(matches.length).toBe(2);
+            // Results are sorted by score descending
+            // Exact match (after normalization) scores 1.0
+            expect(matches[0].candidate).toBe('Kate Hemmerdinger Goodman');
+            expect(matches[0].similarity.score).toBe(1);
+            // Truncated version scores ~0.97
+            expect(matches[1].candidate).toBe('KATE HEMMERDINGER GOODMA');
+            expect(matches[1].similarity.score).toBeGreaterThan(0.9);
+        });
+
+        it('should maintain high scores for exact matches after normalization', () => {
+            const detector = new DuplicateDetector();
+            const result = detector.compare('RICHARD HILER', 'Richard Hiler');
+
+            expect(result.isDuplicate).toBe(true);
+            expect(result.similarity.score).toBe(1);
+            expect(result.similarity.details.dice).toBe(1);
+            expect(result.similarity.details.levenshtein).toBe(1);
+            expect(result.similarity.details.tokens).toBe(1);
+        });
+    });
 });
