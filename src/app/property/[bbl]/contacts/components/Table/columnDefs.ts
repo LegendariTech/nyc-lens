@@ -22,9 +22,17 @@ function getFullName(row: OwnerContactRow): string {
 
 /**
  * Get the best available address: primary first, then secondary
+ * In normalized mode, owner_address may contain multiple addresses separated by newlines
  */
 function getBestAddress(row: OwnerContactRow): string {
-    // Try primary address first
+    // If owner_address exists and city/state/zip are null, it's likely normalized mode
+    // where addresses are already combined (may contain newlines for multiple addresses)
+    if (row.owner_address && !row.owner_city && !row.owner_state && !row.owner_zip) {
+        // Already formatted and potentially contains multiple addresses
+        return row.owner_address;
+    }
+
+    // Try primary address first (combine components)
     const primaryParts = [
         row.owner_address,
         row.owner_city,
@@ -49,8 +57,14 @@ function getBestAddress(row: OwnerContactRow): string {
 
 /**
  * Get the best available phone: primary first, then secondary
+ * In normalized mode, owner_phone may contain multiple phones separated by newlines
  */
 function getBestPhone(row: OwnerContactRow): string {
+    // If owner_phone exists and owner_phone_2 is null, it's likely normalized mode
+    // where phones are already combined (may contain newlines for multiple phones)
+    if (row.owner_phone && !row.owner_phone_2) {
+        return row.owner_phone;
+    }
     return row.owner_phone || row.owner_phone_2 || '';
 }
 
@@ -81,9 +95,10 @@ function formatUSPhone(phone: string): string {
 export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
     {
         field: 'category',
-        headerName: 'Source',
-        width: 100,
+        headerName: '',
+        width: 70,
         cellRenderer: CategoryChip,
+        cellClass: 'category-cell',
     },
     {
         field: 'date',
@@ -116,13 +131,25 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         width: 160,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => {
             const phone = getBestPhone(p.data!);
-            return phone !== '' ? formatUSPhone(phone) : phone;
+            if (!phone || phone === '') return '';
+
+            // Handle multiple phones separated by newlines (normalized mode)
+            if (phone.includes('\n')) {
+                return phone
+                    .split('\n')
+                    .map(p => formatUSPhone(p.trim()))
+                    .filter(p => p)
+                    .join('\n');
+            }
+
+            return formatUSPhone(phone);
         },
+        cellClass: 'multiline-cell',
     },
     {
         field: 'owner_address',
         headerName: 'Address',
-        width: 380,
+        width: 600, // Increased width to prevent wrapping
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => getBestAddress(p.data!),
         cellClass: 'multiline-cell',
     },
