@@ -5,7 +5,7 @@ import type { AcrisDoc } from '@/types/acris';
 
 export function LinkCell(p: ValueFormatterParams<AcrisDoc, string>) {
   const id = p.value;
-  if (!id) return '' as unknown as JSX.Element;
+  if (!id) return null;
   return (
     <a
       // https://a836-acris.nyc.gov/DS/DocumentSearch/DocumentImageView?doc_id=2025101500299001

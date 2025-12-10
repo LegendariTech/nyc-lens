@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
+import type { Meta, StoryObj } from '@storybook/react';
 import { FieldTooltip } from './FieldTooltip';
 
 const meta = {
@@ -54,6 +54,11 @@ export const LongContent: Story = {
 };
 
 export const InOverflowContainer: Story = {
+  args: {
+    description: 'Overflow container tooltip',
+    fieldKey: 'overflow-container',
+    children: 'Hover me',
+  },
   render: () => (
     <div style={{ overflow: 'hidden', border: '2px solid red', padding: '20px', width: '300px' }}>
       <p style={{ marginBottom: '10px' }}>
@@ -77,6 +82,11 @@ export const InOverflowContainer: Story = {
 };
 
 export const MultipleTooltips: Story = {
+  args: {
+    description: 'Multiple tooltips',
+    fieldKey: 'multiple-tooltips',
+    children: 'Hover me',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '20px', flexDirection: 'column' }}>
       <div>

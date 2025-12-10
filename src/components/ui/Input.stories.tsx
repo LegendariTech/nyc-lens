@@ -304,7 +304,7 @@ export const LoginForm: Story = {
               setEmailError(!e.target.value.includes('@'));
             }}
             variant={emailError && email ? 'error' : 'default'}
-            aria-invalid={emailError && email}
+            aria-invalid={emailError && email ? true : undefined}
             aria-describedby={emailError && email ? 'email-error' : undefined}
           />
           {emailError && email && (

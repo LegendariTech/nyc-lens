@@ -3,12 +3,12 @@
 import * as React from 'react';
 import { cn } from '@/utils/cn';
 
-interface AlertProps extends React.ComponentPropsWithoutRef<'div'> {
+interface AlertProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'title'> {
   /** Visual style variant */
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
   /** Optional icon to display */
   icon?: React.ReactNode;
-  /** Optional title */
+  /** Optional title (overrides HTML title attribute to allow ReactNode) */
   title?: React.ReactNode;
   /** Whether the alert can be dismissed */
   dismissible?: boolean;

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
@@ -7,16 +7,6 @@ import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { LocatorInit } from "@/components/LocatorInit";
 import { AgGridRegistry } from "@/components/AgGridRegistry";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,11 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(geistSans.variable, geistMono.variable, "antialiased")}>
+      <body className={cn("font-sans antialiased")}>
         <AgGridRegistry />
         <LocatorInit />
         <ViewportProvider>
-          <ResizableSidebarLayout sidebar={<SidebarNav />}>
+          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}
           </ResizableSidebarLayout>
         </ViewportProvider>
