@@ -79,6 +79,7 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
         const categoryMatch = visibleCategories.has(category);
 
         // Filter by amount if showZeroAmount is false
+        console.log(t.amount);
         const amountMatch = showZeroAmount || (t.amount && t.amount > 0);
 
         return categoryMatch && amountMatch;

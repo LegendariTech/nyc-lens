@@ -5,7 +5,6 @@ import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
-import { LocatorInit } from "@/components/LocatorInit";
 import { AgGridRegistry } from "@/components/AgGridRegistry";
 
 export const metadata: Metadata = {
@@ -22,7 +21,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn("font-sans antialiased")}>
         <AgGridRegistry />
-        <LocatorInit />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}

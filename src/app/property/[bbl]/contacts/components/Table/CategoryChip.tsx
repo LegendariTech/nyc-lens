@@ -18,7 +18,7 @@ export function CategoryChip(props: ICellRendererParams<OwnerContactRow>) {
             title={metadata.label}
             className={cn(
                 'inline-block px-1.5 py-0.5 rounded text-[11px] font-medium',
-                'border cursor-default align-middle leading-tight',
+                'border cursor-default leading-tight',
                 metadata.filterBorderActive,
                 metadata.filterBgActive,
                 metadata.filterTextActive

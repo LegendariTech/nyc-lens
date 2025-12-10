@@ -13,6 +13,9 @@ interface TabControlsBarProps {
   showTableViewToggle?: boolean;
   tableView?: boolean;
   onTableViewChange?: (table: boolean) => void;
+  showNormalizedToggle?: boolean;
+  normalized?: boolean;
+  onNormalizedChange?: (normalized: boolean) => void;
   className?: string;
   children?: React.ReactNode;
 }
@@ -27,6 +30,9 @@ export function TabControlsBar({
   showTableViewToggle = false,
   tableView = false,
   onTableViewChange,
+  showNormalizedToggle = false,
+  normalized = false,
+  onNormalizedChange,
   className,
   children
 }: TabControlsBarProps) {
@@ -34,7 +40,8 @@ export function TabControlsBar({
   const hasEmptyFieldsControl = showEmptyFieldsToggle && onEmptyFieldsChange;
   const hasRawViewControl = showRawViewToggle && onRawViewChange;
   const hasTableViewControl = showTableViewToggle && onTableViewChange;
-  const hasAnyControls = hasEmptyFieldsControl || hasRawViewControl || hasTableViewControl || children;
+  const hasNormalizedControl = showNormalizedToggle && onNormalizedChange;
+  const hasAnyControls = hasEmptyFieldsControl || hasRawViewControl || hasTableViewControl || hasNormalizedControl || children;
 
   // Return null if there are no controls to display
   if (!hasAnyControls) {
@@ -56,6 +63,16 @@ export function TabControlsBar({
             <Switch
               checked={tableView}
               onCheckedChange={onTableViewChange}
+            />
+          </div>
+        )}
+
+        {hasNormalizedControl && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground/70">Normalized</span>
+            <Switch
+              checked={normalized}
+              onCheckedChange={onNormalizedChange}
             />
           </div>
         )}

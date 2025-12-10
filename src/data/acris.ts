@@ -208,26 +208,19 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     const docsHits = (docsResult as { hits: { hits: Array<{ _source: AcrisDoc }> } }).hits.hits;
     const documents = docsHits.map(hit => hit._source);
 
-    // Filter out documents with zero or null amounts
-    const validDocuments = documents.filter(doc =>
-      doc.document_amount !== null &&
-      doc.document_amount !== undefined &&
-      doc.document_amount > 0
-    );
-
-    if (validDocuments.length === 0) {
-      console.info(`No valid documents found for BBL ${bbl} (all filtered out due to zero/null amounts)`);
+    if (documents.length === 0) {
+      console.info(`No documents found for BBL ${bbl}`);
       return [];
     }
 
     // Get unique document IDs to fetch associated parties
     // Filter out any documents without a master_document_id
-    const documentIds = validDocuments
+    const documentIds = documents
       .map(doc => doc.master_document_id)
       .filter((id): id is string => !!id);
 
     if (documentIds.length === 0) {
-      console.warn(`Found ${validDocuments.length} documents for BBL ${bbl} but none have master_document_id`);
+      console.warn(`Found ${documents.length} documents for BBL ${bbl} but none have master_document_id`);
       return [];
     }
 
@@ -270,7 +263,7 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
     }
 
     // Combine documents with their associated parties
-    const transactions: DocumentWithParties[] = validDocuments.map(doc => {
+    const transactions: DocumentWithParties[] = documents.map(doc => {
       const docParties = partiesByDocId.get(doc.master_document_id || '') || [];
 
       // Get party type labels from ACRIS control codes based on document type

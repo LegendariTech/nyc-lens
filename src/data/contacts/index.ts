@@ -1,5 +1,5 @@
 import 'server-only';
-import { queryMany } from './db';
+import { queryMany } from '../db';
 import type { OwnerContact } from '@/types/contacts';
 
 export interface OwnerContactsResult {
