@@ -80,8 +80,6 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
         }
     }, [processedContacts]);
 
-    console.log('processedContacts', processedContacts);
-
     // Filter state - by default show all except past-sale and prior-mortgage
     const [visibleCategories, setVisibleCategories] = useState<Set<ContactCategory>>(
         getDefaultVisibleCategories()

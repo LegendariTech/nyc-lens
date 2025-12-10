@@ -6,7 +6,6 @@ import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { AgGridRegistry } from "@/components/AgGridRegistry";
-import { ClickToComponent } from "@/components/ClickToComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,7 +21,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn("font-sans antialiased")}>
         <AgGridRegistry />
-        <ClickToComponent />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}
