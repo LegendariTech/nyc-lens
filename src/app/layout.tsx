@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
@@ -23,7 +24,7 @@ export default function RootLayout({
         <AgGridRegistry />
         <LocatorInit />
         <ViewportProvider>
-          <ResizableSidebarLayout sidebar={<SidebarNav />}>
+          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}
           </ResizableSidebarLayout>
         </ViewportProvider>
