@@ -162,6 +162,10 @@ export const AbbreviationMatch: Story = {
  * Multiple examples in a list
  */
 export const MultipleExamples: Story = {
+  args: {
+    text: 'Multiple examples',
+    query: 'examples',
+  },
   render: () => (
     <div className="space-y-3 p-4 rounded-lg border border-foreground/10 bg-background">
       <div>
@@ -196,6 +200,10 @@ export const MultipleExamples: Story = {
  * Address list showing highlighted results
  */
 export const AddressList: Story = {
+  args: {
+    text: 'Address list',
+    query: 'address',
+  },
   render: () => (
     <ul className="w-[500px] divide-y divide-foreground/10 rounded-lg border border-foreground/10 bg-background">
       <li className="px-4 py-3">
@@ -221,6 +229,10 @@ export const AddressList: Story = {
  * Different font sizes
  */
 export const FontSizes: Story = {
+  args: {
+    text: 'Font sizes',
+    query: 'font',
+  },
   render: () => (
     <div className="space-y-3">
       <div className="text-xs">
@@ -249,6 +261,10 @@ export const FontSizes: Story = {
  * In a card layout (realistic use case)
  */
 export const InCard: Story = {
+  args: {
+    text: 'In card layout',
+    query: 'card',
+  },
   render: () => (
     <div className="w-[400px] rounded-lg border border-foreground/10 bg-card p-4 shadow-sm">
       <div className="mb-2">

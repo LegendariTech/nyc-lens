@@ -73,7 +73,7 @@ export function transformValuationToTaxRows(valuations: PropertyValuation[]): Ta
     // Calculate year over year change
     const previousTaxable = getTaxableAssessedValue(valuation.pytxbtot, valuation.pytxbextot);
     const previousTaxClass = valuation.pytaxclass || null;
-    const previousFiscalYear = valuation.year - 1;
+    const previousFiscalYear = valuation.year ? String(Number(valuation.year) - 1) : null;
     const previousRate = getTaxRate(previousFiscalYear, previousTaxClass);
     const previousPropertyTax = previousTaxable != null && previousRate != null ? previousTaxable * (previousRate / 100) : null;
     const yoyChange = calculateYoyChange(propertyTax, previousPropertyTax);

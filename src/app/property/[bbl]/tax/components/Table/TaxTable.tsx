@@ -5,7 +5,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, type RowClickedEvent } from 'ag-grid-community';
 import { myTheme } from '@/components/table/theme';
 import { taxColumnDefs } from './taxColumnDefs';
-import type { TaxRow } from './taxTypes';
+import type { TaxRow } from '../taxTypes';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

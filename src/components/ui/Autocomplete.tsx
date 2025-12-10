@@ -150,9 +150,14 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
         if (maxResults) {
           return sources.map(source => ({
             ...source,
-            getItems: async () => {
-              const items = await source.getItems();
-              return items.slice(0, maxResults);
+            getItems: async (params) => {
+              const items = await source.getItems(params);
+              // getItems can return TItem[] | TItem[][] | RequesterDescription<TItem>
+              // We only slice if it's an array
+              if (Array.isArray(items)) {
+                return items.flat().slice(0, maxResults) as TItem[];
+              }
+              return items;
             },
           }));
         }
