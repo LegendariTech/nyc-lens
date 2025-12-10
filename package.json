@@ -29,7 +29,7 @@
     "clsx": "^2.1.1",
     "fastest-levenshtein": "^1.0.16",
     "mssql": "^12.0.0",
-    "next": "^16.0.0",
+    "next": "^16.0.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "server-only": "^0.0.1",
