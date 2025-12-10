@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
 import PropertyTable, { type PropertyTableRef } from "@/components/table/property/PropertyTable";
@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/Switch";
 import { Button } from "@/components/ui/Button";
 import { useViewport } from "@/components/layout/ViewportContext";
 
-export default function SearchPage() {
+function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bulkMode = searchParams.get('bulk') === 'true';
@@ -81,6 +81,14 @@ export default function SearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full w-full items-center justify-center">Loading...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
 
