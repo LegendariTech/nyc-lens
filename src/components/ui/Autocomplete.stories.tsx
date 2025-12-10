@@ -54,7 +54,9 @@ const meta = {
 } satisfies Meta<typeof Autocomplete>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+// Use a permissive type for stories that use custom render functions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Story = StoryObj<any>;
 
 // ============================================================================
 // Sample Data Types
@@ -476,6 +478,7 @@ export const MultiSource: Story = {
           // Check if it's a User or Product
           if ('email' in item) {
             // User
+            const user = item as User;
             return (
               <li
                 {...itemProps}
@@ -484,14 +487,15 @@ export const MultiSource: Story = {
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-foreground/60">👤</span>
                   <div>
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-xs text-foreground/60">{item.email}</div>
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-xs text-foreground/60">{user.email}</div>
                   </div>
                 </div>
               </li>
             );
           } else {
             // Product
+            const product = item as Product;
             return (
               <li
                 {...itemProps}
@@ -500,9 +504,9 @@ export const MultiSource: Story = {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-foreground/60">🛍️</span>
-                    <div className="font-medium">{item.name}</div>
+                    <div className="font-medium">{product.name}</div>
                   </div>
-                  <div className="text-sm font-semibold">${item.price}</div>
+                  <div className="text-sm font-semibold">${product.price}</div>
                 </div>
               </li>
             );

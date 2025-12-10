@@ -15,7 +15,7 @@ const { search } = await import('../elasticsearch');
 
 describe('acris data layer', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('fetchTransactionsWithParties', () => {

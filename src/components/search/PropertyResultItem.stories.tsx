@@ -38,6 +38,7 @@ type Story = StoryObj<typeof meta>;
 const sampleProperty: PropertyItem = {
   id: '1-2469-22',
   address: '123 MAIN STREET',
+  address_with_unit: '123 MAIN STREET',
   borough: '1',
   block: '2469',
   lot: '22',
@@ -50,6 +51,7 @@ const sampleProperty: PropertyItem = {
 const propertyWithoutSale: PropertyItem = {
   id: '2-1234-56',
   address: '456 BROADWAY',
+  address_with_unit: '456 BROADWAY',
   borough: '2',
   block: '1234',
   lot: '56',
@@ -59,6 +61,7 @@ const propertyWithoutSale: PropertyItem = {
 const propertyWithLongAddress: PropertyItem = {
   id: '3-5678-90',
   address: '789 WEST END AVENUE APARTMENT 12B',
+  address_with_unit: '789 WEST END AVENUE APARTMENT 12B',
   borough: '3',
   block: '5678',
   lot: '90',
@@ -71,6 +74,7 @@ const propertyWithLongAddress: PropertyItem = {
 const propertyLowValue: PropertyItem = {
   id: '4-9876-54',
   address: '321 PARK PLACE',
+  address_with_unit: '321 PARK PLACE',
   borough: '4',
   block: '9876',
   lot: '54',
@@ -182,6 +186,12 @@ export const Hovered: Story = {
  * Multiple items in a list to show border behavior
  */
 export const MultipleItems: Story = {
+  args: {
+    item: sampleProperty,
+    query: 'main',
+    compact: false,
+    itemProps: {},
+  },
   render: () => (
     <ul className="w-[600px] rounded-md border border-foreground/20 bg-background">
       <PropertyResultItem
@@ -210,6 +220,12 @@ export const MultipleItems: Story = {
  * Multiple items with one selected
  */
 export const MultipleItemsWithSelection: Story = {
+  args: {
+    item: sampleProperty,
+    query: 'main',
+    compact: false,
+    itemProps: {},
+  },
   render: () => (
     <ul className="w-[600px] rounded-md border border-foreground/20 bg-background">
       <PropertyResultItem
@@ -240,6 +256,12 @@ export const MultipleItemsWithSelection: Story = {
  * Compact list with multiple items
  */
 export const CompactList: Story = {
+  args: {
+    item: sampleProperty,
+    query: 'main',
+    compact: true,
+    itemProps: {},
+  },
   render: () => (
     <ul className="w-[600px] rounded-md border border-foreground/20 bg-background">
       <PropertyResultItem
@@ -278,6 +300,7 @@ export const HighValueSale: Story = {
     item: {
       id: '1-1111-11',
       address: '1 CENTRAL PARK WEST',
+      address_with_unit: '1 CENTRAL PARK WEST',
       borough: '1',
       block: '1111',
       lot: '11',
@@ -300,6 +323,7 @@ export const OwnerOnly: Story = {
     item: {
       id: '2-2222-22',
       address: '100 FIFTH AVENUE',
+      address_with_unit: '100 FIFTH AVENUE',
       borough: '2',
       block: '2222',
       lot: '22',

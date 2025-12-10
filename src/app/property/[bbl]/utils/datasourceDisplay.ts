@@ -32,6 +32,11 @@ export interface DatasourceMetadata {
   columns: DatasourceColumnMetadata[];
   metadata?: {
     attachments?: DatasourceAttachment[];
+    custom_fields?: {
+      Update?: {
+        'Update Frequency'?: string;
+      };
+    };
   };
 }
 

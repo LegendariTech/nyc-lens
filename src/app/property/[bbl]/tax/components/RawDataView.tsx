@@ -100,7 +100,7 @@ export function RawDataView({ data, searchQuery }: RawDataViewProps) {
 
                 // Apply currency formatting for currency fields
                 if (CURRENCY_FIELDS.has(field)) {
-                  displayValue = formatCurrency(value);
+                  displayValue = formatCurrency(typeof value === 'number' ? value : null);
                 }
                 // Apply code resolution for specific fields
                 else if (field === 'pytaxflag' || field === 'tentaxflag' || field === 'cbntaxflag' ||
