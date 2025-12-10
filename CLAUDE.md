@@ -10,7 +10,7 @@ NYC Lens is a Next.js 16 application for exploring NYC real estate data (ACRIS, 
 
 ### Core Development
 - `npm run dev` - Start development server with Turbopack (http://localhost:3000)
-- `npm run build` - Production build with Turbopack
+- `npm run build` - Production build (uses webpack; Turbopack is dev-only in Next.js 16)
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint
 
@@ -191,10 +191,11 @@ DB_DATABASE=...
 
 ## Common Pitfalls
 
-1. **ag-Grid license**: Ensure license key is valid (expires July 2026)
-2. **Elasticsearch field types**: Text fields need `.keyword` or `.integer` subfields for exact matching/sorting - see `searchStrategies` in `src/utils/agGrid.ts`
-3. **BBL format**: Always use 10-digit string format, never numeric (leading zeros matter)
-4. **Server/Client boundary**: Don't accidentally import server-only modules in client components
-5. **Tailwind purging**: Never use dynamic class construction like `text-${size}` - use complete class names
-6. **Date handling**: Elasticsearch expects ISO 8601 format - use `normalizeToIsoDateTime()` in `src/utils/agGrid.ts`
-7. **Vitest timezone**: Tests run in UTC (configured in `vitest.config.ts`)
+1. **Turbopack for production**: NEVER use `--turbopack` flag with `npm run build` - it's dev-only and will cause deployment failures (missing routes-manifest.json). Only use Turbopack for `npm run dev`.
+2. **ag-Grid license**: Ensure license key is valid (expires July 2026)
+3. **Elasticsearch field types**: Text fields need `.keyword` or `.integer` subfields for exact matching/sorting - see `searchStrategies` in `src/utils/agGrid.ts`
+4. **BBL format**: Always use 10-digit string format, never numeric (leading zeros matter)
+5. **Server/Client boundary**: Don't accidentally import server-only modules in client components
+6. **Tailwind purging**: Never use dynamic class construction like `text-${size}` - use complete class names
+7. **Date handling**: Elasticsearch expects ISO 8601 format - use `normalizeToIsoDateTime()` in `src/utils/agGrid.ts`
+8. **Vitest timezone**: Tests run in UTC (configured in `vitest.config.ts`)
