@@ -21,44 +21,53 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
 
     // Apply normalization if enabled
     const processedContacts = useMemo(() => {
-        if (normalized) {
-            // Format contacts (cleanup + address/phone arrays)
-            const formatted = formatContacts(contactsData);
-            // Deduplicate contacts by similar name, matching agency and source
-            const deduplicated = deduplicateContacts(formatted, 0.65);
-            // Convert back to OwnerContact format for the table
-            // Combine all addresses into a single field for display
-            return deduplicated.map(contact => {
-                // Combine all addresses with newlines for multi-line display
-                const combinedAddress = contact.owner_address
-                    .filter(addr => addr && addr.trim())
-                    .join('\n') || null;
+        // Format contacts (cleanup + address/phone/business arrays)
+        const formatted = formatContacts(contactsData);
 
-                // Combine all phones with newlines for multi-line display
-                const combinedPhone = contact.owner_phone
-                    .filter(phone => phone && phone.trim())
-                    .join('\n') || null;
+        // Deduplicate if normalized is enabled
+        const contactsToDisplay = normalized
+            ? deduplicateContacts(formatted, 0.65)
+            : formatted;
 
-                return {
-                    ...contact,
-                    // Combine all addresses into owner_address field
-                    owner_address: combinedAddress,
-                    owner_address_2: null, // Not needed in normalized view
-                    owner_phone: combinedPhone,
-                    owner_phone_2: null, // Not needed in normalized view
-                    // Add back the removed fields as null for type compatibility
-                    owner_city: null,
-                    owner_state: null,
-                    owner_zip: null,
-                    owner_city_2: null,
-                    owner_state_2: null,
-                    owner_zip_2: null,
-                    owner_first_name: null,
-                    owner_last_name: null,
-                };
-            }) as OwnerContact[];
-        }
-        return contactsData;
+        // Convert back to OwnerContact format for the table
+        // Combine arrays into single fields for display
+        return contactsToDisplay.map(contact => {
+            // Combine all addresses with newlines for multi-line display
+            const combinedAddress = contact.owner_address
+                .filter(addr => addr && addr.trim())
+                .join('\n') || null;
+
+            // Combine all phones with newlines for multi-line display
+            const combinedPhone = contact.owner_phone
+                .filter(phone => phone && phone.trim())
+                .join('\n') || null;
+
+            // Combine all business names with newlines for multi-line display
+            const combinedBusinessName = Array.isArray(contact.owner_business_name)
+                ? contact.owner_business_name
+                    .filter(name => name && name.trim())
+                    .join('\n') || null
+                : null;
+
+            return {
+                ...contact,
+                // Combine all addresses into owner_address field
+                owner_address: combinedAddress,
+                owner_address_2: null, // Not needed in normalized view
+                owner_phone: combinedPhone,
+                owner_phone_2: null, // Not needed in normalized view
+                owner_business_name: combinedBusinessName,
+                // Add back the removed fields as null for type compatibility
+                owner_city: null,
+                owner_state: null,
+                owner_zip: null,
+                owner_city_2: null,
+                owner_state_2: null,
+                owner_zip_2: null,
+                owner_first_name: null,
+                owner_last_name: null,
+            };
+        }) as OwnerContact[];
     }, [contactsData, normalized]);
 
     // Add categories to contacts with error handling
@@ -70,6 +79,8 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
             return [];
         }
     }, [processedContacts]);
+
+    console.log('processedContacts', processedContacts);
 
     // Filter state - by default show all except past-sale and prior-mortgage
     const [visibleCategories, setVisibleCategories] = useState<Set<ContactCategory>>(

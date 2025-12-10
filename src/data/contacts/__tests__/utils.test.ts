@@ -1184,7 +1184,7 @@ describe('contacts/utils', () => {
                 const formatted = formatContact(contact);
 
                 // Cleanup applied
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
 
                 // Address reformatted into array
                 expect(formatted.owner_address).toEqual(['123 Main St, New York, NY 10001']);
@@ -1210,7 +1210,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
                 expect(formatted.owner_address).toEqual([
                     '123 Main St, New York, NY 10001',
                     '456 Second St, Brooklyn, NY 11201'
@@ -1237,7 +1237,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBe('Acme Corporation');
+                expect(formatted.owner_business_name).toEqual(['Acme Corporation']);
                 expect(formatted.owner_address).toEqual(['789 Broadway, Queens, NY 11101']);
             });
 
@@ -1252,7 +1252,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
                 expect(formatted.owner_address).toEqual(['999 Test Ave']);
             });
 
@@ -1267,7 +1267,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
                 expect(formatted.owner_address).toEqual([]);
             });
         });
@@ -1584,7 +1584,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
                 expect(formatted.owner_address).toEqual([]);
                 expect(formatted.owner_phone).toEqual([]);
             });
@@ -1600,7 +1600,7 @@ describe('contacts/utils', () => {
 
                 const formatted = formatContact(contact);
 
-                expect(formatted.owner_business_name).toBeNull();
+                expect(formatted.owner_business_name).toEqual([]);
                 expect(formatted.owner_address).toEqual(['123 Main St, New York, NY 10001']);
             });
 
@@ -1618,7 +1618,7 @@ describe('contacts/utils', () => {
 
                     const formatted = formatContact(contact);
 
-                    expect(formatted.owner_business_name).toBeNull();
+                    expect(formatted.owner_business_name).toEqual([]);
                     expect(formatted.owner_address).toEqual(['123 Main St, New York, NY 10001']);
                 });
             });
@@ -1656,17 +1656,17 @@ describe('contacts/utils', () => {
             expect(formatted).toHaveLength(3);
 
             // First contact
-            expect(formatted[0].owner_business_name).toBeNull();
+            expect(formatted[0].owner_business_name).toEqual([]);
             expect(formatted[0].owner_address).toEqual(['123 Main St, New York, NY 10001']);
             expect('owner_city' in formatted[0]).toBe(false);
 
             // Second contact
-            expect(formatted[1].owner_business_name).toBe('Acme Corp');
+            expect(formatted[1].owner_business_name).toEqual(['Acme Corp']);
             expect(formatted[1].owner_address).toEqual(['456 Park Ave, Brooklyn, NY 11201']);
             expect('owner_city' in formatted[1]).toBe(false);
 
             // Third contact
-            expect(formatted[2].owner_business_name).toBeNull();
+            expect(formatted[2].owner_business_name).toEqual([]);
             expect(formatted[2].owner_address).toEqual(['789 Broadway, Queens, NY 11101']);
             expect('owner_city' in formatted[2]).toBe(false);
         });
@@ -1692,7 +1692,7 @@ describe('contacts/utils', () => {
             const formatted = formatContacts(contacts);
 
             expect(formatted).toHaveLength(1);
-            expect(formatted[0].owner_business_name).toBeNull();
+            expect(formatted[0].owner_business_name).toEqual([]);
             expect(formatted[0].owner_address).toEqual(['123 Main St, New York, NY 10001']);
         });
 
@@ -1789,13 +1789,13 @@ describe('contacts/utils', () => {
 
             const formatted = formatContacts(contacts);
 
-            expect(formatted[0].owner_business_name).toBeNull();
+            expect(formatted[0].owner_business_name).toEqual([]);
             expect(formatted[0].owner_address).toEqual(['123 Main St, New York, NY 10001']);
 
-            expect(formatted[1].owner_business_name).toBe('Valid Corp');
+            expect(formatted[1].owner_business_name).toEqual(['Valid Corp']);
             expect(formatted[1].owner_address).toEqual(['456 Park Ave']);
 
-            expect(formatted[2].owner_business_name).toBeNull();
+            expect(formatted[2].owner_business_name).toEqual([]);
             expect(formatted[2].owner_address).toEqual([]);
         });
 
@@ -2643,7 +2643,7 @@ describe('contacts/utils', () => {
                 const deduplicated = deduplicateContacts(formatted, 0.85);
 
                 expect(deduplicated).toHaveLength(1);
-                expect(deduplicated[0].owner_business_name).toBe('ABC Corp');
+                expect(deduplicated[0].owner_business_name).toEqual(['ABC Corp']);
             });
 
             it('should deduplicate contacts with same business name when owner_full_name is empty', () => {
@@ -2676,7 +2676,7 @@ describe('contacts/utils', () => {
                 const deduplicated = deduplicateContacts(formatted, 0.85);
 
                 expect(deduplicated).toHaveLength(1);
-                expect(deduplicated[0].owner_business_name).toBe('ABC Corp');
+                expect(deduplicated[0].owner_business_name).toEqual(['ABC Corp']);
                 expect(deduplicated[0].owner_address.length).toBe(2);
                 expect(deduplicated[0].owner_phone.length).toBe(2);
             });

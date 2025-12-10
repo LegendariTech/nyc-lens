@@ -2,10 +2,11 @@ import type { OwnerContact } from '@/types/contacts';
 import DuplicateDetector from './DuplicateDetector';
 
 /**
- * Formatted contact with combined address and phone fields
+ * Formatted contact with combined address, phone, and business name fields
  * - City, state, and zip fields are removed as they're combined into owner_address
  * - owner_address becomes an array of formatted addresses
  * - owner_phone becomes an array of phone numbers
+ * - owner_business_name becomes an array of business names
  * - Secondary address and phone fields are removed
  * - owner_first_name and owner_last_name are removed (only owner_full_name is kept)
  */
@@ -21,11 +22,13 @@ export type FormattedOwnerContact = Omit<
     | 'owner_address_2'
     | 'owner_phone'
     | 'owner_phone_2'
+    | 'owner_business_name'
     | 'owner_first_name'
     | 'owner_last_name'
 > & {
     owner_address: string[];
     owner_phone: string[];
+    owner_business_name: string[];
 };
 
 /**
@@ -332,6 +335,69 @@ function deduplicateAddresses(
 }
 
 /**
+ * Deduplicate business names using similarity detection
+ * Removes exact duplicates and similar variations (case differences, punctuation, typos)
+ * @param businessNames - Array of business names to deduplicate
+ * @param threshold - Similarity threshold for matching (default: 0.85)
+ * @returns Array of deduplicated business names
+ */
+function deduplicateBusinessNames(
+    businessNames: string[],
+    threshold: number = 0.85
+): string[] {
+    if (businessNames.length <= 1) return businessNames;
+
+    // Filter out empty business names and trim
+    const nonEmptyNames = businessNames
+        .filter(name => name && name.trim())
+        .map(name => name.trim());
+
+    if (nonEmptyNames.length <= 1) return nonEmptyNames;
+
+    // First, remove exact duplicates (case-sensitive exact matches)
+    const seenExact = new Set<string>();
+    const uniqueNames: string[] = [];
+    for (const name of nonEmptyNames) {
+        if (!seenExact.has(name)) {
+            seenExact.add(name);
+            uniqueNames.push(name);
+        }
+    }
+
+    if (uniqueNames.length <= 1) return uniqueNames;
+
+    // Then use DuplicateDetector to find similar duplicates (case variations, punctuation, typos)
+    const detector = new DuplicateDetector({ threshold });
+    const duplicateResult = detector.findDuplicates(uniqueNames);
+
+    // If no similar duplicates found, return unique names
+    if (duplicateResult.clusters.length === 0) {
+        return uniqueNames;
+    }
+
+    // Build a set of business names that are duplicates (to be removed)
+    const duplicateNames = new Set<string>();
+
+    for (const cluster of duplicateResult.clusters) {
+        if (cluster.items.length > 1) {
+            // Keep the canonical form, mark all others as duplicates
+            const canonical = cluster.canonicalForm;
+
+            for (const item of cluster.items) {
+                if (item.original !== canonical) {
+                    duplicateNames.add(item.original);
+                }
+            }
+        }
+    }
+
+    // Return business names that are either:
+    // 1. Canonical forms from clusters, or
+    // 2. Not in any cluster (unique names)
+    return uniqueNames.filter(name => !duplicateNames.has(name));
+}
+
+/**
  * Apply all cleanup and formatting transformations to a contact
  * This is the main function to use for processing raw contact data
  * 
@@ -369,6 +435,12 @@ export function formatContact(contact: OwnerContact): FormattedOwnerContact {
         phones.push(reformatted.owner_phone_2.trim());
     }
 
+    // Combine business names into array (filter out null/empty values)
+    const businessNames: string[] = [];
+    if (reformatted.owner_business_name && reformatted.owner_business_name.trim()) {
+        businessNames.push(reformatted.owner_business_name.trim());
+    }
+
     // Remove redundant fields and return with arrays
     // These variables are intentionally unused - they're destructured to exclude them from the result
     /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -383,6 +455,7 @@ export function formatContact(contact: OwnerContact): FormattedOwnerContact {
         owner_address_2,
         owner_phone,
         owner_phone_2,
+        owner_business_name,
         owner_first_name,
         owner_last_name,
         ...rest
@@ -397,6 +470,7 @@ export function formatContact(contact: OwnerContact): FormattedOwnerContact {
         ...rest,
         owner_address: deduplicatedAddresses,
         owner_phone: phones,
+        owner_business_name: businessNames,
     };
 }
 
@@ -459,7 +533,7 @@ export function deduplicateContacts(
         // Filter out contacts where both owner_full_name and owner_business_name are empty
         const validContacts = groupContacts.filter(contact => {
             const hasName = contact.owner_full_name && contact.owner_full_name.trim();
-            const hasBusinessName = contact.owner_business_name && contact.owner_business_name.trim();
+            const hasBusinessName = contact.owner_business_name && contact.owner_business_name.length > 0;
             return hasName || hasBusinessName;
         });
 
@@ -469,15 +543,16 @@ export function deduplicateContacts(
         );
         const contactsWithBusinessNamesOnly = validContacts.filter(
             c => (!c.owner_full_name || !c.owner_full_name.trim()) &&
-                (c.owner_business_name && c.owner_business_name.trim())
+                (c.owner_business_name && c.owner_business_name.length > 0)
         );
 
         // Process contacts with business names only (deduplicate by business name)
         if (contactsWithBusinessNamesOnly.length > 0) {
             // Create a map of business name to contacts
+            // Join business names array to create a grouping key
             const businessNameToContacts = new Map<string, FormattedOwnerContact[]>();
             for (const contact of contactsWithBusinessNamesOnly) {
-                const businessName = contact.owner_business_name!.trim();
+                const businessName = contact.owner_business_name.join('|');
                 if (!businessNameToContacts.has(businessName)) {
                     businessNameToContacts.set(businessName, []);
                 }
@@ -520,8 +595,12 @@ export function deduplicateContacts(
                                 }
                             });
                         }
-                        if (contact.owner_business_name && contact.owner_business_name.trim()) {
-                            combinedBusinessNames.add(contact.owner_business_name.trim());
+                        if (contact.owner_business_name) {
+                            contact.owner_business_name.forEach(name => {
+                                if (name && name.trim()) {
+                                    combinedBusinessNames.add(name.trim());
+                                }
+                            });
                         }
                         if (contact.date) {
                             const contactDate = contact.date instanceof Date ? contact.date : new Date(contact.date);
@@ -534,13 +613,16 @@ export function deduplicateContacts(
                     // Deduplicate addresses
                     const deduplicatedAddresses = deduplicateAddresses(allAddresses, 0.90);
 
+                    // Deduplicate business names
+                    const deduplicatedBusinessNames = combinedBusinessNames.size > 0
+                        ? deduplicateBusinessNames(Array.from(combinedBusinessNames), 0.85)
+                        : masterContact.owner_business_name;
+
                     const mergedContact: FormattedOwnerContact = {
                         ...masterContact,
                         owner_address: deduplicatedAddresses,
                         owner_phone: Array.from(combinedPhones),
-                        owner_business_name: combinedBusinessNames.size > 0
-                            ? Array.from(combinedBusinessNames).join(', ')
-                            : masterContact.owner_business_name,
+                        owner_business_name: deduplicatedBusinessNames,
                         date: maxDate || masterContact.date,
                     };
 
@@ -560,7 +642,7 @@ export function deduplicateContacts(
             if (remainingBusinessNameContacts.length > 0) {
                 const remainingBusinessNameToContacts = new Map<string, FormattedOwnerContact[]>();
                 for (const contact of remainingBusinessNameContacts) {
-                    const businessName = contact.owner_business_name!.trim();
+                    const businessName = contact.owner_business_name.join('|');
                     if (!remainingBusinessNameToContacts.has(businessName)) {
                         remainingBusinessNameToContacts.set(businessName, []);
                     }
@@ -613,8 +695,12 @@ export function deduplicateContacts(
                                 }
                             });
                         }
-                        if (contact.owner_business_name && contact.owner_business_name.trim()) {
-                            combinedBusinessNames.add(contact.owner_business_name.trim());
+                        if (contact.owner_business_name) {
+                            contact.owner_business_name.forEach(name => {
+                                if (name && name.trim()) {
+                                    combinedBusinessNames.add(name.trim());
+                                }
+                            });
                         }
                         if (contact.date) {
                             const contactDate = contact.date instanceof Date ? contact.date : new Date(contact.date);
@@ -626,13 +712,16 @@ export function deduplicateContacts(
 
                     const deduplicatedAddresses = deduplicateAddresses(allAddresses, 0.90);
 
+                    // Deduplicate business names
+                    const deduplicatedBusinessNames = combinedBusinessNames.size > 0
+                        ? deduplicateBusinessNames(Array.from(combinedBusinessNames), 0.85)
+                        : masterContact.owner_business_name;
+
                     const mergedContact: FormattedOwnerContact = {
                         ...masterContact,
                         owner_address: deduplicatedAddresses,
                         owner_phone: Array.from(combinedPhones),
-                        owner_business_name: combinedBusinessNames.size > 0
-                            ? Array.from(combinedBusinessNames).join(', ')
-                            : masterContact.owner_business_name,
+                        owner_business_name: deduplicatedBusinessNames,
                         date: maxDate || masterContact.date,
                     };
 
@@ -662,100 +751,21 @@ export function deduplicateContacts(
             nameToContacts.get(name)!.push(contact);
         }
 
-        // First, handle exact matches (same name) - these should always be deduplicated
-        for (const [, contactsWithSameName] of nameToContacts) {
-            if (contactsWithSameName.length > 1) {
-                // These are exact duplicates by name - merge them
-                let masterContact = contactsWithSameName[0];
-                let maxDataCompleteness = getDataCompleteness(masterContact);
-
-                for (const contact of contactsWithSameName.slice(1)) {
-                    const completeness = getDataCompleteness(contact);
-                    if (completeness > maxDataCompleteness) {
-                        masterContact = contact;
-                        maxDataCompleteness = completeness;
-                    }
-                }
-
-                // Combine all unique data from exact duplicates
-                const allAddresses: string[] = [];
-                const combinedPhones = new Set<string>();
-                const combinedBusinessNames = new Set<string>();
-                let maxDate: Date | null = null;
-
-                for (const contact of contactsWithSameName) {
-                    if (contact.owner_address) {
-                        contact.owner_address.forEach(addr => {
-                            if (addr && addr.trim()) {
-                                allAddresses.push(addr.trim());
-                            }
-                        });
-                    }
-                    if (contact.owner_phone) {
-                        contact.owner_phone.forEach(phone => {
-                            if (phone && phone.trim()) {
-                                combinedPhones.add(phone.trim());
-                            }
-                        });
-                    }
-                    if (contact.owner_business_name && contact.owner_business_name.trim()) {
-                        combinedBusinessNames.add(contact.owner_business_name.trim());
-                    }
-                    if (contact.date) {
-                        const contactDate = contact.date instanceof Date ? contact.date : new Date(contact.date);
-                        if (!maxDate || contactDate > maxDate) {
-                            maxDate = contactDate;
-                        }
-                    }
-                }
-
-                // Deduplicate addresses using DuplicateDetector
-                // Use a higher threshold (0.90) for addresses to avoid deduplicating addresses with different street numbers
-                const deduplicatedAddresses = deduplicateAddresses(allAddresses, 0.90);
-
-                const mergedContact: FormattedOwnerContact = {
-                    ...masterContact,
-                    owner_address: deduplicatedAddresses,
-                    owner_phone: Array.from(combinedPhones),
-                    owner_business_name: combinedBusinessNames.size > 0
-                        ? Array.from(combinedBusinessNames).join(', ')
-                        : masterContact.owner_business_name,
-                    date: maxDate || masterContact.date,
-                };
-
-                deduplicated.push(mergedContact);
-                contactsWithSameName.forEach(contact => processedContacts.add(contact));
-            }
-        }
-
-        // Now handle similar but not identical names using similarity detection
-        // Only process contacts that haven't been deduplicated yet
-        const remainingContacts = contactsWithNames.filter(c => !processedContacts.has(c));
-        if (remainingContacts.length === 0) continue;
-
-        // Create a new map for remaining contacts
-        const remainingNameToContacts = new Map<string, FormattedOwnerContact[]>();
-        for (const contact of remainingContacts) {
-            const name = contact.owner_full_name!.trim();
-            if (!remainingNameToContacts.has(name)) {
-                remainingNameToContacts.set(name, []);
-            }
-            remainingNameToContacts.get(name)!.push(contact);
-        }
-
-        // Extract unique names for duplicate detection
-        const uniqueNames = Array.from(remainingNameToContacts.keys());
+        // Extract ALL unique names for similarity detection
+        // This includes names that have exact duplicates AND single occurrences
+        // This way "Richard Hiller", "Richard Hiler", and "RICHARD HILER" can all be compared
+        const uniqueNames = Array.from(nameToContacts.keys());
 
         // Find duplicates within this group
         const duplicateResult = detector.findDuplicates(uniqueNames);
 
         // Process each cluster
         for (const cluster of duplicateResult.clusters) {
-            // Collect all contacts in this cluster
+            // Collect all contacts in this cluster (from ALL names, not just remaining)
             const clusterContacts: FormattedOwnerContact[] = [];
 
             for (const item of cluster.items) {
-                const contactsWithName = remainingNameToContacts.get(item.original);
+                const contactsWithName = nameToContacts.get(item.original);
                 if (contactsWithName) {
                     clusterContacts.push(...contactsWithName);
                 }
@@ -801,8 +811,12 @@ export function deduplicateContacts(
                 }
 
                 // Add business names
-                if (contact.owner_business_name && contact.owner_business_name.trim()) {
-                    combinedBusinessNames.add(contact.owner_business_name.trim());
+                if (contact.owner_business_name) {
+                    contact.owner_business_name.forEach(name => {
+                        if (name && name.trim()) {
+                            combinedBusinessNames.add(name.trim());
+                        }
+                    });
                 }
 
                 // Track maximum date (most recent)
@@ -818,14 +832,17 @@ export function deduplicateContacts(
             // Use a higher threshold (0.90) for addresses to avoid deduplicating addresses with different street numbers
             const deduplicatedAddresses = deduplicateAddresses(allAddresses, 0.90);
 
+            // Deduplicate business names
+            const deduplicatedBusinessNames = combinedBusinessNames.size > 0
+                ? deduplicateBusinessNames(Array.from(combinedBusinessNames), 0.85)
+                : masterContact.owner_business_name;
+
             // Create merged contact
             const mergedContact: FormattedOwnerContact = {
                 ...masterContact,
                 owner_address: deduplicatedAddresses,
                 owner_phone: Array.from(combinedPhones),
-                owner_business_name: combinedBusinessNames.size > 0
-                    ? Array.from(combinedBusinessNames).join(', ')
-                    : masterContact.owner_business_name,
+                owner_business_name: deduplicatedBusinessNames,
                 date: maxDate || masterContact.date, // Use max date, fallback to master's date
             };
 
@@ -835,11 +852,85 @@ export function deduplicateContacts(
             clusterContacts.forEach(contact => processedContacts.add(contact));
         }
 
-        // Add contacts that weren't part of any duplicate cluster
-        // Note: contactsWithoutNames were already added above
-        for (const contact of contactsWithNames) {
-            if (!processedContacts.has(contact)) {
-                deduplicated.push(contact);
+        // Handle names that have multiple contacts but weren't in any cluster
+        // (e.g., 3x "John Doe" - only 1 unique name, no cluster formed, but needs merging)
+        for (const [name, contacts] of nameToContacts) {
+            // Skip if already processed (was in a cluster)
+            if (contacts.some(c => processedContacts.has(c))) {
+                continue;
+            }
+
+            // If this unique name has multiple contacts, merge them (exact duplicates)
+            if (contacts.length > 1) {
+                // Select master contact
+                let masterContact = contacts[0];
+                let maxDataCompleteness = getDataCompleteness(masterContact);
+
+                for (const contact of contacts.slice(1)) {
+                    const completeness = getDataCompleteness(contact);
+                    if (completeness > maxDataCompleteness) {
+                        masterContact = contact;
+                        maxDataCompleteness = completeness;
+                    }
+                }
+
+                // Combine data
+                const allAddresses: string[] = [];
+                const combinedPhones = new Set<string>();
+                const combinedBusinessNames = new Set<string>();
+                let maxDate: Date | null = null;
+
+                for (const contact of contacts) {
+                    if (contact.owner_address) {
+                        contact.owner_address.forEach(addr => {
+                            if (addr && addr.trim()) {
+                                allAddresses.push(addr.trim());
+                            }
+                        });
+                    }
+                    if (contact.owner_phone) {
+                        contact.owner_phone.forEach(phone => {
+                            if (phone && phone.trim()) {
+                                combinedPhones.add(phone.trim());
+                            }
+                        });
+                    }
+                    if (contact.owner_business_name) {
+                        contact.owner_business_name.forEach(name => {
+                            if (name && name.trim()) {
+                                combinedBusinessNames.add(name.trim());
+                            }
+                        });
+                    }
+                    if (contact.date) {
+                        const contactDate = contact.date instanceof Date ? contact.date : new Date(contact.date);
+                        if (!maxDate || contactDate > maxDate) {
+                            maxDate = contactDate;
+                        }
+                    }
+                }
+
+                const deduplicatedAddresses = deduplicateAddresses(allAddresses, 0.90);
+
+                // Deduplicate business names
+                const deduplicatedBusinessNames = combinedBusinessNames.size > 0
+                    ? deduplicateBusinessNames(Array.from(combinedBusinessNames), 0.85)
+                    : masterContact.owner_business_name;
+
+                const mergedContact: FormattedOwnerContact = {
+                    ...masterContact,
+                    owner_address: deduplicatedAddresses,
+                    owner_phone: Array.from(combinedPhones),
+                    owner_business_name: deduplicatedBusinessNames,
+                    date: maxDate || masterContact.date,
+                };
+
+                deduplicated.push(mergedContact);
+                contacts.forEach(contact => processedContacts.add(contact));
+            } else {
+                // Single contact with this unique name, add it
+                deduplicated.push(contacts[0]);
+                processedContacts.add(contacts[0]);
             }
         }
     }

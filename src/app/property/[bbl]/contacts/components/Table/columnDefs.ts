@@ -124,6 +124,7 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         headerName: 'Business Name',
         width: 220,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+        cellClass: 'multiline-cell',
     },
     {
         field: 'owner_phone',

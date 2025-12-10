@@ -34,8 +34,8 @@ export function ContactsTable({ data }: ContactsTableProps) {
         const row = params.data;
         if (!row) return 42; // Default row height
 
-        const baseHeight = 25; // Base height for single item
-        const heightPerItem = 20; // Height per additional item (address or phone)
+        const baseHeight = 30; // Base height for single item
+        const heightPerItem = 24; // Height per additional item (address, phone, or business name)
 
         // Count addresses (split by newlines)
         let addressCount = 0;
@@ -53,12 +53,20 @@ export function ContactsTable({ data }: ContactsTableProps) {
             phoneCount = phoneLines.length;
         }
 
-        // Use the maximum count (addresses or phones) to determine height
-        const maxItemCount = Math.max(addressCount, phoneCount, 1); // At least 1 for empty cells
+        // Count business names (split by newlines)
+        let businessNameCount = 0;
+        const businessName = row.owner_business_name;
+        if (businessName) {
+            const businessNameLines = businessName.split('\n').filter(line => line && line.trim());
+            businessNameCount = businessNameLines.length;
+        }
+
+        // Use the maximum count (addresses, phones, or business names) to determine height
+        const maxItemCount = Math.max(addressCount, phoneCount, businessNameCount, 1); // At least 1 for empty cells
 
         // Calculate height: baseHeight + (itemCount * heightPerItem)
-        // For 1 item: 25 + (1 * 20) = 45px
-        // For 6 items: 25 + (6 * 20) = 145px
+        // For 1 item: 30 + (1 * 24) = 54px
+        // For 6 items: 30 + (6 * 24) = 174px
         const calculatedHeight = baseHeight + (maxItemCount * heightPerItem);
 
         return calculatedHeight;

@@ -193,8 +193,8 @@ describe('acris data layer', () => {
             });
         });
 
-        describe('Amount filtering', () => {
-            it('should filter out transactions with zero amount', async () => {
+        describe('Document amounts', () => {
+            it('should include transactions with zero amount', async () => {
                 vi.mocked(search)
                     .mockResolvedValueOnce({
                         hits: {
@@ -214,10 +214,11 @@ describe('acris data layer', () => {
 
                 const result = await fetchTransactionsWithParties('1-13-1');
 
-                expect(result).toEqual([]);
+                expect(result).toHaveLength(1);
+                expect(result[0].documentAmount).toBe(0);
             });
 
-            it('should filter out transactions with null amount', async () => {
+            it('should include transactions with null amount', async () => {
                 vi.mocked(search)
                     .mockResolvedValueOnce({
                         hits: {
@@ -237,7 +238,8 @@ describe('acris data layer', () => {
 
                 const result = await fetchTransactionsWithParties('1-13-1');
 
-                expect(result).toEqual([]);
+                expect(result).toHaveLength(1);
+                expect(result[0].documentAmount).toBe(null);
             });
 
             it('should include transactions with positive amounts', async () => {
@@ -256,7 +258,8 @@ describe('acris data layer', () => {
                 const result = await fetchTransactionsWithParties('1-13-1');
 
                 expect(result.length).toBeGreaterThan(0);
-                expect(result.every(t => t.documentAmount > 0)).toBe(true);
+                expect(result[0].documentAmount).toBe(1000000);
+                expect(result[1].documentAmount).toBe(5000000);
             });
         });
 
