@@ -38,8 +38,6 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
     "@eslint/eslintrc": "^3",
-    "@locator/babel-jsx": "^0.5.1",
-    "@locator/runtime": "^0.5.1",
     "@storybook/addon-a11y": "^9.1.13",
     "@storybook/addon-docs": "^9.1.13",
     "@storybook/addon-onboarding": "^9.1.13",
@@ -56,6 +54,7 @@
     "@vitest/browser": "3.2.4",
     "@vitest/coverage-v8": "3.2.4",
     "axe-core": "^4.11.0",
+    "baseline-browser-mapping": "^2.9.6",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "eslint-plugin-storybook": "^9.1.13",
