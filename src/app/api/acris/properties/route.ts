@@ -41,13 +41,9 @@ export async function POST(req: NextRequest) {
       sortModel: effectiveSortModel,
     };
 
-    console.log(JSON.stringify({ fullRequest }, null, 2));
-
     const index = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || '';
     const base = buildEsQueryFromAgGrid(fullRequest);
     (base as Record<string, unknown>).track_total_hits = true;
-
-    // console.log(JSON.stringify(base, null, 2));
 
     const res = await search(index, base);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];
