@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { cn } from '@/utils/cn';
-import { Card, CardContent } from '@/components/ui/Card';
 import { OnThisPageSidebar } from '@/components/layout/OnThisPageSidebar';
 import { DesktopTimeline } from './DesktopTimeline';
 import { MobileTimeline } from './MobileTimeline';
@@ -120,52 +119,48 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
   // Empty state - no transactions at all
   if (transactions.length === 0) {
     return (
-      <Card className={className}>
-        <CardContent>
-          <p className="text-sm text-foreground/70">
-            No transactions found for this property.
-          </p>
-        </CardContent>
-      </Card>
+      <div className={cn('py-8 text-center', className)}>
+        <p className="text-sm text-foreground/70">
+          No transactions found for this property.
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="flex xl:gap-6">
       {/* Main timeline content */}
-      <Card className={cn('flex-1 min-w-0 xl:border xl:shadow-sm border-none shadow-none', className)} role="region" aria-label="Property transaction timeline">
-        <CardContent className="p-3 xl:p-6">
-          {/* Legend with filters */}
-          <FilterLegend
-            filters={filters}
-            categoryMetadata={CATEGORY_METADATA}
-            onToggleCategory={toggleCategory}
-            showZeroAmount={showZeroAmount}
-            onToggleZeroAmount={toggleZeroAmount}
-            zeroAmountLabel="Show $0 documents"
-          />
+      <div className={cn('flex-1 min-w-0 space-y-4', className)} role="region" aria-label="Property transaction timeline">
+        {/* Legend with filters */}
+        <FilterLegend
+          filters={filters}
+          categoryMetadata={CATEGORY_METADATA}
+          onToggleCategory={toggleCategory}
+          showZeroAmount={showZeroAmount}
+          onToggleZeroAmount={toggleZeroAmount}
+          zeroAmountLabel="Show $0 documents"
+        />
 
-          {/* Timeline content */}
-          {sortedTransactions.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-foreground/70">
-                No transactions match the selected filters.
-              </p>
-            </div>
-          ) : (
-            <>
-              <DesktopTimeline
-                transactions={sortedTransactions}
-                firstTransactionOfYear={firstTransactionOfYear}
-              />
-              <MobileTimeline
-                transactions={sortedTransactions}
-                firstTransactionOfYear={firstTransactionOfYear}
-              />
-            </>
-          )}
-        </CardContent>
-      </Card>
+        {/* Timeline content */}
+        {sortedTransactions.length === 0 ? (
+          <div className="py-8 text-center">
+            <p className="text-sm text-foreground/70">
+              No transactions match the selected filters.
+            </p>
+          </div>
+        ) : (
+          <>
+            <DesktopTimeline
+              transactions={sortedTransactions}
+              firstTransactionOfYear={firstTransactionOfYear}
+            />
+            <MobileTimeline
+              transactions={sortedTransactions}
+              firstTransactionOfYear={firstTransactionOfYear}
+            />
+          </>
+        )}
+      </div>
 
       {/* On This Page sidebar */}
       <OnThisPageSidebar sections={yearSections} className="w-48" />
