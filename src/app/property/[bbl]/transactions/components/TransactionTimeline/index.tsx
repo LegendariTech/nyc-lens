@@ -134,7 +134,7 @@ export function TransactionTimeline({ transactions, className }: TransactionTime
     <div className="flex xl:gap-6">
       {/* Main timeline content */}
       <Card className={cn('flex-1 min-w-0 xl:border xl:shadow-sm border-none shadow-none', className)} role="region" aria-label="Property transaction timeline">
-        <CardContent className="pb-3 xl:p-6">
+        <CardContent className="p-3 xl:p-6">
           {/* Legend with filters */}
           <FilterLegend
             filters={filters}

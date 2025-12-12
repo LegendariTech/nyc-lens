@@ -23,7 +23,7 @@ export function PropertyPageLayout({ bbl, activeTab, address, maxWidth = 'xl', c
 
       {/* Content */}
       <div className="flex-1 p-4">
-        <div className={cn('space-y-2 md:space-y-4', maxWidth === 'xl' ? 'max-w-screen-xl' : 'w-full')}>
+        <div className={cn('space-y-4', maxWidth === 'xl' ? 'max-w-screen-xl' : 'w-full')}>
           {/* Tabs Navigation */}
           <PropertyTabsNav activeTab={activeTab} bbl={bbl} />
 
