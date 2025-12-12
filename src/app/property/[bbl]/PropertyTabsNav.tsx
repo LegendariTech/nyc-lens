@@ -1,8 +1,10 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { ButtonGroup } from '@/components/ui';
 import { OpenAIIcon, AnthropicIcon, PerplexityIcon, ExternalLinkIcon } from '@/components/icons';
+import { cn } from '@/utils/cn';
 
 interface PropertyTabsNavProps {
   activeTab?: string;
@@ -12,11 +14,15 @@ interface PropertyTabsNavProps {
 export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
-  // Default to pluto if no tab is specified
-  const currentTab = activeTab || 'pluto';
+  // Simple useState with initial value from props
+  const [selectedTab, setSelectedTab] = useState(activeTab || 'pluto');
 
   const handleTabClick = (value: string) => {
+    // Immediately update the visual state
+    setSelectedTab(value);
+
     // Build path-based URL
     let newPath = `/property/${bbl}/${value}`;
 
@@ -29,8 +35,9 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
     const params = searchParams.toString();
     const fullPath = params ? `${newPath}?${params}` : newPath;
 
-    // Update URL
-    router.push(fullPath, { scroll: false });
+    startTransition(() => {
+      router.push(fullPath, { scroll: false });
+    });
   };
 
   // Function to open AI services with property page URL
@@ -88,25 +95,51 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Tabs */}
       <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1 overflow-x-auto overflow-y-hidden scrollbar-hide">
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => handleTabClick(tab.value)}
-            className={`
-              inline-flex items-center justify-center gap-2
-              whitespace-nowrap rounded-sm px-3 py-1.5
-              text-sm font-medium transition-all
-              cursor-pointer shrink-0
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ${currentTab === tab.value
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
-              }
-            `}
-          >
-            {tab.label}
-          </button>
-        ))}
+        {tabs.map((tab) => {
+          const isActive = selectedTab === tab.value;
+          const isLoading = isPending && isActive && activeTab !== tab.value;
+
+          return (
+            <button
+              key={tab.value}
+              onClick={() => handleTabClick(tab.value)}
+              className={cn(
+                'inline-flex items-center justify-center gap-2',
+                'whitespace-nowrap rounded-sm px-3 py-1.5',
+                'text-sm font-medium transition-all',
+                'cursor-pointer shrink-0',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                isActive
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
+              )}
+            >
+              {isLoading && (
+                <svg
+                  className="size-3 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              )}
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Ask AI Button - Hidden on mobile */}
