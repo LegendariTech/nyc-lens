@@ -21,16 +21,18 @@ export function TransactionsView({ transactions, bbl, address }: TransactionsVie
 
     return (
         <div className="space-y-4">
-            {/* Controls Bar */}
-            <TabControlsBar
-                showTableViewToggle={true}
-                tableView={tableView}
-                onTableViewChange={setTableView}
-            />
+            {/* Controls Bar - hidden on mobile via CSS (no JS flash) */}
+            <div className="hidden md:block">
+                <TabControlsBar
+                    showTableViewToggle={true}
+                    tableView={tableView}
+                    onTableViewChange={setTableView}
+                />
+            </div>
 
-            {/* Content */}
-            {tableView ? (
-                <div className="rounded-lg border border-foreground/10 bg-card">
+            {/* Table View - only on desktop when enabled */}
+            {tableView && (
+                <div className="hidden md:block rounded-lg border border-foreground/10 bg-card">
                     <DocumentTable
                         data={{
                             borough,
@@ -40,9 +42,12 @@ export function TransactionsView({ transactions, bbl, address }: TransactionsVie
                         }}
                     />
                 </div>
-            ) : (
-                <TransactionTimeline transactions={transactions} />
             )}
+
+            {/* Timeline - always on mobile, conditional on desktop */}
+            <div className={tableView ? 'md:hidden' : undefined}>
+                <TransactionTimeline transactions={transactions} />
+            </div>
         </div>
     );
 }

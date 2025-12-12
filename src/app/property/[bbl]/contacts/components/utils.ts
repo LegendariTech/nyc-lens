@@ -1,5 +1,14 @@
 import type { OwnerContact } from '@/types/contacts';
+import type { FormattedOwnerContact } from '@/data/contacts/utils';
 import type { ContactCategory, CategoryMetadata, ContactWithCategory } from './types';
+
+/**
+ * Contact with agency and source fields (minimum required for categorization)
+ */
+type ContactWithAgencySource = {
+  agency: string | null;
+  source: string | null;
+};
 
 /**
  * Category metadata for different contact sources
@@ -140,7 +149,7 @@ export const CATEGORY_ORDER: readonly ContactCategory[] = [
  *
  * @see Database schema: gold.owner_contact table
  */
-export function getContactCategory(contact: OwnerContact): ContactCategory {
+export function getContactCategory(contact: ContactWithAgencySource): ContactCategory {
   const agency = contact.agency?.toLowerCase() || '';
   const source = contact.source?.toLowerCase() || '';
 
@@ -193,7 +202,7 @@ export function getContactCategory(contact: OwnerContact): ContactCategory {
 /**
  * Get category metadata for a contact
  */
-export function getCategoryMetadata(contact: OwnerContact): CategoryMetadata {
+export function getCategoryMetadata(contact: ContactWithAgencySource): CategoryMetadata {
   const category = getContactCategory(contact);
   return CATEGORY_METADATA[category];
 }

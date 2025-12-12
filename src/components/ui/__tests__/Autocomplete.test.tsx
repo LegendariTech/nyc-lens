@@ -514,6 +514,32 @@ describe('Autocomplete', () => {
         expect(screen.getByRole('listbox')).toBeInTheDocument();
       });
     });
+
+    it('accepts aria-label for screen readers', () => {
+      render(
+        <Autocomplete
+          getSources={mockGetSources()}
+          renderItem={mockRenderItem}
+          ariaLabel="Search property by address"
+        />
+      );
+
+      const input = screen.getByRole('searchbox');
+      expect(input).toHaveAttribute('aria-label', 'Search property by address');
+    });
+
+    it('does not add aria-label when not provided', () => {
+      render(
+        <Autocomplete
+          getSources={mockGetSources()}
+          renderItem={mockRenderItem}
+        />
+      );
+
+      const input = screen.getByRole('searchbox');
+      // aria-label should not be present (or be null/undefined)
+      expect(input.getAttribute('aria-label')).toBeNull();
+    });
   });
 });
 

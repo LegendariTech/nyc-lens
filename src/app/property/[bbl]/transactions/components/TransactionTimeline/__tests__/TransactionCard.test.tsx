@@ -263,7 +263,7 @@ describe('TransactionCard', () => {
             const card = container.querySelector('.shadow-md');
             expect(card).toBeInTheDocument();
             expect(card).toHaveClass('rounded-lg');
-            expect(card).toHaveClass('bg-card');
+            expect(card).toHaveClass('bg-foreground/5');
         });
     });
 });

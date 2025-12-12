@@ -169,8 +169,8 @@ describe('MobileTimeline', () => {
                 <MobileTimeline transactions={transactions} firstTransactionOfYear={{}} />
             );
 
-            // Check for space-y-4 and py-4 classes
-            const timeline = container.querySelector('.space-y-4.py-4');
+            // Check for mt-4 and space-y-3 classes
+            const timeline = container.querySelector('.mt-4.space-y-3');
             expect(timeline).toBeInTheDocument();
         });
     });

@@ -1,4 +1,5 @@
 import type { OwnerContact } from '@/types/contacts';
+import type { FormattedOwnerContact } from '@/data/contacts/utils';
 
 /**
  * Contact category types for filtering
@@ -35,5 +36,12 @@ export interface CategoryMetadata {
  * Contact with additional computed fields
  */
 export interface ContactWithCategory extends OwnerContact {
+  category: ContactCategory;
+}
+
+/**
+ * Formatted contact with arrays and category (for mobile card view)
+ */
+export interface FormattedContactWithCategory extends FormattedOwnerContact {
   category: ContactCategory;
 }

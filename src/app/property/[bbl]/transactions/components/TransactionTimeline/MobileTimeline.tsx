@@ -8,7 +8,7 @@ interface MobileTimelineProps {
 
 export function MobileTimeline({ transactions, firstTransactionOfYear }: MobileTimelineProps) {
   return (
-    <div className="xl:hidden space-y-4 py-4">
+    <div className="xl:hidden mt-4 space-y-3">
       {transactions.map((transaction) => (
         <MobileTimelineItem
           key={transaction.id}
