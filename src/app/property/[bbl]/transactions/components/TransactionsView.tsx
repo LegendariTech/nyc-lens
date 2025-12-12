@@ -20,7 +20,7 @@ export function TransactionsView({ transactions, bbl, address }: TransactionsVie
     const [borough, block, lot] = bblParts;
 
     return (
-        <div className="space-y-4">
+        <div className="md:space-y-4">
             {/* Controls Bar - hidden on mobile via CSS (no JS flash) */}
             <div className="hidden md:block">
                 <TabControlsBar
