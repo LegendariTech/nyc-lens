@@ -67,7 +67,7 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
         <div
           onClick={handleCardClick}
           className={cn(
-            'relative rounded-lg border bg-card p-3 shadow-md cursor-pointer',
+            'relative rounded-lg border bg-foreground/5 p-3 shadow-md cursor-pointer',
             'hover:shadow-lg hover:border-foreground/20 transition-all',
             `${categoryMetadata.borderColor}/40`
           )}

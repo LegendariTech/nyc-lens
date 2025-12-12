@@ -70,7 +70,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
             <div
                 onClick={handleCardClick}
                 className={cn(
-                    'relative w-full max-w-md rounded-lg border bg-card p-3 shadow-md cursor-pointer',
+                    'relative w-full max-w-md rounded-lg border bg-foreground/5 p-3 shadow-md cursor-pointer',
                     'hover:shadow-lg hover:border-foreground/20 transition-all',
                     `${categoryMetadata.borderColor}/40`
                 )}
