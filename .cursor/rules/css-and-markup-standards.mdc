@@ -78,6 +78,7 @@ src/app/<route>/
    - Test user interactions (clicks, keyboard navigation)
    - Test accessibility (ARIA attributes, focus management)
    - Test edge cases and error states
+   - **Test responsive visibility**: Verify CSS classes for responsive behavior (`hidden md:block`, `md:hidden`)
    - Place in `__tests__/` folder alongside component
 
 2. **Storybook Stories** (`ComponentName.stories.tsx`)
@@ -122,6 +123,41 @@ describe("Button", () => {
 
     rerender(<Button variant="secondary">Secondary</Button>);
     expect(screen.getByRole("button")).toHaveClass("bg-foreground/10");
+  });
+});
+```
+
+**Example Responsive Visibility Test**:
+
+```tsx
+// ComponentName.test.tsx - testing CSS-based responsive visibility
+describe("CSS-based Responsive Visibility", () => {
+  it("renders controls with hidden md:block for desktop-only visibility", () => {
+    render(<MyComponent />);
+
+    const controls = screen.getByTestId("controls");
+    const wrapper = controls.parentElement;
+
+    // Verify CSS classes for responsive visibility
+    expect(wrapper).toHaveClass("hidden");
+    expect(wrapper).toHaveClass("md:block");
+  });
+
+  it("renders mobile view with md:hidden for mobile-only visibility", () => {
+    render(<MyComponent />);
+
+    const mobileView = screen.getByTestId("mobile-view");
+    const wrapper = mobileView.parentElement;
+
+    expect(wrapper).toHaveClass("md:hidden");
+  });
+
+  it("both views are always in DOM (visibility controlled by CSS, not JS)", () => {
+    render(<MyComponent />);
+
+    // Both should be rendered - no conditional JS rendering
+    expect(screen.getByTestId("desktop-view")).toBeInTheDocument();
+    expect(screen.getByTestId("mobile-view")).toBeInTheDocument();
   });
 });
 ```

@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui';
 import { TabControlsBar } from '@/components/layout/TabControlsBar';
 import { ContactsTable } from './Table';
+import { ContactCardList } from './ContactCardList';
 import { FilterLegend } from '@/components/FilterLegend';
 import type { OwnerContact } from '@/types/contacts';
 import type { ContactCategory } from './types';
@@ -125,12 +126,14 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
 
     return (
         <div className="space-y-4">
-            {/* Controls Bar with Normalized Toggle */}
-            <TabControlsBar
-                showNormalizedToggle={true}
-                normalized={normalized}
-                onNormalizedChange={setNormalized}
-            />
+            {/* Controls Bar with Normalized Toggle - hidden on mobile via CSS (no JS flash) */}
+            <div className="hidden md:block">
+                <TabControlsBar
+                    showNormalizedToggle={true}
+                    normalized={normalized}
+                    onNormalizedChange={setNormalized}
+                />
+            </div>
 
             <Card>
                 <CardContent>
@@ -141,21 +144,28 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
                         onToggleCategory={toggleCategory}
                     />
 
-                    {/* Contacts Table */}
-                    {filteredContacts.length === 0 ? (
-                        <div className="py-8 text-center space-y-2">
-                            <p className="text-sm text-foreground/70">
-                                No contacts match the selected filters.
-                            </p>
-                            <p className="text-xs text-foreground/50">
-                                Try enabling more categories above to see additional contacts.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="mt-4">
-                            <ContactsTable data={filteredContacts} />
-                        </div>
-                    )}
+                    {/* Contacts Table - desktop only */}
+                    <div className="hidden md:block">
+                        {filteredContacts.length === 0 ? (
+                            <div className="py-8 text-center space-y-2">
+                                <p className="text-sm text-foreground/70">
+                                    No contacts match the selected filters.
+                                </p>
+                                <p className="text-xs text-foreground/50">
+                                    Try enabling more categories above to see additional contacts.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="mt-4">
+                                <ContactsTable data={filteredContacts} />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Contact Cards - mobile only */}
+                    <div className="md:hidden">
+                        <ContactCardList contacts={filteredContacts} />
+                    </div>
                 </CardContent>
             </Card>
         </div>
