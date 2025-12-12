@@ -130,7 +130,7 @@ function ResizableSidebarLayoutInner({
         >
           <MenuIcon className="h-5 w-5" />
         </button>
-        {/* Property search - only on property pages */}
+        {/* Property search - only on property pages (desktop search is in PropertyPageLayout, hidden on mobile) */}
         <Suspense fallback={null}>
           <MobilePropertySearch />
         </Suspense>

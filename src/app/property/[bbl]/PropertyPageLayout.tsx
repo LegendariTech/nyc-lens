@@ -14,7 +14,7 @@ interface PropertyPageLayoutProps {
 export function PropertyPageLayout({ bbl, activeTab, address, maxWidth = 'xl', children }: PropertyPageLayoutProps) {
   return (
     <div className="flex h-full w-full flex-col overflow-auto scroll-container focus:outline-none" tabIndex={-1}>
-      {/* Search Header - hidden on mobile (handled by layout), shown on md+ */}
+      {/* Search Header - hidden on mobile (mobile search is in ResizableSidebarLayout nav bar), shown on md+ */}
       <div className="hidden md:block sticky top-0 z-50 border-b border-foreground/20 bg-background py-3 px-4">
         <div className={cn(maxWidth === 'xl' ? 'max-w-screen-xl' : 'w-full')}>
           <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
