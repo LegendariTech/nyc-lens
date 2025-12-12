@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useTransition, useEffect } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import { ButtonGroup } from '@/components/ui';
 import { OpenAIIcon, AnthropicIcon, PerplexityIcon, ExternalLinkIcon } from '@/components/icons';
 import { cn } from '@/utils/cn';
@@ -19,13 +19,8 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   // Default to pluto if no tab is specified
   const serverTab = activeTab || 'pluto';
 
-  // Optimistic state for immediate visual feedback
-  const [optimisticTab, setOptimisticTab] = useState(serverTab);
-
-  // Sync optimistic state when server confirms navigation
-  useEffect(() => {
-    setOptimisticTab(serverTab);
-  }, [serverTab]);
+  // Optimistic state - auto-syncs to serverTab when transition completes
+  const [optimisticTab, setOptimisticTab] = useOptimistic(serverTab);
 
   const handleTabClick = (value: string) => {
     // Immediately update the visual state

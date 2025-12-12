@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useTransition, useEffect } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import { cn } from '@/utils/cn';
 
 interface DobTabNavProps {
@@ -17,13 +17,8 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   // Default to violations if no sub-tab is specified
   const serverTab = activeSubTab || 'violations';
 
-  // Optimistic state for immediate visual feedback
-  const [optimisticTab, setOptimisticTab] = useState(serverTab);
-
-  // Sync optimistic state when server confirms navigation
-  useEffect(() => {
-    setOptimisticTab(serverTab);
-  }, [serverTab]);
+  // Optimistic state - auto-syncs to serverTab when transition completes
+  const [optimisticTab, setOptimisticTab] = useOptimistic(serverTab);
 
   const tabs = [
     { value: 'jobs-filings', label: 'Jobs' },
