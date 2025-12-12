@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { MenuIcon } from "@/components/icons";
+import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
 
 interface ResizableSidebarLayoutProps {
   sidebar: ReactNode;
@@ -85,11 +86,11 @@ function ResizableSidebarLayoutInner({
         className
       )}
     >
-      {/* Mobile top bar with burger menu */}
+      {/* Mobile top bar with burger menu and search */}
       <div
         className={cn(
           "md:hidden fixed top-0 left-0 right-0 z-[60]",
-          "h-12 flex items-center px-3",
+          "h-12 flex items-center gap-2 px-3",
           "bg-background border-b border-foreground/20"
         )}
       >
@@ -98,7 +99,7 @@ function ResizableSidebarLayoutInner({
           aria-label="Open sidebar"
           onClick={() => setIsMobileOpen(true)}
           className={cn(
-            "inline-flex items-center justify-center",
+            "inline-flex items-center justify-center shrink-0",
             "h-9 w-9 rounded-md",
             "hover:bg-foreground/10",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -106,6 +107,9 @@ function ResizableSidebarLayoutInner({
         >
           <MenuIcon className="h-5 w-5" />
         </button>
+        <div className="flex-1 min-w-0">
+          <PropertyAutocomplete compact autoFocus={false} />
+        </div>
       </div>
 
       {/* Mobile backdrop */}
