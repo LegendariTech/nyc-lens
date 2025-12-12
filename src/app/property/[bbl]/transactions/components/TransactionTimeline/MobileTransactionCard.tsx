@@ -103,14 +103,19 @@ export function MobileTransactionCard({ transaction }: MobileTransactionCardProp
             {formatCurrency(transaction.amount)}
           </div>
 
+          {/* Party information - for deeds, show buyer (party2) first */}
           <div className="space-y-2 text-sm">
             <div>
-              <div className="text-foreground/50 text-xs mb-0.5">{transaction.party1Type}:</div>
-              <PartyList parties={transaction.party1} />
+              <div className="text-foreground/50 text-xs mb-0.5">
+                {transaction.isDeed ? transaction.party2Type : transaction.party1Type}:
+              </div>
+              <PartyList parties={transaction.isDeed ? transaction.party2 : transaction.party1} />
             </div>
             <div>
-              <div className="text-foreground/50 text-xs mb-0.5">{transaction.party2Type}:</div>
-              <PartyList parties={transaction.party2} />
+              <div className="text-foreground/50 text-xs mb-0.5">
+                {transaction.isDeed ? transaction.party1Type : transaction.party2Type}:
+              </div>
+              <PartyList parties={transaction.isDeed ? transaction.party1 : transaction.party2} />
             </div>
             <div className="pt-1 border-t border-foreground/10">
               <div className="text-foreground/50 text-xs mb-0.5">Doc Type:</div>

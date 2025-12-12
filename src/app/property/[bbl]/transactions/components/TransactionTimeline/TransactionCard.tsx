@@ -97,15 +97,19 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
                         </span>
                     </div>
 
-                    {/* Party information */}
+                    {/* Party information - for deeds, show buyer (party2) first */}
                     <div className="space-y-1 text-[11px]">
                         <div className="flex items-start gap-1">
-                            <span className="text-foreground/50 shrink-0">{transaction.party1Type}:</span>
-                            <PartyList parties={transaction.party1} />
+                            <span className="text-foreground/50 shrink-0">
+                                {transaction.isDeed ? transaction.party2Type : transaction.party1Type}:
+                            </span>
+                            <PartyList parties={transaction.isDeed ? transaction.party2 : transaction.party1} />
                         </div>
                         <div className="flex items-start gap-1">
-                            <span className="text-foreground/50 shrink-0">{transaction.party2Type}:</span>
-                            <PartyList parties={transaction.party2} />
+                            <span className="text-foreground/50 shrink-0">
+                                {transaction.isDeed ? transaction.party1Type : transaction.party2Type}:
+                            </span>
+                            <PartyList parties={transaction.isDeed ? transaction.party1 : transaction.party2} />
                         </div>
                         <div className="flex items-start gap-1 pt-1 border-t border-foreground/10">
                             <span className="text-foreground/50 shrink-0">Doc Type:</span>
