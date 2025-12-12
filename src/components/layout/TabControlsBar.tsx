@@ -58,7 +58,7 @@ export function TabControlsBar({
       {/* Right side - Toggles */}
       <div className="flex items-center gap-6">
         {hasTableViewControl && (
-          <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <span className="text-sm text-foreground/70">Table View</span>
             <Switch
               checked={tableView}
