@@ -21,7 +21,12 @@ export function PropertyPageLayout({ bbl, activeTab, address, maxWidth = 'xl', c
   // Inject the PropertyAutocomplete into the mobile header
   useEffect(() => {
     setHeaderContent(
-      <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
+      <PropertyAutocomplete
+        compact
+        initialValue={address || ''}
+        autoFocus={false}
+        inputClassName="w-full border-0 rounded-none py-2 px-3 bg-transparent focus:ring-0"
+      />
     );
 
     // Clean up on unmount
