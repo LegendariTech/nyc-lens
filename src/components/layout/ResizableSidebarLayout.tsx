@@ -1,10 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
-import { MobileHeaderProvider, useMobileHeader } from "./MobileHeaderContext";
 import { MenuIcon } from "@/components/icons";
+import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
+
+/** Mobile property search - extracted to wrap with Suspense for useSearchParams */
+function MobilePropertySearch() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isPropertyPage = pathname?.startsWith('/property/');
+  const address = searchParams?.get('address') || '';
+
+  if (!isPropertyPage) return null;
+
+  return (
+    <div className="flex-1 min-w-0">
+      <PropertyAutocomplete
+        compact
+        initialValue={address}
+        autoFocus={false}
+        inputClassName="w-full border-0 rounded-none py-2 px-3 bg-transparent focus:ring-0"
+      />
+    </div>
+  );
+}
 
 interface ResizableSidebarLayoutProps {
   sidebar: ReactNode;
@@ -35,7 +57,6 @@ function ResizableSidebarLayoutInner({
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(initialWidth);
   const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
-  const { headerContent } = useMobileHeader();
 
   // Collapsed width (just enough for icons and padding)
   const collapsedWidth = 64;
@@ -108,12 +129,10 @@ function ResizableSidebarLayoutInner({
         >
           <MenuIcon className="h-5 w-5" />
         </button>
-        {/* Injected header content (e.g., search from property pages) */}
-        {headerContent && (
-          <div className="flex-1 min-w-0">
-            {headerContent}
-          </div>
-        )}
+        {/* Property search - only on property pages */}
+        <Suspense fallback={null}>
+          <MobilePropertySearch />
+        </Suspense>
       </div>
 
       {/* Mobile backdrop */}
@@ -190,9 +209,7 @@ function ResizableSidebarLayoutInner({
 export default function ResizableSidebarLayout(props: ResizableSidebarLayoutProps) {
   return (
     <SidebarProvider>
-      <MobileHeaderProvider>
-        <ResizableSidebarLayoutInner {...props} />
-      </MobileHeaderProvider>
+      <ResizableSidebarLayoutInner {...props} />
     </SidebarProvider>
   );
 }
