@@ -22,7 +22,8 @@ function MobilePropertySearch() {
         compact
         initialValue={address}
         autoFocus={false}
-        inputClassName="w-full border-0 rounded-none py-2 px-3 bg-transparent focus:ring-0"
+        inputClassName="w-full border-0 rounded-none py-2 px-3 bg-transparent focus:ring-1 focus:ring-foreground/30"
+        ariaLabel="Search property by address or BBL"
       />
     </div>
   );

@@ -257,14 +257,60 @@ export function Button({
 
 ### Accessibility Checklist
 
-✅ **Keyboard Navigation**: All interactive elements focusable and operable via keyboard  
-✅ **Focus Indicators**: Visible focus states using `focus-visible:ring-2` or similar  
-✅ **Color Contrast**: Minimum 4.5:1 for text, 3:1 for UI components (WCAG AA)  
-✅ **Alt Text**: Descriptive `alt` for images; empty `alt=""` for decorative  
-✅ **Labels**: All form inputs have associated labels  
-✅ **Heading Hierarchy**: Logical order (h1 → h2 → h3), no skipping levels  
-✅ **Loading States**: Announce dynamic content with `aria-live` regions  
+✅ **Keyboard Navigation**: All interactive elements focusable and operable via keyboard
+✅ **Focus Indicators**: Visible focus states using `focus-visible:ring-2` or similar
+✅ **Color Contrast**: Minimum 4.5:1 for text, 3:1 for UI components (WCAG AA)
+✅ **Alt Text**: Descriptive `alt` for images; empty `alt=""` for decorative
+✅ **Labels**: All form inputs have associated labels
+✅ **Heading Hierarchy**: Logical order (h1 → h2 → h3), no skipping levels
+✅ **Loading States**: Announce dynamic content with `aria-live` regions
 ✅ **Disabled States**: Use `disabled` attribute + visual indicators (`opacity-50`, `cursor-not-allowed`)
+
+### Focus Indicators: Never Remove Without Replacement
+
+**NEVER use `focus:ring-0`, `focus:outline-none`, or similar classes to remove focus indicators without providing an alternative visible focus state.**
+
+Focus indicators are critical for keyboard accessibility. Removing them makes the UI unusable for keyboard-only users.
+
+**❌ Bad - Removes focus indicator entirely:**
+```tsx
+<input className="focus:ring-0 focus:outline-none" />
+```
+
+**✅ Good - Replaces default with custom focus style:**
+```tsx
+<input className="focus:outline-none focus:ring-2 focus:ring-foreground/50" />
+// OR
+<input className="focus:ring-1 focus:ring-foreground/30" />
+// OR use focus-visible for keyboard-only:
+<input className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2" />
+```
+
+### ARIA Labels for Inputs Without Visible Labels
+
+**All inputs must have an accessible name.** Use one of these approaches:
+
+1. **Visible label** (preferred):
+```tsx
+<label htmlFor="search">Search</label>
+<input id="search" />
+```
+
+2. **aria-label** (when no visible label):
+```tsx
+<input aria-label="Search property by address" />
+```
+
+3. **aria-labelledby** (reference another element):
+```tsx
+<h2 id="section-title">Find Properties</h2>
+<input aria-labelledby="section-title" />
+```
+
+**Common cases requiring aria-label:**
+- Search inputs in navigation bars (no visible label, just placeholder)
+- Icon-only buttons (use aria-label to describe the action)
+- Inputs inside compact UI where labels are hidden
 
 ### Class Order Convention
 
