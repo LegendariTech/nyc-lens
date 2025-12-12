@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
+import { MobileHeaderProvider, useMobileHeader } from "./MobileHeaderContext";
 import { MenuIcon } from "@/components/icons";
 
 interface ResizableSidebarLayoutProps {
@@ -34,6 +35,7 @@ function ResizableSidebarLayoutInner({
 
   const [sidebarWidth, setSidebarWidth] = useState<number>(initialWidth);
   const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { headerContent } = useMobileHeader();
 
   // Collapsed width (just enough for icons and padding)
   const collapsedWidth = 64;
@@ -89,7 +91,7 @@ function ResizableSidebarLayoutInner({
       <div
         className={cn(
           "md:hidden fixed top-0 left-0 right-0 z-[60]",
-          "h-12 flex items-center px-3",
+          "h-12 flex items-center gap-2 px-3",
           "bg-background border-b border-foreground/20"
         )}
       >
@@ -98,7 +100,7 @@ function ResizableSidebarLayoutInner({
           aria-label="Open sidebar"
           onClick={() => setIsMobileOpen(true)}
           className={cn(
-            "inline-flex items-center justify-center",
+            "inline-flex items-center justify-center shrink-0",
             "h-9 w-9 rounded-md",
             "hover:bg-foreground/10",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -106,6 +108,12 @@ function ResizableSidebarLayoutInner({
         >
           <MenuIcon className="h-5 w-5" />
         </button>
+        {/* Injected header content (e.g., search from property pages) */}
+        {headerContent && (
+          <div className="flex-1 min-w-0">
+            {headerContent}
+          </div>
+        )}
       </div>
 
       {/* Mobile backdrop */}
@@ -182,7 +190,9 @@ function ResizableSidebarLayoutInner({
 export default function ResizableSidebarLayout(props: ResizableSidebarLayoutProps) {
   return (
     <SidebarProvider>
-      <ResizableSidebarLayoutInner {...props} />
+      <MobileHeaderProvider>
+        <ResizableSidebarLayoutInner {...props} />
+      </MobileHeaderProvider>
     </SidebarProvider>
   );
 }

@@ -1,7 +1,11 @@
+'use client';
+
+import { useEffect } from 'react';
 import { PropertyAutocomplete } from '@/components/search/PropertyAutocomplete';
 import { PropertyTabsNav } from './PropertyTabsNav';
 import { ReactNode } from 'react';
 import { cn } from '@/utils/cn';
+import { useMobileHeader } from '@/components/layout/MobileHeaderContext';
 
 interface PropertyPageLayoutProps {
   bbl: string;
@@ -12,10 +16,24 @@ interface PropertyPageLayoutProps {
 }
 
 export function PropertyPageLayout({ bbl, activeTab, address, maxWidth = 'xl', children }: PropertyPageLayoutProps) {
+  const { setHeaderContent } = useMobileHeader();
+
+  // Inject the PropertyAutocomplete into the mobile header
+  useEffect(() => {
+    setHeaderContent(
+      <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
+    );
+
+    // Clean up on unmount
+    return () => {
+      setHeaderContent(null);
+    };
+  }, [address, setHeaderContent]);
+
   return (
     <div className="flex h-full w-full flex-col overflow-auto scroll-container focus:outline-none" tabIndex={-1}>
-      {/* Search Header */}
-      <div className="sticky top-0 z-50 border-b border-foreground/20 bg-background py-3 px-4">
+      {/* Search Header - hidden on mobile, shown on md+ */}
+      <div className="hidden md:block sticky top-0 z-50 border-b border-foreground/20 bg-background py-3 px-4">
         <div className={cn(maxWidth === 'xl' ? 'max-w-screen-xl' : 'w-full')}>
           <PropertyAutocomplete compact initialValue={address || ''} autoFocus={false} />
         </div>
@@ -34,4 +52,3 @@ export function PropertyPageLayout({ bbl, activeTab, address, maxWidth = 'xl', c
     </div>
   );
 }
-
