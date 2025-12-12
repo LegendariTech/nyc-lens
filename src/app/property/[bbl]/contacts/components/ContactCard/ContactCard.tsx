@@ -36,7 +36,7 @@ export function ContactCard({ contact }: ContactCardProps) {
   return (
     <div
       className={cn(
-        'relative rounded-lg border bg-card p-3 shadow-md',
+        'relative rounded-lg border bg-foreground/5 p-3 shadow-md',
         'hover:shadow-lg hover:border-foreground/20 transition-all',
         metadata.filterBorderActive
       )}
