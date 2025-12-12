@@ -43,21 +43,13 @@ export function TabControlsBar({
   const hasNormalizedControl = showNormalizedToggle && onNormalizedChange;
   const hasAnyControls = hasEmptyFieldsControl || hasRawViewControl || hasTableViewControl || hasNormalizedControl || children;
 
-  // Controls visible on mobile (table view is hidden on mobile)
-  const hasMobileControls = hasEmptyFieldsControl || hasRawViewControl || hasNormalizedControl || children;
-
   // Return null if there are no controls to display
   if (!hasAnyControls) {
     return null;
   }
 
   return (
-    <div className={cn(
-      'items-center justify-between h-10',
-      // Hide on mobile if only table view toggle (which is hidden on mobile)
-      hasMobileControls ? 'flex' : 'hidden md:flex',
-      className
-    )}>
+    <div className={cn('flex items-center justify-between h-10', className)}>
       {/* Left side - custom children */}
       <div className="flex items-center gap-4">
         {children}
@@ -66,7 +58,7 @@ export function TabControlsBar({
       {/* Right side - Toggles */}
       <div className="flex items-center gap-6">
         {hasTableViewControl && (
-          <div className="hidden md:flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <span className="text-sm text-foreground/70">Table View</span>
             <Switch
               checked={tableView}
