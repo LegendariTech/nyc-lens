@@ -1,10 +1,10 @@
 'use client';
 
 import { ContactCard } from './ContactCard';
-import type { ContactWithCategory } from './types';
+import type { FormattedContactWithCategory } from './types';
 
 interface ContactCardListProps {
-  contacts: ContactWithCategory[];
+  contacts: FormattedContactWithCategory[];
 }
 
 /**

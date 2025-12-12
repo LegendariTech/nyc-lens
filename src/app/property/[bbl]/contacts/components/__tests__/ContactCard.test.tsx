@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ContactCard } from '../ContactCard';
 import { ExpandableList } from '../ContactCard/ExpandableList';
-import type { ContactWithCategory } from '../types';
+import type { FormattedContactWithCategory } from '../types';
 
 describe('ExpandableList', () => {
   it('returns null for empty items', () => {
@@ -68,30 +68,21 @@ describe('ExpandableList', () => {
 });
 
 describe('ContactCard', () => {
-  const mockContact: ContactWithCategory = {
+  // FormattedContactWithCategory has arrays instead of newline-separated strings
+  const mockContact: FormattedContactWithCategory = {
     borough: '1',
     block: '1',
     lot: '1',
-    owner_first_name: null,
-    owner_last_name: null,
-    owner_business_name: 'ABC Corp\nXYZ Inc',
+    owner_business_name: ['ABC Corp', 'XYZ Inc'],
     owner_type: 'CORPORATION',
-    owner_address: '123 Main St\n456 Oak Ave',
-    owner_city: null,
-    owner_state: null,
-    owner_zip: null,
+    owner_address: ['123 Main St', '456 Oak Ave'],
     date: new Date('2024-01-15'),
     agency: 'dof',
     source: 'latest_sale',
     owner_title: 'Manager',
-    owner_phone: '555-1234\n555-5678',
+    owner_phone: ['555-1234', '555-5678'],
     owner_full_name: 'John Doe',
     owner_middle_name: null,
-    owner_address_2: null,
-    owner_city_2: null,
-    owner_state_2: null,
-    owner_zip_2: null,
-    owner_phone_2: null,
     category: 'sale',
   };
 
@@ -100,9 +91,9 @@ describe('ContactCard', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
-  it('renders category chip', () => {
+  it('renders category chip with full label', () => {
     render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('S')).toBeInTheDocument(); // 'S' is the abbreviation for Sale
+    expect(screen.getByText('Sale')).toBeInTheDocument();
   });
 
   it('renders date', () => {
@@ -118,44 +109,46 @@ describe('ContactCard', () => {
   it('renders phones with expand/collapse', () => {
     render(<ContactCard contact={mockContact} />);
     expect(screen.getByText('555-1234')).toBeInTheDocument();
-    expect(screen.getByText('Phone:')).toBeInTheDocument();
+    // Plural label for multiple phones
+    expect(screen.getByText('Phones:')).toBeInTheDocument();
   });
 
   it('renders addresses with expand/collapse', () => {
     render(<ContactCard contact={mockContact} />);
     expect(screen.getByText('123 Main St')).toBeInTheDocument();
-    expect(screen.getByText('Address:')).toBeInTheDocument();
+    // Plural label for multiple addresses
+    expect(screen.getByText('Addresses:')).toBeInTheDocument();
   });
 
   it('renders business names when full name is present', () => {
     render(<ContactCard contact={mockContact} />);
     expect(screen.getByText('ABC Corp')).toBeInTheDocument();
-    expect(screen.getByText('Business:')).toBeInTheDocument();
+    expect(screen.getByText('Business Names:')).toBeInTheDocument();
   });
 
   it('uses business name as contact name when no full name', () => {
-    const contactWithoutFullName: ContactWithCategory = {
+    const contactWithoutFullName: FormattedContactWithCategory = {
       ...mockContact,
       owner_full_name: null,
     };
     render(<ContactCard contact={contactWithoutFullName} />);
     expect(screen.getByText('ABC Corp')).toBeInTheDocument();
     // Business label should not appear since business name is used as contact name
-    expect(screen.queryByText('Business:')).not.toBeInTheDocument();
+    expect(screen.queryByText('Business Names:')).not.toBeInTheDocument();
   });
 
   it('shows Unknown when no name available', () => {
-    const contactWithoutName: ContactWithCategory = {
+    const contactWithoutName: FormattedContactWithCategory = {
       ...mockContact,
       owner_full_name: null,
-      owner_business_name: null,
+      owner_business_name: [],
     };
     render(<ContactCard contact={contactWithoutName} />);
     expect(screen.getByText('Unknown')).toBeInTheDocument();
   });
 
   it('does not render date when not present', () => {
-    const contactWithoutDate: ContactWithCategory = {
+    const contactWithoutDate: FormattedContactWithCategory = {
       ...mockContact,
       date: null,
     };
@@ -163,20 +156,38 @@ describe('ContactCard', () => {
     expect(screen.queryByText(/Jan/i)).not.toBeInTheDocument();
   });
 
-  it('renders different category chips correctly', () => {
+  it('renders different category chips with full labels', () => {
     const categories = [
-      { category: 'assessment-roll' as const, abbr: 'AR' },
-      { category: 'hpd-registration' as const, abbr: 'HPD' },
-      { category: 'permits' as const, abbr: 'P' },
-      { category: 'mortgage' as const, abbr: 'M' },
+      { category: 'assessment-roll' as const, label: 'Assessment Roll' },
+      { category: 'hpd-registration' as const, label: 'HPD Registration' },
+      { category: 'permits' as const, label: 'Permit' },
+      { category: 'mortgage' as const, label: 'Mortgage' },
     ];
 
-    categories.forEach(({ category, abbr }) => {
+    categories.forEach(({ category, label }) => {
       const { unmount } = render(
         <ContactCard contact={{ ...mockContact, category }} />
       );
-      expect(screen.getByText(abbr)).toBeInTheDocument();
+      expect(screen.getByText(label)).toBeInTheDocument();
       unmount();
     });
+  });
+
+  it('uses singular Phone label for single phone', () => {
+    const contactWithSinglePhone: FormattedContactWithCategory = {
+      ...mockContact,
+      owner_phone: ['555-1234'],
+    };
+    render(<ContactCard contact={contactWithSinglePhone} />);
+    expect(screen.getByText('Phone:')).toBeInTheDocument();
+  });
+
+  it('uses singular Address label for single address', () => {
+    const contactWithSingleAddress: FormattedContactWithCategory = {
+      ...mockContact,
+      owner_address: ['123 Main St'],
+    };
+    render(<ContactCard contact={contactWithSingleAddress} />);
+    expect(screen.getByText('Address:')).toBeInTheDocument();
   });
 });
