@@ -38,10 +38,8 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
     const params = searchParams.toString();
     const fullPath = params ? `${newPath}?${params}` : newPath;
 
-    // Wrap navigation in transition for non-blocking update
-    startTransition(() => {
-      router.push(fullPath, { scroll: false });
-    });
+    // TEST: Without startTransition - should cause flicker
+    router.push(fullPath, { scroll: false });
   };
 
   // Function to open AI services with property page URL
