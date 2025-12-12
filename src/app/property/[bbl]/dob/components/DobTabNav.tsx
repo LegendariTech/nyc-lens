@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useOptimistic, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { cn } from '@/utils/cn';
 
 interface DobTabNavProps {
@@ -14,11 +14,8 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  // Default to violations if no sub-tab is specified
-  const serverTab = activeSubTab || 'violations';
-
-  // Optimistic state - auto-syncs to serverTab when transition completes
-  const [optimisticTab, setOptimisticTab] = useOptimistic(serverTab);
+  // Simple useState with initial value from props
+  const [selectedTab, setSelectedTab] = useState(activeSubTab || 'violations');
 
   const tabs = [
     { value: 'jobs-filings', label: 'Jobs' },
@@ -30,13 +27,12 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
 
   const handleTabClick = (tabValue: string) => {
     // Immediately update visual state
-    setOptimisticTab(tabValue);
+    setSelectedTab(tabValue);
 
     const path = `/property/${bbl}/dob/${tabValue}`;
     const params = searchParams.toString();
     const fullPath = params ? `${path}?${params}` : path;
 
-    // Wrap navigation in transition for non-blocking update
     startTransition(() => {
       router.push(fullPath, { scroll: false });
     });
@@ -45,8 +41,8 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
   return (
     <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1 overflow-x-auto overflow-y-hidden scrollbar-hide">
       {tabs.map((tab) => {
-        const isActive = optimisticTab === tab.value;
-        const isLoading = isPending && isActive && serverTab !== tab.value;
+        const isActive = selectedTab === tab.value;
+        const isLoading = isPending && isActive && activeSubTab !== tab.value;
 
         return (
           <button
