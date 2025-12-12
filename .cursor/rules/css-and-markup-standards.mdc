@@ -451,6 +451,61 @@ _Organized by use case with clear explanations for beginners_
 
 ## Best Practices & Patterns
 
+### Responsive Visibility: CSS over JavaScript
+
+**Always prefer CSS-based responsive visibility over JavaScript viewport hooks.**
+
+Using `useViewport()` or similar hooks causes layout flash/blink because:
+1. Server renders with default state (e.g., `isMobile = false`)
+2. Client hydrates with same default (no hydration error)
+3. After `useEffect`, state updates and layout shifts
+
+**❌ Bad - JavaScript-based (causes flash):**
+```tsx
+const { isMobile } = useViewport();
+
+return (
+  <div>
+    {!isMobile && <DesktopOnlyComponent />}
+    <Content />
+  </div>
+);
+```
+
+**✅ Good - CSS-based (no flash):**
+```tsx
+return (
+  <div>
+    {/* Hidden on mobile via CSS - no JS, no flash */}
+    <div className="hidden md:block">
+      <DesktopOnlyComponent />
+    </div>
+    <Content />
+  </div>
+);
+```
+
+**When you need both mobile and desktop variants:**
+```tsx
+return (
+  <div>
+    {/* Desktop version */}
+    <div className="hidden md:block">
+      <DesktopComponent />
+    </div>
+    {/* Mobile version */}
+    <div className="md:hidden">
+      <MobileComponent />
+    </div>
+  </div>
+);
+```
+
+**When to use JS viewport hooks:**
+- Complex logic that can't be expressed in CSS (rare)
+- Analytics/tracking based on viewport
+- When flash is acceptable (non-visible state changes)
+
 ### ✅ Do This
 
 - **Composition over duplication**: Accept `className` prop on all components for extension
