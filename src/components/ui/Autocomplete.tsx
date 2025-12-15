@@ -231,7 +231,8 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                 }, 200);
               }}
               className={cn(
-                'rounded-md border border-foreground/20 px-6 py-3',
+                'rounded-md border border-foreground/20 py-3 pl-6',
+                autocompleteState.query ? 'pr-10' : 'pr-6',
                 'text-foreground text-base',
                 'focus:outline-none focus:ring-2 focus:ring-foreground/50',
                 'placeholder:text-foreground/40',
@@ -240,6 +241,36 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
               )}
               placeholder={placeholder}
             />
+            {autocompleteState.query && (
+              <button
+                type="button"
+                onClick={() => {
+                  autocomplete.setQuery('');
+                  autocomplete.refresh();
+                  inputRef.current?.focus();
+                }}
+                className={cn(
+                  'absolute right-3 top-1/2 -translate-y-1/2',
+                  'flex h-5 w-5 items-center justify-center rounded-full',
+                  'text-foreground/40 hover:text-foreground/70',
+                  'transition-colors'
+                )}
+                aria-label="Clear input"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </form>
 
