@@ -51,6 +51,9 @@ export interface AutocompleteProps<TItem extends BaseAutocompleteItem> {
   /** Custom input className */
   inputClassName?: string;
 
+  /** Accessible label for the input (for screen readers) */
+  ariaLabel?: string;
+
   /** Custom panel className */
   panelClassName?: string;
 
@@ -102,6 +105,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
   autoFocus = true,
   placeholder = 'Search...',
   inputClassName,
+  ariaLabel,
   panelClassName,
   containerClassName,
   openOnFocus = true,
@@ -216,6 +220,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
               {...(autocomplete.getInputProps({
                 inputElement: inputRef.current,
               }) as unknown as React.InputHTMLAttributes<HTMLInputElement>)}
+              aria-label={ariaLabel}
               onBlur={() => {
                 // Clear any existing blur timeout
                 if (blurTimeoutRef.current) {

@@ -1,9 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { MenuIcon } from "@/components/icons";
+import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
+
+/** Mobile property search - extracted to wrap with Suspense for useSearchParams */
+function MobilePropertySearch() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isPropertyPage = pathname?.startsWith('/property/');
+  const address = searchParams?.get('address') || '';
+
+  if (!isPropertyPage) return null;
+
+  return (
+    <div className="flex-1 min-w-0">
+      <PropertyAutocomplete
+        compact
+        initialValue={address}
+        autoFocus={false}
+        inputClassName="w-full border-0 rounded-none py-2 px-3 bg-transparent focus:ring-1 focus:ring-foreground/30"
+        ariaLabel="Search property by address or BBL"
+      />
+    </div>
+  );
+}
 
 interface ResizableSidebarLayoutProps {
   sidebar: ReactNode;
@@ -89,7 +113,7 @@ function ResizableSidebarLayoutInner({
       <div
         className={cn(
           "md:hidden fixed top-0 left-0 right-0 z-[60]",
-          "h-12 flex items-center px-3",
+          "h-12 flex items-center gap-2 px-3",
           "bg-background border-b border-foreground/20"
         )}
       >
@@ -98,7 +122,7 @@ function ResizableSidebarLayoutInner({
           aria-label="Open sidebar"
           onClick={() => setIsMobileOpen(true)}
           className={cn(
-            "inline-flex items-center justify-center",
+            "inline-flex items-center justify-center shrink-0",
             "h-9 w-9 rounded-md",
             "hover:bg-foreground/10",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -106,6 +130,10 @@ function ResizableSidebarLayoutInner({
         >
           <MenuIcon className="h-5 w-5" />
         </button>
+        {/* Property search - only on property pages (desktop search is in PropertyPageLayout, hidden on mobile) */}
+        <Suspense fallback={null}>
+          <MobilePropertySearch />
+        </Suspense>
       </div>
 
       {/* Mobile backdrop */}

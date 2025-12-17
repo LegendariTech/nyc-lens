@@ -12,6 +12,10 @@ interface PropertyAutocompleteProps {
   initialValue?: string;
   autoFocus?: boolean;
   searchField?: 'address' | 'address_with_unit';
+  /** Custom className for the input element */
+  inputClassName?: string;
+  /** Accessible label for the input (for screen readers) */
+  ariaLabel?: string;
 }
 
 /**
@@ -24,7 +28,9 @@ export function PropertyAutocomplete({
   compact = false,
   initialValue = '',
   autoFocus = true,
-  searchField = 'address_with_unit'
+  searchField = 'address_with_unit',
+  inputClassName,
+  ariaLabel,
 }: PropertyAutocompleteProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -78,6 +84,8 @@ export function PropertyAutocomplete({
       placeholder='Try "1 Broadway" or "1 13 1"'
       maxResults={400}
       openOnFocus={true}
+      inputClassName={inputClassName}
+      ariaLabel={ariaLabel}
       getSources={({ query }) => [
         {
           sourceId: 'properties',
