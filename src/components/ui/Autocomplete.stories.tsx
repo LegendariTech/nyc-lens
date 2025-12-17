@@ -364,6 +364,54 @@ export const CustomEmptyState: Story = {
 };
 
 /**
+ * Clear button feature - appears when input has text
+ *
+ * The clear button (X icon) automatically appears on the right side of the input
+ * when there's text present. Clicking it clears the input and refocuses it.
+ */
+export const WithClearButton: Story = {
+  render: () => (
+    <div className="w-[500px]">
+      <Autocomplete<User>
+        placeholder="Search users..."
+        initialValue="John" // Pre-filled to show clear button
+        getSources={({ query }) => [
+          {
+            sourceId: 'users',
+            getItems: () => searchItems(mockUsers, query),
+            getItemInputValue: ({ item }) => item.name,
+            onSelect: ({ item }) => {
+              alert(`Selected: ${item.name}`);
+            },
+          },
+        ]}
+        renderItem={({ item, itemProps }) => (
+          <li
+            {...itemProps}
+            className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-foreground/5 border-b border-foreground/5 last:border-b-0"
+          >
+            <div className="flex size-10 items-center justify-center rounded-full bg-foreground/10 text-lg">
+              {item.name.charAt(0)}
+            </div>
+            <div>
+              <div className="font-medium">{item.name}</div>
+              <div className="text-sm text-foreground/60">{item.email}</div>
+            </div>
+          </li>
+        )}
+        renderHeader={() => (
+          <div className="border-b border-foreground/10 px-4 py-3 bg-foreground/[0.02]">
+            <p className="text-xs text-foreground/70">
+              💡 Notice the X button on the right - click it to clear the input
+            </p>
+          </div>
+        )}
+      />
+    </div>
+  ),
+};
+
+/**
  * With header and footer
  */
 export const WithHeaderAndFooter: Story = {
