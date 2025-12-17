@@ -240,6 +240,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                 inputClassName
               )}
               placeholder={placeholder}
+              type="text"
             />
             {autocompleteState.query && (
               <button
