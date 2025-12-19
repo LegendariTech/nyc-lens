@@ -37,32 +37,48 @@ export function ContactsTable({ data }: ContactsTableProps) {
         const baseHeight = 30; // Base height for single item
         const heightPerItem = 24; // Height per additional item (address, phone, or business name)
 
-        // Count addresses (split by newlines)
+        // Count addresses
         let addressCount = 0;
-        const address = row.owner_address;
+        const address = row.owner_full_address as string | string[] | null;
         if (address) {
-            const addressLines = address.split('\n').filter(line => line && line.trim());
-            addressCount = addressLines.length;
+            if (typeof address === 'string') {
+                const addressLines = address.split('\n').filter((line: string) => line && line.trim());
+                addressCount = addressLines.length;
+            } else if (Array.isArray(address)) {
+                addressCount = address.filter(addr => addr && addr.trim()).length;
+            }
         }
 
-        // Count phones (split by newlines)
+        // Count phones
         let phoneCount = 0;
-        const phone = row.owner_phone || row.owner_phone_2;
-        if (phone) {
-            const phoneLines = phone.split('\n').filter(line => line && line.trim());
+        const phone = row.owner_phone as string | string[] | null;
+        if (phone && typeof phone === 'string') {
+            const phoneLines: string[] = phone.split('\n').filter((line: string) => line && line.trim());
             phoneCount = phoneLines.length;
         }
 
-        // Count business names (split by newlines)
+        // Count full names
+        let fullNameCount = 0;
+        const fullName = row.owner_full_name as string | string[] | null;
+        if (fullName) {
+            if (typeof fullName === 'string') {
+                const fullNameLines: string[] = fullName.split('\n').filter((line: string) => line && line.trim());
+                fullNameCount = fullNameLines.length;
+            } else if (Array.isArray(fullName)) {
+                fullNameCount = fullName.filter(name => name && name.trim()).length;
+            }
+        }
+
+        // Count business names
         let businessNameCount = 0;
-        const businessName = row.owner_business_name;
-        if (businessName) {
-            const businessNameLines = businessName.split('\n').filter(line => line && line.trim());
+        const businessName = row.owner_business_name as string | string[] | null;
+        if (businessName && typeof businessName === 'string') {
+            const businessNameLines: string[] = businessName.split('\n').filter((line: string) => line && line.trim());
             businessNameCount = businessNameLines.length;
         }
 
-        // Use the maximum count (addresses, phones, or business names) to determine height
-        const maxItemCount = Math.max(addressCount, phoneCount, businessNameCount, 1); // At least 1 for empty cells
+        // Use the maximum count (addresses, phones, full names, or business names) to determine height
+        const maxItemCount = Math.max(addressCount, phoneCount, fullNameCount, businessNameCount, 1); // At least 1 for empty cells
 
         // Calculate height: baseHeight + (itemCount * heightPerItem)
         // For 1 item: 30 + (1 * 24) = 54px

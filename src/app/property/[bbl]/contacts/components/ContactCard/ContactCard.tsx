@@ -2,12 +2,31 @@
 
 import { cn } from '@/utils/cn';
 import { ExpandableList } from './ExpandableList';
-import { CATEGORY_METADATA } from '../utils';
-import type { FormattedContactWithCategory } from '../types';
+import type { OwnerContact } from '@/types/contacts';
 
 interface ContactCardProps {
-  contact: FormattedContactWithCategory;
+  contact: OwnerContact;
 }
+
+// Status metadata for styling
+const STATUS_METADATA = {
+  'current': {
+    label: 'Current',
+    filterBorderActive: 'border-green-500/50',
+    filterBgActive: 'bg-green-500/10',
+    filterTextActive: 'text-green-600 dark:text-green-400',
+    textColor: 'text-green-600',
+    darkTextColor: 'dark:text-green-400',
+  },
+  'past': {
+    label: 'Past',
+    filterBorderActive: 'border-gray-500/50',
+    filterBgActive: 'bg-gray-500/10',
+    filterTextActive: 'text-gray-600 dark:text-gray-400',
+    textColor: 'text-gray-600',
+    darkTextColor: 'dark:text-gray-400',
+  },
+};
 
 /**
  * Format date for display
@@ -23,15 +42,17 @@ function formatDate(date: Date | string | null): string {
 }
 
 export function ContactCard({ contact }: ContactCardProps) {
-  const metadata = CATEGORY_METADATA[contact.category];
+  // Use status from contact, default to 'current'
+  const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
+  const metadata = STATUS_METADATA[status];
 
-  // Arrays are already provided by FormattedOwnerContact
-  const phones = contact.owner_phone;
-  const addresses = contact.owner_address;
-  const businessNames = contact.owner_business_name;
+  // Arrays from Elasticsearch
+  const phones = contact.owner_phone || [];
+  const businessNames = contact.owner_business_name || [];
+  const addresses = contact.owner_full_address || [];
 
-  // Get contact name (full name or first business name)
-  const contactName = contact.owner_full_name || businessNames[0] || 'Unknown';
+  // Get contact name (master name or first business name)
+  const contactName = contact.owner_master_full_name || businessNames[0] || 'Unknown';
 
   return (
     <div
@@ -82,15 +103,19 @@ export function ContactCard({ contact }: ContactCardProps) {
         {/* Contact details */}
         <div className="space-y-2 text-sm pt-1 border-t border-foreground/10">
           {/* Phones */}
-          <ExpandableList items={phones} label={phones.length > 1 ? 'Phones' : 'Phone'} />
+          {phones.length > 0 && (
+            <ExpandableList items={phones} label={phones.length > 1 ? 'Phones' : 'Phone'} />
+          )}
 
-          {/* Business Names (only if different from contact name) */}
-          {businessNames.length > 0 && contact.owner_full_name && (
-            <ExpandableList items={businessNames} label="Business Names" />
+          {/* Business Names */}
+          {businessNames.length > 0 && (
+            <ExpandableList items={businessNames} label={businessNames.length > 1 ? 'Business Names' : 'Business Name'} />
           )}
 
           {/* Addresses */}
-          <ExpandableList items={addresses} label={addresses.length > 1 ? 'Addresses' : 'Address'} />
+          {addresses.length > 0 && (
+            <ExpandableList items={addresses} label={addresses.length > 1 ? 'Addresses' : 'Address'} />
+          )}
         </div>
       </div>
     </div>

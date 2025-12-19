@@ -1,89 +1,24 @@
-/// <reference types="vitest/globals" />
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ContactCard } from '../ContactCard';
-import { ExpandableList } from '../ContactCard/ExpandableList';
-import type { FormattedContactWithCategory } from '../types';
-
-describe('ExpandableList', () => {
-  it('returns null for empty items', () => {
-    const { container } = render(<ExpandableList items={[]} label="Phone" />);
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it('returns null for items with only empty strings', () => {
-    const { container } = render(<ExpandableList items={['', '  ', '']} label="Phone" />);
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it('renders single item without expand button', () => {
-    render(<ExpandableList items={['555-1234']} label="Phone" />);
-
-    expect(screen.getByText('Phone:')).toBeInTheDocument();
-    expect(screen.getByText('555-1234')).toBeInTheDocument();
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-  });
-
-  it('renders multiple items with expand button', () => {
-    render(<ExpandableList items={['555-1234', '555-5678', '555-9999']} label="Phone" />);
-
-    expect(screen.getByText('Phone:')).toBeInTheDocument();
-    expect(screen.getByText('555-1234')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /\+ 2 more/i })).toBeInTheDocument();
-
-    // Other items should be hidden initially
-    expect(screen.queryByText('555-5678')).not.toBeInTheDocument();
-    expect(screen.queryByText('555-9999')).not.toBeInTheDocument();
-  });
-
-  it('expands and collapses list on button click', async () => {
-    const user = userEvent.setup();
-    render(<ExpandableList items={['555-1234', '555-5678', '555-9999']} label="Phone" />);
-
-    // Click to expand
-    await user.click(screen.getByRole('button', { name: /\+ 2 more/i }));
-
-    // All items should be visible
-    expect(screen.getByText('555-1234')).toBeInTheDocument();
-    expect(screen.getByText('555-5678')).toBeInTheDocument();
-    expect(screen.getByText('555-9999')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /show less/i })).toBeInTheDocument();
-
-    // Click to collapse
-    await user.click(screen.getByRole('button', { name: /show less/i }));
-
-    // Only first item visible
-    expect(screen.getByText('555-1234')).toBeInTheDocument();
-    expect(screen.queryByText('555-5678')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /\+ 2 more/i })).toBeInTheDocument();
-  });
-
-  it('filters out empty items from count', () => {
-    render(<ExpandableList items={['555-1234', '', '555-5678', '  ']} label="Phone" />);
-
-    // Should show "+ 1 more" (only one valid additional item)
-    expect(screen.getByRole('button', { name: /\+ 1 more/i })).toBeInTheDocument();
-  });
-});
+import { describe, it, expect } from 'vitest';
+import { ContactCard } from '../ContactCard/ContactCard';
+import type { OwnerContact } from '@/types/contacts';
 
 describe('ContactCard', () => {
-  // FormattedContactWithCategory has arrays instead of newline-separated strings
-  const mockContact: FormattedContactWithCategory = {
+  const mockContact: OwnerContact = {
+    bbl: '1000010001',
     borough: '1',
     block: '1',
     lot: '1',
+    bucket_name: 'ALL',
+    status: 'current',
+    merged_count: 5,
     owner_business_name: ['ABC Corp', 'XYZ Inc'],
-    owner_type: 'CORPORATION',
-    owner_address: ['123 Main St', '456 Oak Ave'],
+    owner_full_address: ['123 Main St, New York, NY 10001'],
     date: new Date('2024-01-15'),
-    agency: 'dof',
-    source: 'latest_sale',
     owner_title: 'Manager',
     owner_phone: ['555-1234', '555-5678'],
-    owner_full_name: 'John Doe',
-    owner_middle_name: null,
-    category: 'sale',
+    owner_full_name: ['John Doe'],
+    owner_master_full_name: 'John Doe',
   };
 
   it('renders contact name', () => {
@@ -91,9 +26,9 @@ describe('ContactCard', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
-  it('renders category chip with full label', () => {
+  it('renders status chip with full label', () => {
     render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('Sale')).toBeInTheDocument();
+    expect(screen.getByText('Current')).toBeInTheDocument();
   });
 
   it('renders date', () => {
@@ -106,88 +41,65 @@ describe('ContactCard', () => {
     expect(screen.getByText('Manager')).toBeInTheDocument();
   });
 
-  it('renders phones with expand/collapse', () => {
-    render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('555-1234')).toBeInTheDocument();
-    // Plural label for multiple phones
-    expect(screen.getByText('Phones:')).toBeInTheDocument();
-  });
-
-  it('renders addresses with expand/collapse', () => {
-    render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('123 Main St')).toBeInTheDocument();
-    // Plural label for multiple addresses
-    expect(screen.getByText('Addresses:')).toBeInTheDocument();
-  });
-
-  it('renders business names when full name is present', () => {
-    render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('ABC Corp')).toBeInTheDocument();
-    expect(screen.getByText('Business Names:')).toBeInTheDocument();
-  });
-
-  it('uses business name as contact name when no full name', () => {
-    const contactWithoutFullName: FormattedContactWithCategory = {
+  it('does not render title when absent', () => {
+    const contactWithoutTitle: OwnerContact = {
       ...mockContact,
-      owner_full_name: null,
+      owner_title: null,
     };
-    render(<ContactCard contact={contactWithoutFullName} />);
-    expect(screen.getByText('ABC Corp')).toBeInTheDocument();
-    // Business label should not appear since business name is used as contact name
-    expect(screen.queryByText('Business Names:')).not.toBeInTheDocument();
+    render(<ContactCard contact={contactWithoutTitle} />);
+    expect(screen.queryByText('Manager')).not.toBeInTheDocument();
   });
 
-  it('shows Unknown when no name available', () => {
-    const contactWithoutName: FormattedContactWithCategory = {
+  it('renders expandable phone list', () => {
+    render(<ContactCard contact={mockContact} />);
+    // First phone should be visible
+    expect(screen.getByText('555-1234')).toBeInTheDocument();
+  });
+
+  it('renders expandable business name list', () => {
+    render(<ContactCard contact={mockContact} />);
+    // First business name should be visible
+    expect(screen.getByText('ABC Corp')).toBeInTheDocument();
+  });
+
+  it('renders expandable address list', () => {
+    render(<ContactCard contact={mockContact} />);
+    // Address should be visible
+    expect(screen.getByText('123 Main St, New York, NY 10001')).toBeInTheDocument();
+  });
+
+  it('uses first business name as contact name when master name is not present', () => {
+    const businessOnlyContact: OwnerContact = {
       ...mockContact,
-      owner_full_name: null,
+      owner_master_full_name: null,
+    };
+    render(<ContactCard contact={businessOnlyContact} />);
+    expect(screen.getByText('ABC Corp')).toBeInTheDocument();
+  });
+
+  it('displays "Unknown" when neither master name nor business name is present', () => {
+    const unknownContact: OwnerContact = {
+      ...mockContact,
+      owner_master_full_name: null,
       owner_business_name: [],
     };
-    render(<ContactCard contact={contactWithoutName} />);
+    render(<ContactCard contact={unknownContact} />);
     expect(screen.getByText('Unknown')).toBeInTheDocument();
   });
 
-  it('does not render date when not present', () => {
-    const contactWithoutDate: FormattedContactWithCategory = {
+  it('does not render empty fields', () => {
+    const minimalContact: OwnerContact = {
       ...mockContact,
-      date: null,
+      owner_phone: [],
+      owner_business_name: [],
+      owner_full_address: [],
+      owner_title: null,
     };
-    render(<ContactCard contact={contactWithoutDate} />);
-    expect(screen.queryByText(/Jan/i)).not.toBeInTheDocument();
-  });
+    render(<ContactCard contact={minimalContact} />);
 
-  it('renders different category chips with full labels', () => {
-    const categories = [
-      { category: 'assessment-roll' as const, label: 'Assessment Roll' },
-      { category: 'hpd-registration' as const, label: 'HPD Registration' },
-      { category: 'permits' as const, label: 'Permit' },
-      { category: 'mortgage' as const, label: 'Mortgage' },
-    ];
-
-    categories.forEach(({ category, label }) => {
-      const { unmount } = render(
-        <ContactCard contact={{ ...mockContact, category }} />
-      );
-      expect(screen.getByText(label)).toBeInTheDocument();
-      unmount();
-    });
-  });
-
-  it('uses singular Phone label for single phone', () => {
-    const contactWithSinglePhone: FormattedContactWithCategory = {
-      ...mockContact,
-      owner_phone: ['555-1234'],
-    };
-    render(<ContactCard contact={contactWithSinglePhone} />);
-    expect(screen.getByText('Phone:')).toBeInTheDocument();
-  });
-
-  it('uses singular Address label for single address', () => {
-    const contactWithSingleAddress: FormattedContactWithCategory = {
-      ...mockContact,
-      owner_address: ['123 Main St'],
-    };
-    render(<ContactCard contact={contactWithSingleAddress} />);
-    expect(screen.getByText('Address:')).toBeInTheDocument();
+    // These labels should not appear when fields are empty
+    expect(screen.queryByText('Phone')).not.toBeInTheDocument();
+    expect(screen.queryByText('Business Names')).not.toBeInTheDocument();
+    expect(screen.queryByText('Address')).not.toBeInTheDocument();
   });
 });

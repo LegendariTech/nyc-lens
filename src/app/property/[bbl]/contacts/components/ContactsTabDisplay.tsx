@@ -1,160 +1,145 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { TabControlsBar } from '@/components/layout/TabControlsBar';
 import { ContactsTable } from './Table';
 import { ContactCardList } from './ContactCardList';
 import { FilterLegend } from '@/components/FilterLegend';
 import type { OwnerContact } from '@/types/contacts';
-import type { ContactCategory, FormattedContactWithCategory } from './types';
-import { enrichContactsWithCategory, getDefaultVisibleCategories, CATEGORY_ORDER, CATEGORY_METADATA, getContactCategory } from './utils';
-import { formatContacts, deduplicateContacts } from '@/data/contacts/utils';
 
 interface ContactsTabDisplayProps {
     contactsData: OwnerContact[];
     bbl: string;
 }
 
+// Status type for filtering
+type ContactStatus = 'current' | 'past';
+
+// Status metadata for FilterLegend
+const STATUS_METADATA: Record<ContactStatus, {
+    pluralLabel: string;
+    filterBorderActive: string;
+    filterBgActive: string;
+    filterTextActive: string;
+    borderColor: string;
+    bgColor: string;
+}> = {
+    'current': {
+        pluralLabel: 'Current',
+        filterBorderActive: 'border-green-500/50',
+        filterBgActive: 'bg-green-500/10',
+        filterTextActive: 'text-green-600 dark:text-green-400',
+        borderColor: 'border-green-500',
+        bgColor: 'bg-green-500',
+    },
+    'past': {
+        pluralLabel: 'Past',
+        filterBorderActive: 'border-gray-500/50',
+        filterBgActive: 'bg-gray-500/10',
+        filterTextActive: 'text-gray-600 dark:text-gray-400',
+        borderColor: 'border-gray-500',
+        bgColor: 'bg-gray-500',
+    },
+};
+
 export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProps) {
-    // Normalized toggle state - enabled by default
-    const [normalized, setNormalized] = useState(true);
-
-    // Format and optionally deduplicate contacts - keeps arrays for mobile cards
-    const formattedContacts = useMemo(() => {
-        // Format contacts (cleanup + address/phone/business arrays)
-        const formatted = formatContacts(contactsData);
-
-        // Deduplicate if normalized is enabled
-        return normalized
-            ? deduplicateContacts(formatted, 0.65)
-            : formatted;
-    }, [contactsData, normalized]);
-
-    // Add categories to formatted contacts (for mobile card view - keeps arrays)
-    const formattedContactsWithCategory = useMemo((): FormattedContactWithCategory[] => {
-        try {
-            return formattedContacts.map(contact => ({
-                ...contact,
-                category: getContactCategory(contact),
-            }));
-        } catch (error) {
-            console.error('Error enriching contacts with categories:', error);
-            return [];
-        }
-    }, [formattedContacts]);
 
     // Convert to table format (join arrays to strings) for desktop table
     const tableContacts = useMemo(() => {
-        return formattedContacts.map(contact => {
-            // Combine all addresses with newlines for multi-line display
-            const combinedAddress = contact.owner_address
-                .filter(addr => addr && addr.trim())
+        return contactsData.map(contact => {
+            // Combine all business names with newlines for multi-line display
+            const combinedBusinessName = contact.owner_business_name
+                ?.filter(name => name && name.trim())
+                .join('\n') || null;
+
+            // Combine all full names with newlines for multi-line display
+            const combinedFullName = contact.owner_full_name
+                ?.filter(name => name && name.trim())
                 .join('\n') || null;
 
             // Combine all phones with newlines for multi-line display
             const combinedPhone = contact.owner_phone
-                .filter(phone => phone && phone.trim())
+                ?.filter(phone => phone && phone.trim())
                 .join('\n') || null;
 
-            // Combine all business names with newlines for multi-line display
-            const combinedBusinessName = contact.owner_business_name
-                .filter(name => name && name.trim())
+            // Combine all addresses with newlines for multi-line display
+            const combinedAddress = contact.owner_full_address
+                ?.filter(addr => addr && addr.trim())
                 .join('\n') || null;
 
             return {
                 ...contact,
-                owner_address: combinedAddress,
-                owner_address_2: null,
-                owner_phone: combinedPhone,
-                owner_phone_2: null,
-                owner_business_name: combinedBusinessName,
-                owner_city: null,
-                owner_state: null,
-                owner_zip: null,
-                owner_city_2: null,
-                owner_state_2: null,
-                owner_zip_2: null,
-                owner_first_name: null,
-                owner_last_name: null,
+                // Override array fields with string versions for table display
+                owner_business_name: combinedBusinessName as any,
+                owner_full_name: combinedFullName as any,
+                owner_phone: combinedPhone as any,
+                owner_full_address: combinedAddress as any,
             };
-        }) as OwnerContact[];
-    }, [formattedContacts]);
+        });
+    }, [contactsData]);
 
-    // Add categories to table contacts (for desktop table view)
-    const tableContactsWithCategory = useMemo(() => {
-        try {
-            return enrichContactsWithCategory(tableContacts);
-        } catch (error) {
-            console.error('Error enriching contacts with categories:', error);
-            return [];
-        }
-    }, [tableContacts]);
-
-    // Filter state - by default show all except past-sale and prior-mortgage
-    const [visibleCategories, setVisibleCategories] = useState<Set<ContactCategory>>(
-        getDefaultVisibleCategories()
+    // Filter state - by default show only 'current' status
+    const [visibleStatuses, setVisibleStatuses] = useState<Set<ContactStatus>>(
+        new Set(['current'])
     );
 
-    // Toggle category visibility
-    const toggleCategory = (category: ContactCategory) => {
-        setVisibleCategories(prev => {
+    // Toggle status visibility
+    const toggleStatus = (status: ContactStatus) => {
+        setVisibleStatuses(prev => {
             const next = new Set(prev);
-            if (next.has(category)) {
-                next.delete(category);
+            if (next.has(status)) {
+                next.delete(status);
             } else {
-                next.add(category);
+                next.add(status);
             }
             return next;
         });
     };
 
-    // Combine category counts and filter generation for better performance
+    // Count contacts by status and generate filters
     const filters = useMemo(() => {
-        // Count contacts by category (use formatted contacts as source of truth)
-        const categoryCounts = formattedContactsWithCategory.reduce(
+        // Count contacts by status
+        const statusCounts = contactsData.reduce(
             (acc, contact) => {
-                acc[contact.category] = (acc[contact.category] || 0) + 1;
+                const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
+                acc[status] = (acc[status] || 0) + 1;
                 return acc;
             },
-            {} as Record<ContactCategory, number>
+            {} as Record<ContactStatus, number>
         );
 
-        // Create filter data for Legend component using defined order
-        return CATEGORY_ORDER.map(category => ({
-            category,
-            isVisible: visibleCategories.has(category),
-            count: categoryCounts[category] || 0,
+        // Create filter data for Legend component
+        const statusOrder: ContactStatus[] = ['current', 'past'];
+        return statusOrder.map(status => ({
+            category: status,
+            isVisible: visibleStatuses.has(status),
+            count: statusCounts[status] || 0,
         }));
-    }, [formattedContactsWithCategory, visibleCategories]);
+    }, [contactsData, visibleStatuses]);
 
-    // Filter contacts for table view (desktop)
+    // Filter contacts by status
     const filteredTableContacts = useMemo(
-        () => tableContactsWithCategory.filter(contact => visibleCategories.has(contact.category)),
-        [tableContactsWithCategory, visibleCategories]
+        () => tableContacts.filter(contact => {
+            const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
+            return visibleStatuses.has(status);
+        }),
+        [tableContacts, visibleStatuses]
     );
 
-    // Filter contacts for card view (mobile) - keeps arrays
     const filteredCardContacts = useMemo(
-        () => formattedContactsWithCategory.filter(contact => visibleCategories.has(contact.category)),
-        [formattedContactsWithCategory, visibleCategories]
+        () => contactsData.filter(contact => {
+            const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
+            return visibleStatuses.has(status);
+        }),
+        [contactsData, visibleStatuses]
     );
 
     return (
         <div className="space-y-4">
-            {/* Controls Bar with Normalized Toggle - hidden on mobile via CSS (no JS flash) */}
-            <div className="hidden md:block">
-                <TabControlsBar
-                    showNormalizedToggle={true}
-                    normalized={normalized}
-                    onNormalizedChange={setNormalized}
-                />
-            </div>
-
-            {/* Legend with filters */}
+            {/* Legend with status filters */}
             <FilterLegend
                 filters={filters}
-                categoryMetadata={CATEGORY_METADATA}
-                onToggleCategory={toggleCategory}
+                categoryMetadata={STATUS_METADATA}
+                onToggleCategory={toggleStatus}
             />
 
             {/* Contacts Table - desktop only */}
@@ -165,7 +150,7 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
                             No contacts match the selected filters.
                         </p>
                         <p className="text-xs text-foreground/50">
-                            Try enabling more categories above to see additional contacts.
+                            Try enabling the "Past" filter above to see additional contacts.
                         </p>
                     </div>
                 ) : (

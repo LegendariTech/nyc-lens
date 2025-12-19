@@ -1,5 +1,5 @@
 import 'server-only';
-import { queryMany } from '../db';
+import { search } from '../elasticsearch';
 import type { OwnerContact } from '@/types/contacts';
 
 export interface OwnerContactsResult {
@@ -8,25 +8,30 @@ export interface OwnerContactsResult {
 }
 
 /**
- * Parse BBL string into borough, block, and lot for owner contacts
- * Block and lot are NOT padded (stored as strings in the table)
- * @param bbl - BBL in format "1-13-1" or "1-00013-0001"
- * @returns Object with borough (string name), block (string), lot (string) or null if invalid
+ * Parse BBL string into components for Elasticsearch query
+ * @param bbl - BBL in format "1-13-1" or "1-00013-0001" or "1000130001"
+ * @returns Object with bbl string or null if invalid
  */
-function parseBBLForContacts(bbl: string): { borough: string; block: string; lot: string } | null {
+function parseBBLForContacts(bbl: string): { bbl: string } | null {
     // Handle hyphenated format (e.g., "1-13-1" or "1-00013-0001")
     if (bbl.includes('-')) {
         const parts = bbl.split('-');
         if (parts.length === 3) {
-            const boroCode = parts[0]; // 1 digit
-            const block = parts[1]; // No padding needed for contacts table
-            const lot = parts[2]; // No padding needed for contacts table
+            const boroCode = parts[0].padStart(1, '0'); // 1 digit
+            const block = parts[1].padStart(5, '0'); // 5 digits
+            const lot = parts[2].padStart(4, '0'); // 4 digits
 
             // Validate that boro is 1-5
             const boroNum = parseInt(boroCode, 10);
             if (boroNum >= 1 && boroNum <= 5) {
-                return { borough: boroCode, block, lot };
+                return { bbl: `${boroCode}${block}${lot}` };
             }
+        }
+    } else if (bbl.length === 10) {
+        // Already in 10-digit format
+        const boroNum = parseInt(bbl[0], 10);
+        if (boroNum >= 1 && boroNum <= 5) {
+            return { bbl };
         }
     }
 
@@ -34,10 +39,10 @@ function parseBBLForContacts(bbl: string): { borough: string; block: string; lot
 }
 
 /**
- * Fetch owner contact information for a specific property from the database
+ * Fetch owner contact information for a specific property from Elasticsearch
  * Returns all owner contact records for the given BBL, ordered by date descending (most recent first)
  *
- * @param bbl - BBL in format "1-13-1"
+ * @param bbl - BBL in format "1-13-1" or "1000130001"
  * @returns Promise containing array of owner contact records or error
  */
 export async function fetchOwnerContacts(bbl: string): Promise<OwnerContactsResult> {
@@ -51,40 +56,50 @@ export async function fetchOwnerContacts(bbl: string): Promise<OwnerContactsResu
             };
         }
 
-        // Query the database
-        // Fetch all owner contact records for this BBL, ordered by date descending (most recent first)
-        const query = `
-      SELECT *
-      FROM gold.owner_contact
-      WHERE borough = @borough
-        AND block = @block
-        AND lot = @lot
-      ORDER BY
-        CASE
-          WHEN date IS NOT NULL
-          THEN date
-          ELSE '1900-01-01'
-        END DESC
-    `;
+        // Get the index name from environment variable
+        const indexName = process.env.ELASTICSEARCH_CONTACTS_INDEX_NAME || 'owner_contacts_normalized_v_1_1';
 
-        const rows = await queryMany<OwnerContact>(query, {
-            borough: parsed.borough,
-            block: parsed.block,
-            lot: parsed.lot,
-        });
+        // Query Elasticsearch
+        const query = {
+            query: {
+                term: {
+                    bbl: parsed.bbl,
+                },
+            },
+            sort: [
+                {
+                    date: {
+                        order: 'desc',
+                        unmapped_type: 'date',
+                    },
+                },
+            ],
+            size: 10000, // Maximum results
+        };
 
-        if (!rows || rows.length === 0) {
+        const result = await search(indexName, query) as {
+            hits: {
+                hits: Array<{
+                    _source: OwnerContact;
+                }>;
+            };
+        };
+
+        if (!result.hits || !result.hits.hits || result.hits.hits.length === 0) {
             return {
                 data: [],
                 error: undefined,
             };
         }
 
+        // Extract contacts from Elasticsearch response
+        const contacts = result.hits.hits.map(hit => hit._source);
+
         return {
-            data: rows,
+            data: contacts,
         };
     } catch (error) {
-        console.error('Error fetching owner contacts data:', error);
+        console.error('Error fetching owner contacts data from Elasticsearch:', error);
         return {
             data: null,
             error: `Failed to load owner contacts data for BBL ${bbl}: ${error instanceof Error ? error.message : 'Unknown error'}`,

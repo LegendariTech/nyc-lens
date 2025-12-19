@@ -1,7 +1,6 @@
-import type { ContactWithCategory } from '../types';
+import type { OwnerContact } from '@/types/contacts';
 
 /**
  * Row type for Owner Contacts AG Grid table
- * Includes the computed category field for display
  */
-export type OwnerContactRow = ContactWithCategory;
+export type OwnerContactRow = OwnerContact;

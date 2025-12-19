@@ -1,10 +1,10 @@
 'use client';
 
 import { ContactCard } from './ContactCard';
-import type { FormattedContactWithCategory } from './types';
+import type { OwnerContact } from '@/types/contacts';
 
 interface ContactCardListProps {
-  contacts: FormattedContactWithCategory[];
+  contacts: OwnerContact[];
 }
 
 /**
@@ -27,7 +27,7 @@ export function ContactCardList({ contacts }: ContactCardListProps) {
   return (
     <div className="mt-4 space-y-3">
       {contacts.map((contact, index) => (
-        <ContactCard key={`${contact.agency}-${contact.source}-${index}`} contact={contact} />
+        <ContactCard key={`${contact.bucket_name}-${contact.status}-${index}`} contact={contact} />
       ))}
     </div>
   );

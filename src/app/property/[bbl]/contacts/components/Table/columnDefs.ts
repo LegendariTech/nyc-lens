@@ -1,72 +1,6 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { OwnerContactRow } from './types';
 import { formatDate } from '@/utils/formatters';
-import { CategoryChip } from './CategoryChip';
-
-/**
- * Get the best available full name: prefer owner_full_name, then compile from first/middle/last
- */
-function getFullName(row: OwnerContactRow): string {
-    if (row.owner_full_name) {
-        return row.owner_full_name;
-    }
-
-    const nameParts = [
-        row.owner_first_name,
-        row.owner_middle_name,
-        row.owner_last_name,
-    ].filter(Boolean);
-
-    return nameParts.length > 0 ? nameParts.join(' ') : '';
-}
-
-/**
- * Get the best available address: primary first, then secondary
- * In normalized mode, owner_address may contain multiple addresses separated by newlines
- */
-function getBestAddress(row: OwnerContactRow): string {
-    // If owner_address exists and city/state/zip are null, it's likely normalized mode
-    // where addresses are already combined (may contain newlines for multiple addresses)
-    if (row.owner_address && !row.owner_city && !row.owner_state && !row.owner_zip) {
-        // Already formatted and potentially contains multiple addresses
-        return row.owner_address;
-    }
-
-    // Try primary address first (combine components)
-    const primaryParts = [
-        row.owner_address,
-        row.owner_city,
-        row.owner_state,
-        row.owner_zip,
-    ].filter(Boolean);
-
-    if (primaryParts.length > 0) {
-        return primaryParts.join(', ');
-    }
-
-    // Fall back to secondary address
-    const secondaryParts = [
-        row.owner_address_2,
-        row.owner_city_2,
-        row.owner_state_2,
-        row.owner_zip_2,
-    ].filter(Boolean);
-
-    return secondaryParts.length > 0 ? secondaryParts.join(', ') : '';
-}
-
-/**
- * Get the best available phone: primary first, then secondary
- * In normalized mode, owner_phone may contain multiple phones separated by newlines
- */
-function getBestPhone(row: OwnerContactRow): string {
-    // If owner_phone exists and owner_phone_2 is null, it's likely normalized mode
-    // where phones are already combined (may contain newlines for multiple phones)
-    if (row.owner_phone && !row.owner_phone_2) {
-        return row.owner_phone;
-    }
-    return row.owner_phone || row.owner_phone_2 || '';
-}
 
 /**
  * Format phone number as US format: (123) 456-7890
@@ -94,29 +28,37 @@ function formatUSPhone(phone: string): string {
 
 export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
     {
-        field: 'category',
-        headerName: '',
-        width: 70,
-        cellRenderer: CategoryChip,
-        cellClass: 'category-cell',
-    },
-    {
         field: 'date',
         headerName: 'Date',
         width: 140,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, Date>) => formatDate(p.value),
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, Date | string>) => {
+            if (!p.value) return '';
+            return formatDate(p.value);
+        },
         filterValueGetter: (params) => formatDate(params.data?.date),
-        comparator: (valueA: Date, valueB: Date) => {
+        comparator: (valueA: Date | string, valueB: Date | string) => {
             const dateA = valueA ? new Date(valueA).getTime() : 0;
             const dateB = valueB ? new Date(valueB).getTime() : 0;
             return dateA - dateB;
         },
     },
     {
+        field: 'owner_master_full_name',
+        headerName: 'Master Name',
+        width: 200,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+    },
+    {
         field: 'owner_full_name',
-        headerName: 'Owner Name',
-        width: 250,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => getFullName(p.data!),
+        headerName: 'Full Names',
+        width: 200,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
+            // Handle array or string (already joined with \n in tableContacts)
+            if (Array.isArray(p.value)) {
+                return p.value.filter(name => name && name.trim()).join('\n');
+            }
+            return p.value || '';
+        },
         cellClass: 'multiline-cell',
     },
     {
@@ -131,10 +73,10 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         headerName: 'Phone',
         width: 160,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => {
-            const phone = getBestPhone(p.data!);
+            const phone = p.value;
             if (!phone || phone === '') return '';
 
-            // Handle multiple phones separated by newlines (normalized mode)
+            // Handle multiple phones separated by newlines
             if (phone.includes('\n')) {
                 return phone
                     .split('\n')
@@ -148,20 +90,19 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         cellClass: 'multiline-cell',
     },
     {
-        field: 'owner_address',
+        field: 'owner_full_address',
         headerName: 'Address',
-        width: 600, // Increased width to prevent wrapping
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => getBestAddress(p.data!),
+        width: 600,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
+            // Handle array or string
+            if (Array.isArray(p.value)) {
+                return p.value.filter(addr => addr && addr.trim()).join('\n');
+            }
+            return p.value || '';
+        },
         cellClass: 'multiline-cell',
     },
     // Hidden columns - available via column menu
-    {
-        field: 'owner_type',
-        headerName: 'Owner Type',
-        width: 160,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
     {
         field: 'owner_title',
         headerName: 'Title',
@@ -170,88 +111,32 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     {
-        field: 'owner_first_name',
-        headerName: 'First Name',
+        field: 'bucket_name',
+        headerName: 'Bucket',
         width: 150,
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     {
-        field: 'owner_middle_name',
-        headerName: 'Middle Name',
-        width: 150,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
-    {
-        field: 'owner_last_name',
-        headerName: 'Last Name',
-        width: 150,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
-    {
-        field: 'owner_phone_2',
-        headerName: 'Secondary Phone',
-        width: 160,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => {
-            const phone = p.value;
-            return phone ? formatUSPhone(phone) : '';
-        },
-    },
-    {
-        field: 'owner_address_2',
-        headerName: 'Secondary Address',
-        width: 200,
-        hide: true,
-        cellClass: 'multiline-cell',
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => {
-            if (!p.value) return '';
-
-            // Combine secondary address components
-            const secondaryParts = [
-                p.value,
-                p.data?.owner_city_2,
-                p.data?.owner_state_2,
-                p.data?.owner_zip_2,
-            ].filter(Boolean);
-
-            return secondaryParts.length > 0 ? secondaryParts.join(', ') : '';
-        },
-    },
-    {
-        field: 'owner_city_2',
-        headerName: 'Secondary City',
-        width: 150,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
-    {
-        field: 'owner_state_2',
-        headerName: 'Secondary State',
-        width: 150,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-    },
-    {
-        field: 'owner_zip_2',
-        headerName: 'Secondary ZIP',
+        field: 'status',
+        headerName: 'Status',
         width: 120,
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     {
-        field: 'agency',
-        headerName: 'Agency (Raw)',
-        width: 150,
+        field: 'merged_count',
+        headerName: 'Merged Count',
+        width: 140,
         hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, number>) => {
+            return p.value != null ? p.value.toString() : '';
+        },
     },
     {
-        field: 'source',
-        headerName: 'Source (Raw)',
-        width: 250,
+        field: 'bbl',
+        headerName: 'BBL',
+        width: 140,
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
