@@ -140,4 +140,30 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
+    {
+        field: 'source',
+        headerName: 'Source',
+        width: 180,
+        hide: true,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
+            if (!p.value) return '';
+            if (Array.isArray(p.value)) {
+                return p.value.filter(item => item && item.trim()).join(', ');
+            }
+            return '';
+        },
+    },
+    {
+        field: 'agency',
+        headerName: 'Agency',
+        width: 150,
+        hide: true,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
+            if (!p.value) return '';
+            if (Array.isArray(p.value)) {
+                return p.value.filter(item => item && item.trim()).join(', ');
+            }
+            return '';
+        },
+    },
 ];
