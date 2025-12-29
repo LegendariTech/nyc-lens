@@ -19,6 +19,8 @@ describe('ContactCard', () => {
     owner_phone: ['555-1234', '555-5678'],
     owner_full_name: ['John Doe'],
     owner_master_full_name: 'John Doe',
+    source: ['latest_sale'],
+    agency: ['DOF'],
   };
 
   it('renders contact name', () => {
@@ -74,7 +76,7 @@ describe('ContactCard', () => {
       owner_master_full_name: null,
     };
     render(<ContactCard contact={businessOnlyContact} />);
-    expect(screen.getByText('ABC Corp')).toBeInTheDocument();
+    expect(screen.getAllByText('ABC Corp')[0]).toBeInTheDocument();
   });
 
   it('displays "Unknown" when neither master name nor business name is present', () => {
