@@ -20,6 +20,8 @@ describe('ContactsTabDisplay', () => {
       owner_phone: ['555-1234'],
       owner_full_name: ['John Doe'],
       owner_master_full_name: 'John Doe',
+      source: ['latest_sale'],
+      agency: ['DOF'],
     },
     {
       bbl: '1000010001',
@@ -36,6 +38,8 @@ describe('ContactsTabDisplay', () => {
       owner_phone: ['555-5678'],
       owner_full_name: ['Jane Smith'],
       owner_master_full_name: 'Jane Smith',
+      source: ['latest_sale'],
+      agency: ['DOF'],
     },
   ];
 
@@ -43,13 +47,13 @@ describe('ContactsTabDisplay', () => {
     render(<ContactsTabDisplay contactsData={mockContacts} bbl="1-1-1" />);
 
     // Check for status filter legend (should appear)
-    expect(screen.getByText(/Current/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Current/i)[0]).toBeInTheDocument();
   });
 
   it('handles empty contact data', () => {
     render(<ContactsTabDisplay contactsData={[]} bbl="1-1-1" />);
 
     // Should show message about no matching contacts
-    expect(screen.getByText(/No contacts match the selected filters/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/No contacts match the selected filters/i)[0]).toBeInTheDocument();
   });
 });

@@ -19,4 +19,6 @@ export interface OwnerContact {
     owner_title: string | null;
     status: string | null;
     merged_count: number | null;
+    source: string[] | null;
+    agency: string[] | null;
 }
