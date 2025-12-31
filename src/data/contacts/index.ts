@@ -57,7 +57,7 @@ export async function fetchOwnerContacts(bbl: string): Promise<OwnerContactsResu
         }
 
         // Get the index name from environment variable
-        const indexName = process.env.ELASTICSEARCH_CONTACTS_INDEX_NAME || 'owner_contacts_normalized_v_1_1';
+        const indexName = process.env.ELASTICSEARCH_CONTACTS_INDEX_NAME || 'owner_contacts_normalized_v_1_3';
 
         // Query Elasticsearch
         const query = {
