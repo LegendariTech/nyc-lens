@@ -3,10 +3,13 @@
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { TabControlsBar, DataTabLayout } from '@/components/layout';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MetadataType = any; // TODO: Add proper typing for Socrata metadata
+
 interface PermitIssuanceDisplayProps {
   bbl: string;
-  data: any; // TODO: Add proper typing
-  metadata: any; // TODO: Add proper typing
+  data: unknown; // TODO: Add proper typing
+  metadata: MetadataType; // TODO: Add proper typing
   error?: string;
 }
 

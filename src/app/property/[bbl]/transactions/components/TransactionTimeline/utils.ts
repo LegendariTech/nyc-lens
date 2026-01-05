@@ -1,14 +1,8 @@
 import type { DocumentWithParties } from '@/data/acris';
 import type { Transaction, DocumentCategory, CategoryMetadata } from './types';
+import { formatCurrency } from '@/utils/formatters';
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+export { formatCurrency };
 
 export function formatDate(dateStr: string): string {
   // Parse the date string as UTC to avoid timezone conversion

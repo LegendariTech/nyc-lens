@@ -360,8 +360,8 @@ describe('utils/formatters', () => {
     });
 
     describe('Edge Cases and Invalid Inputs', () => {
-      it('should return "N/A" for zero', () => {
-        expect(formatCurrency(0)).toBe('N/A');
+      it('should return "$0" for zero', () => {
+        expect(formatCurrency(0)).toBe('$0');
       });
 
       it('should return "N/A" for undefined', () => {
@@ -373,7 +373,7 @@ describe('utils/formatters', () => {
       });
 
       it('should handle negative zero', () => {
-        expect(formatCurrency(-0)).toBe('N/A');
+        expect(formatCurrency(-0)).toBe('$0');
       });
 
       it('should handle very small positive numbers', () => {

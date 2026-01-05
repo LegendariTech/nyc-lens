@@ -98,7 +98,7 @@ describe('Alert', () => {
     });
 
     it('renders title with proper styling', () => {
-      const { container } = render(<Alert title="Title">Content</Alert>);
+      render(<Alert title="Title">Content</Alert>);
       const title = screen.getByText('Title');
       expect(title.className).toContain('font-semibold');
       expect(title.className).toContain('text-sm');

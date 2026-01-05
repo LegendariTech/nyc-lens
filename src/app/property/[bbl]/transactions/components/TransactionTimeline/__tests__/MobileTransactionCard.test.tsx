@@ -23,6 +23,7 @@ describe('MobileTransactionCard', () => {
         party1Type: 'Seller',
         party2Type: 'Buyer',
         documentId: 'DOC-123',
+        classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
         isDeed: true,
         isMortgage: false,
         isUccLien: false,
@@ -297,7 +298,7 @@ describe('MobileTransactionCard', () => {
                 ...mockTransaction,
                 party1: ['SELLER LLC', 'CO-SELLER INC'],
             };
-            const { container } = render(<MobileTransactionCard transaction={multiPartyTransaction} />);
+            render(<MobileTransactionCard transaction={multiPartyTransaction} />);
 
             const button = screen.getByText('+ 1 more');
             expect(button).toHaveAttribute('type', 'button');
@@ -316,14 +317,14 @@ describe('MobileTransactionCard', () => {
         });
 
         it('should handle undefined amount', () => {
-            const undefinedAmountTransaction: Transaction = {
+            const undefinedAmountTransaction = {
                 ...mockTransaction,
                 amount: undefined,
-            };
+            } as unknown as Transaction;
             render(<MobileTransactionCard transaction={undefinedAmountTransaction} />);
 
-            // formatCurrency should handle undefined gracefully
-            expect(screen.getByText(/\$/)).toBeInTheDocument();
+            // formatCurrency should handle undefined gracefully by returning 'N/A'
+            expect(screen.getByText('N/A')).toBeInTheDocument();
         });
 
         it('should render with empty party arrays', () => {
@@ -344,7 +345,7 @@ describe('MobileTransactionCard', () => {
     describe('Mobile-specific layout', () => {
         it('should have mobile-optimized padding', () => {
             const { container } = render(<MobileTransactionCard transaction={mockTransaction} />);
-            
+
             // Check that the card has p-3 (mobile padding)
             const card = container.querySelector('.p-3');
             expect(card).toBeInTheDocument();
@@ -352,7 +353,7 @@ describe('MobileTransactionCard', () => {
 
         it('should have flex layout for proper spacing', () => {
             const { container } = render(<MobileTransactionCard transaction={mockTransaction} />);
-            
+
             // Check that container has flex-1 pb-4 for mobile spacing
             const wrapper = container.querySelector('.flex-1.pb-4');
             expect(wrapper).toBeInTheDocument();
@@ -360,7 +361,7 @@ describe('MobileTransactionCard', () => {
 
         it('should show date with type badge on mobile', () => {
             const { container } = render(<MobileTransactionCard transaction={mockTransaction} />);
-            
+
             // Check that date and badge are in a flex container with proper spacing
             const header = container.querySelector('.flex.items-center.justify-between');
             expect(header).toBeInTheDocument();

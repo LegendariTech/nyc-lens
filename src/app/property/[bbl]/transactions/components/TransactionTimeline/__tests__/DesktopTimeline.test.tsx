@@ -30,6 +30,7 @@ describe('DesktopTimeline', () => {
         party1Type: 'Seller',
         party2Type: 'Buyer',
         documentId: `DOC-${id}`,
+        classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
         isDeed: true,
         isMortgage: false,
         isUccLien: false,
@@ -244,9 +245,6 @@ describe('DesktopTimeline', () => {
             const { container } = render(
                 <DesktopTimeline transactions={transactions} firstTransactionOfYear={{}} />
             );
-
-            const axis = screen.getByTestId('timeline-axis');
-            const firstItem = screen.getByTestId('timeline-item-TX-001');
 
             // Axis should appear before items in DOM
             expect(container.innerHTML.indexOf('timeline-axis')).toBeLessThan(

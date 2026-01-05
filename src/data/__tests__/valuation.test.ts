@@ -20,7 +20,7 @@ vi.mock('@/app/property/[bbl]/tax/metadata.json', () => ({
 }));
 
 import { queryMany } from '../db';
-import { fetchPropertyValuation, type PropertyValuationResult } from '../valuation';
+import { fetchPropertyValuation } from '../valuation';
 import type { PropertyValuation } from '@/types/valuation';
 
 describe('data/valuation', () => {

@@ -159,10 +159,12 @@ export const formatDateMMDDYYYY = formatDate;
 
 /**
  * Format number as USD currency
- * Returns 'N/A' for zero, null, or undefined values
+ * Returns 'N/A' for null or undefined values, '$0' for zero
  */
 export function formatCurrency(value?: number | null): string {
-  if (value == null || value === 0) return 'N/A';
+  if (value == null) return 'N/A';
+  // Handle -0 edge case (Object.is(-0, 0) is false, but -0 === 0 is true)
+  if (value === 0) return '$0';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

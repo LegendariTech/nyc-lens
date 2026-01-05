@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { PropertyAutocomplete } from './PropertyAutocomplete';
-import type { PropertyItem } from './propertyService';
 import { ViewportProvider } from '@/components/layout/ViewportContext';
 
 /**
@@ -300,7 +299,7 @@ export const CustomPlaceholder: Story = {
       <div className="w-[600px]">
         <PropertyAutocomplete compact={false} autoFocus={false} />
         <p className="mt-2 text-sm text-foreground/60">
-          Note: The placeholder is set to 'Try "1 Broadway" or "1 13 1"' in the component
+          Note: The placeholder is set to &apos;Try &quot;1 Broadway&quot; or &quot;1 13 1&quot;&apos; in the component
         </p>
       </div>
     </ViewportProvider>

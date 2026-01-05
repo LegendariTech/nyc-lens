@@ -5,7 +5,6 @@ import { DataTabLayout } from '@/components/layout';
 import { DobJobApplicationsTable } from './Table';
 import { DobJobNowApplicationsTable } from './TableNow';
 import type { DobJobApplicationsResult, DobJobApplicationsNowResult } from '@/data/dobJobs';
-import Link from 'next/link';
 
 interface DobJobApplicationsDisplayProps {
   bbl: string;

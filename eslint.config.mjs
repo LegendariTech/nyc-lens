@@ -19,7 +19,14 @@ const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "storybook-static/**",
+    "coverage/**",
   ],
-}, ...storybook.configs["flat/recommended"]];
+}, ...storybook.configs["flat/recommended"], {
+  files: ["**/*.stories.tsx"],
+  rules: {
+    "storybook/no-renderer-packages": "off",
+  },
+}];
 
 export default eslintConfig;

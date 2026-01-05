@@ -280,7 +280,7 @@ describe('Autocomplete', () => {
     it.skip('shows custom empty state when no results', async () => {
       const user = userEvent.setup();
       const renderEmpty = vi.fn((query: string) => (
-        <div>No matches for "{query}"</div>
+        <div>No matches for &quot;{query}&quot;</div>
       ));
       const props = createProps({ renderEmpty });
       render(<Autocomplete {...props} />);

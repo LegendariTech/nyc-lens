@@ -169,25 +169,25 @@ export const MultipleExamples: Story = {
   render: () => (
     <div className="space-y-3 p-4 rounded-lg border border-foreground/10 bg-background">
       <div>
-        <div className="text-xs text-foreground/50 mb-1">Query: "broadway"</div>
+        <div className="text-xs text-foreground/50 mb-1">Query: &quot;broadway&quot;</div>
         <div className="text-lg">
           <HighlightedText text="123 BROADWAY" query="broadway" />
         </div>
       </div>
       <div>
-        <div className="text-xs text-foreground/50 mb-1">Query: "5th"</div>
+        <div className="text-xs text-foreground/50 mb-1">Query: &quot;5th&quot;</div>
         <div className="text-lg">
           <HighlightedText text="789 5TH AVENUE" query="5th" />
         </div>
       </div>
       <div>
-        <div className="text-xs text-foreground/50 mb-1">Query: "west"</div>
+        <div className="text-xs text-foreground/50 mb-1">Query: &quot;west&quot;</div>
         <div className="text-lg">
           <HighlightedText text="456 WEST END AVENUE" query="west" />
         </div>
       </div>
       <div>
-        <div className="text-xs text-foreground/50 mb-1">Query: "park" (no match)</div>
+        <div className="text-xs text-foreground/50 mb-1">Query: &quot;park&quot; (no match)</div>
         <div className="text-lg">
           <HighlightedText text="321 LEXINGTON AVENUE" query="park" />
         </div>

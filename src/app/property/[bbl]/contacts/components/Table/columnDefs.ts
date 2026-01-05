@@ -102,14 +102,21 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         },
         cellClass: 'multiline-cell',
     },
-    // Hidden columns - available via column menu
     {
         field: 'owner_title',
         headerName: 'Title',
         width: 160,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
+        hide: false,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
+            // Handle array or string
+            if (Array.isArray(p.value)) {
+                return p.value.filter(title => title && title.trim()).join('\n');
+            }
+            return p.value || '';
+        },
+        cellClass: 'multiline-cell',
     },
+    // Hidden columns - available via column menu
     {
         field: 'bucket_name',
         headerName: 'Bucket',

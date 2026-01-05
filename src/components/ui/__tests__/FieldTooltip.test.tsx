@@ -186,7 +186,7 @@ describe('FieldTooltip', () => {
     });
 
     it('renders Radix Tooltip components in wrapper mode', () => {
-      const { container } = render(
+      render(
         <FieldTooltip description="Test description" fieldKey="test-field">
           Test Label
         </FieldTooltip>

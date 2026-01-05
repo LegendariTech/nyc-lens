@@ -196,7 +196,7 @@ export const AllVariants: Story = {
         Something went wrong. Please try again.
       </Alert>
       <Alert variant="info" title="Information">
-        Here's some useful information for you.
+        Here&apos;s some useful information for you.
       </Alert>
     </div>
   ),

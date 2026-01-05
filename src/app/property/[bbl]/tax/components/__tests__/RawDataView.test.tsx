@@ -11,7 +11,7 @@ vi.mock('@/utils/formatters', () => ({
 
 describe('RawDataView', () => {
   const mockValuation: PropertyValuation = {
-    year: 2024,
+    year: '2024',
     finmkttot: 500000,
     finmktland: 200000,
     pymkttot: 450000,
@@ -19,7 +19,7 @@ describe('RawDataView', () => {
     boro: 1,
     block: 1234,
     lot: 56,
-  };
+  } as PropertyValuation;
 
   it('renders valuation data', () => {
     render(<RawDataView data={[mockValuation]} searchQuery="" />);

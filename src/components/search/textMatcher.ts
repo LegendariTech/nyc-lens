@@ -83,7 +83,6 @@ export function findMatchInText(text: string, query: string): TextMatch | null {
 
   // Split text into words, keeping track of positions
   const words: Array<{ text: string; start: number; length: number }> = [];
-  let currentPos = 0;
   let currentWord = '';
   let wordStart = 0;
 

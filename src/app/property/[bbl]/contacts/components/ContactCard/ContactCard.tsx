@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/utils/cn';
+import { formatDate } from '@/utils/formatters';
 import { ExpandableList } from './ExpandableList';
 import type { OwnerContact } from '@/types/contacts';
 
@@ -28,19 +29,6 @@ const STATUS_METADATA = {
   },
 };
 
-/**
- * Format date for display
- */
-function formatDate(date: Date | string | null): string {
-  if (!date) return '';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
 export function ContactCard({ contact }: ContactCardProps) {
   // Use status from contact, default to 'current'
   const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
@@ -50,6 +38,7 @@ export function ContactCard({ contact }: ContactCardProps) {
   const phones = contact.owner_phone || [];
   const businessNames = contact.owner_business_name || [];
   const addresses = contact.owner_full_address || [];
+  const titles = contact.owner_title || [];
 
   // Get contact name (master name or first business name)
   const contactName = contact.owner_master_full_name || businessNames[0] || 'Unknown';
@@ -93,15 +82,13 @@ export function ContactCard({ contact }: ContactCardProps) {
           {contactName}
         </div>
 
-        {/* Title if present */}
-        {contact.owner_title && (
-          <div className="text-sm text-foreground/70">
-            {contact.owner_title}
-          </div>
-        )}
-
         {/* Contact details */}
         <div className="space-y-2 text-sm pt-1 border-t border-foreground/10">
+          {/* Titles */}
+          {titles.length > 0 && (
+            <ExpandableList items={titles} label={titles.length > 1 ? 'Titles' : 'Title'} />
+          )}
+
           {/* Phones */}
           {phones.length > 0 && (
             <ExpandableList items={phones} label={phones.length > 1 ? 'Phones' : 'Phone'} />

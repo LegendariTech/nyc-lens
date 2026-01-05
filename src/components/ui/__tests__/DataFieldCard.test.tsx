@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DataFieldCard, type DataField } from '../DataFieldCard';
 
@@ -241,8 +241,7 @@ describe('DataFieldCard', () => {
         { label: 'Type', value: 'Residential', fieldName: 'property_type' },
         { label: 'Type', value: 'Owner', fieldName: 'owner_type' },
       ];
-      const { container } = render(<DataFieldCard title="Details" fields={fields} />);
-      const fieldDivs = container.querySelectorAll('[key]');
+      render(<DataFieldCard title="Details" fields={fields} />);
       // Both fields should render despite having the same label
       expect(screen.getAllByText('Type')).toHaveLength(2);
     });

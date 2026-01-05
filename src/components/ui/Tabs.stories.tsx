@@ -29,7 +29,7 @@ export const Default: Story = {
         <div className="rounded-lg border border-foreground/10 bg-background p-6">
           <h3 className="mb-2 text-lg font-semibold">Account Settings</h3>
           <p className="text-sm text-foreground/70">
-            Make changes to your account here. Click save when you're done.
+            Make changes to your account here. Click save when you&apos;re done.
           </p>
         </div>
       </TabsContent>
@@ -37,7 +37,7 @@ export const Default: Story = {
         <div className="rounded-lg border border-foreground/10 bg-background p-6">
           <h3 className="mb-2 text-lg font-semibold">Password Settings</h3>
           <p className="text-sm text-foreground/70">
-            Change your password here. After saving, you'll be logged out.
+            Change your password here. After saving, you&apos;ll be logged out.
           </p>
         </div>
       </TabsContent>

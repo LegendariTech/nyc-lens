@@ -1,6 +1,5 @@
 import type { ServerSideGetRowsRequest } from '@/utils/agGrid';
 import type { AcrisDoc, AcrisParty, AcrisRecord } from './acris';
-import type { PropertyValuation } from './valuation';
 
 /**
  * API Request/Response types for /api/acris/* endpoints

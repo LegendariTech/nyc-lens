@@ -41,7 +41,7 @@ const STATUS_METADATA: Record<ContactStatus, {
     },
 };
 
-export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProps) {
+export function ContactsTabDisplay({ contactsData }: ContactsTabDisplayProps) {
 
     // Convert to table format (join arrays to strings) for desktop table
     const tableContacts = useMemo(() => {
@@ -69,10 +69,10 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
             return {
                 ...contact,
                 // Override array fields with string versions for table display
-                owner_business_name: combinedBusinessName as any,
-                owner_full_name: combinedFullName as any,
-                owner_phone: combinedPhone as any,
-                owner_full_address: combinedAddress as any,
+                owner_business_name: combinedBusinessName as unknown as string[] | null,
+                owner_full_name: combinedFullName as unknown as string[] | null,
+                owner_phone: combinedPhone as unknown as string[] | null,
+                owner_full_address: combinedAddress as unknown as string[] | null,
             };
         });
     }, [contactsData]);
@@ -150,7 +150,7 @@ export function ContactsTabDisplay({ contactsData, bbl }: ContactsTabDisplayProp
                             No contacts match the selected filters.
                         </p>
                         <p className="text-xs text-foreground/50">
-                            Try enabling the "Past" filter above to see additional contacts.
+                            Try enabling the &quot;Past&quot; filter above to see additional contacts.
                         </p>
                     </div>
                 ) : (

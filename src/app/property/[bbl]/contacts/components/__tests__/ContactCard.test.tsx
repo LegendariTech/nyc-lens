@@ -15,7 +15,7 @@ describe('ContactCard', () => {
     owner_business_name: ['ABC Corp', 'XYZ Inc'],
     owner_full_address: ['123 Main St, New York, NY 10001'],
     date: new Date('2024-01-15'),
-    owner_title: 'Manager',
+    owner_title: ['Manager'],
     owner_phone: ['555-1234', '555-5678'],
     owner_full_name: ['John Doe'],
     owner_master_full_name: 'John Doe',
@@ -46,7 +46,7 @@ describe('ContactCard', () => {
   it('does not render title when absent', () => {
     const contactWithoutTitle: OwnerContact = {
       ...mockContact,
-      owner_title: null,
+      owner_title: [],
     };
     render(<ContactCard contact={contactWithoutTitle} />);
     expect(screen.queryByText('Manager')).not.toBeInTheDocument();
@@ -95,7 +95,7 @@ describe('ContactCard', () => {
       owner_phone: [],
       owner_business_name: [],
       owner_full_address: [],
-      owner_title: null,
+      owner_title: [],
     };
     render(<ContactCard contact={minimalContact} />);
 
@@ -103,5 +103,6 @@ describe('ContactCard', () => {
     expect(screen.queryByText('Phone')).not.toBeInTheDocument();
     expect(screen.queryByText('Business Names')).not.toBeInTheDocument();
     expect(screen.queryByText('Address')).not.toBeInTheDocument();
+    expect(screen.queryByText('Title')).not.toBeInTheDocument();
   });
 });

@@ -46,24 +46,36 @@ describe('acris data layer', () => {
 
         const mockParties: AcrisParty[] = [
             {
+                borough: '1',
+                block: '13',
+                lot: '1',
                 party_document_id: 'DOC123',
                 party_party_type: '1',
                 party_party_type_description: 'SELLER',
                 party_name: 'SELLER LLC',
             } as AcrisParty,
             {
+                borough: '1',
+                block: '13',
+                lot: '1',
                 party_document_id: 'DOC123',
                 party_party_type: '2',
                 party_party_type_description: 'BUYER',
                 party_name: 'BUYER INC',
             } as AcrisParty,
             {
+                borough: '1',
+                block: '13',
+                lot: '1',
                 party_document_id: 'DOC456',
                 party_party_type: '1',
                 party_party_type_description: 'BORROWER',
                 party_name: 'BORROWER CORP',
             } as AcrisParty,
             {
+                borough: '1',
+                block: '13',
+                lot: '1',
                 party_document_id: 'DOC456',
                 party_party_type: '2',
                 party_party_type_description: 'LENDER',
@@ -265,18 +277,27 @@ describe('acris data layer', () => {
             it('should handle multiple parties of same type', async () => {
                 const multipleParties: AcrisParty[] = [
                     {
+                        borough: '1',
+                        block: '13',
+                        lot: '1',
                         party_document_id: 'DOC123',
                         party_party_type: '1',
                         party_party_type_description: 'SELLER',
                         party_name: 'SELLER A',
                     } as AcrisParty,
                     {
+                        borough: '1',
+                        block: '13',
+                        lot: '1',
                         party_document_id: 'DOC123',
                         party_party_type: '1',
                         party_party_type_description: 'SELLER',
                         party_name: 'SELLER B',
                     } as AcrisParty,
                     {
+                        borough: '1',
+                        block: '13',
+                        lot: '1',
                         party_document_id: 'DOC123',
                         party_party_type: '2',
                         party_party_type_description: 'BUYER',
@@ -305,11 +326,14 @@ describe('acris data layer', () => {
             it('should handle parties with no type information', async () => {
                 const partiesNoType: AcrisParty[] = [
                     {
+                        borough: '1',
+                        block: '13',
+                        lot: '1',
                         party_document_id: 'DOC123',
                         party_party_type: undefined,
                         party_party_type_description: undefined,
                         party_name: 'UNKNOWN PARTY',
-                    } as AcrisParty,
+                    } as unknown as AcrisParty,
                 ];
 
                 vi.mocked(search)

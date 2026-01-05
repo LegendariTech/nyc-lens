@@ -25,6 +25,7 @@ describe('MobileTimeline', () => {
         party1Type: 'Seller',
         party2Type: 'Buyer',
         documentId: `DOC-${id}`,
+        classCodeDescription: 'DEEDS AND OTHER CONVEYANCES',
         isDeed: true,
         isMortgage: false,
         isUccLien: false,

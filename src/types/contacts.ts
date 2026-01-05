@@ -16,7 +16,7 @@ export interface OwnerContact {
     owner_full_name: string[] | null;
     owner_master_full_name: string | null;
     owner_phone: string[] | null;
-    owner_title: string | null;
+    owner_title: string[] | null;
     status: string | null;
     merged_count: number | null;
     source: string[] | null;

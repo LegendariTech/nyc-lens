@@ -215,7 +215,7 @@ describe('FilterLegend', () => {
 
     it('displays colored indicator dot for visible categories', () => {
       const onToggle = vi.fn();
-      const { container } = render(
+      render(
         <FilterLegend
           filters={mockFilters}
           categoryMetadata={mockCategoryMetadata}
