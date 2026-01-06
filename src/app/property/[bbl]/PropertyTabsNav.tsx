@@ -85,7 +85,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
     { value: 'overview', label: 'Overview' },
     { value: 'contacts', label: 'Contacts' },
     { value: 'transactions', label: 'Transactions' },
-    { value: 'pluto', label: 'PLUTO' },
+    { value: 'pluto', label: 'PropertyInfo' },
     { value: 'tax', label: 'Tax' },
     { value: 'dob', label: 'DOB' },
     { value: 'hpd', label: 'HPD' },

@@ -97,9 +97,9 @@ export async function fetchDobSafetyViolations(bbl: string): Promise<DobSafetyVi
       WHERE borough = @borough
         AND block = @block
         AND lot = @lot
-      ORDER BY 
-        CASE 
-          WHEN violation_issue_date IS NOT NULL 
+      ORDER BY
+        CASE
+          WHEN violation_issue_date IS NOT NULL
           THEN violation_issue_date
           ELSE '1900-01-01'
         END DESC,
