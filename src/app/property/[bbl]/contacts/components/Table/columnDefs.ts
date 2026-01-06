@@ -45,13 +45,13 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
     {
         field: 'owner_master_full_name',
         headerName: 'Master Name',
-        width: 200,
+        width: 280,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     {
         field: 'owner_full_name',
         headerName: 'Full Names',
-        width: 200,
+        width: 290,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
             // Handle array or string (already joined with \n in tableContacts)
             if (Array.isArray(p.value)) {
