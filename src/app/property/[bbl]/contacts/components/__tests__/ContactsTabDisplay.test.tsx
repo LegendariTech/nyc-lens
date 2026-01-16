@@ -44,14 +44,14 @@ describe('ContactsTabDisplay', () => {
   ];
 
   it('renders contact data with status filters', () => {
-    render(<ContactsTabDisplay contactsData={mockContacts} bbl="1-1-1" />);
+    render(<ContactsTabDisplay contactsData={mockContacts} bbl="1-1-1" tableView={false} onTableViewChange={() => {}} />);
 
     // Check for status filter legend (should appear)
     expect(screen.getAllByText(/Current/i)[0]).toBeInTheDocument();
   });
 
   it('handles empty contact data', () => {
-    render(<ContactsTabDisplay contactsData={[]} bbl="1-1-1" />);
+    render(<ContactsTabDisplay contactsData={[]} bbl="1-1-1" tableView={false} onTableViewChange={() => {}} />);
 
     // Should show message about no matching contacts
     expect(screen.getAllByText(/No contacts match the selected filters/i)[0]).toBeInTheDocument();

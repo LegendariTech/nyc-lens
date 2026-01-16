@@ -8,7 +8,6 @@ import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
 import { PropertyValuation } from '@/types/valuation';
-import { cn } from '@/utils/cn';
 import { formatValue, formatDate, formatUSPhone, formatCurrency, formatYoyChange } from '@/utils/formatters';
 import { getTaxableAssessedValue, formatTaxYear, transformValuationToTaxRows } from '@/app/property/[bbl]/tax/components/utils';
 
@@ -19,15 +18,6 @@ interface OverviewTabProps {
   valuationData: PropertyValuation[] | null;
   error?: string;
   bbl?: string;
-}
-
-function formatNumber(value: number | string | boolean | null | undefined, options?: { decimals?: number; treatZeroAsNull?: boolean }): string {
-  if (value === null || value === undefined || typeof value === 'boolean') return '—';
-  const num = typeof value === 'string' ? parseFloat(value) : value;
-  if (isNaN(num)) return '—';
-  if (options?.treatZeroAsNull && num === 0) return '—';
-  const decimals = options?.decimals ?? 0;
-  return decimals === 0 ? Math.round(num).toLocaleString() : num.toLocaleString(undefined, { maximumFractionDigits: decimals });
 }
 
 function InfoItem({ label, value, className, valueStyle }: { label: string; value: string | number; className?: string; valueStyle?: React.CSSProperties }) {
@@ -49,6 +39,10 @@ function SectionCard({ title, children }: { title: string; children: React.React
 }
 
 export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl }: OverviewTabProps) {
+  // State for showing/hiding alternative addresses and contacts - must be at top before any returns
+  const [showAllAddresses, setShowAllAddresses] = React.useState(false);
+  const [showAllContacts, setShowAllContacts] = React.useState(false);
+
   if (error) {
     return (
       <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
@@ -70,10 +64,6 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       </Card>
     );
   }
-
-  // State for showing/hiding alternative addresses and contacts
-  const [showAllAddresses, setShowAllAddresses] = React.useState(false);
-  const [showAllContacts, setShowAllContacts] = React.useState(false);
 
   // Extract address data
   const propertyAddress = propertyData?.address ||
@@ -196,8 +186,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     : '—';
 
   const hasMarketValueExemption = latestValuation?.finactextot != null &&
-    latestValuation.finactextot !== 0 &&
-    latestValuation.finactextot !== '0';
+    latestValuation.finactextot !== 0
   const marketValueExemption = hasMarketValueExemption
     ? formatCurrency(latestValuation.finactextot)
     : '—';
@@ -207,8 +196,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     : '—';
 
   const hasTransitionalValueExemption = latestValuation?.fintrnextot != null &&
-    latestValuation.fintrnextot !== 0 &&
-    latestValuation.fintrnextot !== '0';
+    latestValuation.fintrnextot !== 0
   const transitionalValueExemption = hasTransitionalValueExemption
     ? formatCurrency(latestValuation.fintrnextot)
     : '—';

@@ -2,7 +2,7 @@ import type { DatasourceMetadata } from '@/app/property/[bbl]/utils/datasourceDi
 import { queryOne } from './db';
 
 
-export interface PlutoData {
+export interface PlutoData extends Record<string, unknown> {
   borough: string | null;
   block: string | null;
   lot: string | null;

@@ -5,7 +5,6 @@ import { ContactsTable } from './Table';
 import { ContactCardList } from './ContactCardList';
 import { FilterLegend } from '@/components/FilterLegend';
 import { TabControlsBar } from '@/components/layout/TabControlsBar';
-import { cn } from '@/utils/cn';
 import type { OwnerContact } from '@/types/contacts';
 
 interface ContactsTabDisplayProps {
