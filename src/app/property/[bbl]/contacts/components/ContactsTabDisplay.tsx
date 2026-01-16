@@ -4,11 +4,15 @@ import { useMemo, useState } from 'react';
 import { ContactsTable } from './Table';
 import { ContactCardList } from './ContactCardList';
 import { FilterLegend } from '@/components/FilterLegend';
+import { TabControlsBar } from '@/components/layout/TabControlsBar';
+import { cn } from '@/utils/cn';
 import type { OwnerContact } from '@/types/contacts';
 
 interface ContactsTabDisplayProps {
     contactsData: OwnerContact[];
     bbl: string;
+    tableView: boolean;
+    onTableViewChange: (value: boolean) => void;
 }
 
 // Status type for filtering
@@ -41,8 +45,7 @@ const STATUS_METADATA: Record<ContactStatus, {
     },
 };
 
-export function ContactsTabDisplay({ contactsData }: ContactsTabDisplayProps) {
-
+export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange }: ContactsTabDisplayProps) {
     // Convert to table format (join arrays to strings) for desktop table
     const tableContacts = useMemo(() => {
         return contactsData.map(contact => {
@@ -142,9 +145,38 @@ export function ContactsTabDisplay({ contactsData }: ContactsTabDisplayProps) {
                 onToggleCategory={toggleStatus}
             />
 
-            {/* Contacts Table - desktop only */}
+            {/* Controls Bar - hidden on mobile via CSS (no JS flash) */}
             <div className="hidden md:block">
-                {filteredTableContacts.length === 0 ? (
+                <TabControlsBar
+                    showTableViewToggle={true}
+                    tableView={tableView}
+                    onTableViewChange={onTableViewChange}
+                />
+            </div>
+
+            {/* Table View - only on desktop when enabled */}
+            {tableView && (
+                <div className="hidden md:block">
+                    {filteredTableContacts.length === 0 ? (
+                        <div className="py-8 text-center space-y-2">
+                            <p className="text-sm text-foreground/70">
+                                No contacts match the selected filters.
+                            </p>
+                            <p className="text-xs text-foreground/50">
+                                Try enabling the &quot;Past&quot; filter above to see additional contacts.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="rounded-lg border border-foreground/10 bg-card">
+                            <ContactsTable data={filteredTableContacts} />
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Contact Cards - always on mobile, conditional on desktop */}
+            <div className={tableView ? 'md:hidden' : undefined}>
+                {filteredCardContacts.length === 0 ? (
                     <div className="py-8 text-center space-y-2">
                         <p className="text-sm text-foreground/70">
                             No contacts match the selected filters.
@@ -154,15 +186,8 @@ export function ContactsTabDisplay({ contactsData }: ContactsTabDisplayProps) {
                         </p>
                     </div>
                 ) : (
-                    <div className="rounded-lg border border-foreground/10 bg-card">
-                        <ContactsTable data={filteredTableContacts} />
-                    </div>
+                    <ContactCardList contacts={filteredCardContacts} />
                 )}
-            </div>
-
-            {/* Contact Cards - mobile only */}
-            <div className="md:hidden">
-                <ContactCardList contacts={filteredCardContacts} />
             </div>
         </div>
     );

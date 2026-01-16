@@ -83,7 +83,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
       const address = encodeURIComponent(params.value || '');
       return (
         <Link
-          href={`/property/${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}?address=${address}`}
+          href={`/property/${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}/overview?address=${address}`}
           className="text-blue-400 hover:text-blue-300"
         >
           {params.value}

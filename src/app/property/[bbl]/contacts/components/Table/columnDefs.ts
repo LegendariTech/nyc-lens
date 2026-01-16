@@ -1,30 +1,6 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { OwnerContactRow } from './types';
-import { formatDate } from '@/utils/formatters';
-
-/**
- * Format phone number as US format: (123) 456-7890
- */
-function formatUSPhone(phone: string): string {
-    if (!phone || phone === '') return phone;
-
-    // Remove all non-digit characters
-    const digits = phone.replace(/\D/g, '');
-
-    // Format as US phone number if it has 10 digits
-    if (digits.length === 10) {
-        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-    }
-
-    // If it has 11 digits and starts with 1, format as US number with country code
-    if (digits.length === 11 && digits.startsWith('1')) {
-        const number = digits.slice(1);
-        return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6)}`;
-    }
-
-    // Return original if it doesn't match expected formats
-    return phone;
-}
+import { formatDate, formatUSPhone } from '@/utils/formatters';
 
 export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
     {
@@ -49,26 +25,6 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
     {
-        field: 'owner_full_name',
-        headerName: 'Full Names',
-        width: 290,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
-            // Handle array or string (already joined with \n in tableContacts)
-            if (Array.isArray(p.value)) {
-                return p.value.filter(name => name && name.trim()).join('\n');
-            }
-            return p.value || '';
-        },
-        cellClass: 'multiline-cell',
-    },
-    {
-        field: 'owner_business_name',
-        headerName: 'Business Name',
-        width: 220,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
-        cellClass: 'multiline-cell',
-    },
-    {
         field: 'owner_phone',
         headerName: 'Phone',
         width: 160,
@@ -87,6 +43,39 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
 
             return formatUSPhone(phone);
         },
+        cellClass: 'multiline-cell',
+    },
+    {
+        field: 'agency',
+        headerName: 'Agency',
+        width: 150,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
+            if (!p.value) return '';
+            if (Array.isArray(p.value)) {
+                return p.value.filter(item => item && item.trim()).join(', ');
+            }
+            return '';
+        },
+    },
+    {
+        field: 'owner_full_name',
+        headerName: 'All Names',
+        width: 290,
+        hide: true,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string | string[]>) => {
+            // Handle array or string (already joined with \n in tableContacts)
+            if (Array.isArray(p.value)) {
+                return p.value.filter(name => name && name.trim()).join('\n');
+            }
+            return p.value || '';
+        },
+        cellClass: 'multiline-cell',
+    },
+    {
+        field: 'owner_business_name',
+        headerName: 'Business Name',
+        width: 280,
+        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
         cellClass: 'multiline-cell',
     },
     {
@@ -151,19 +140,6 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         field: 'source',
         headerName: 'Source',
         width: 180,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
-            if (!p.value) return '';
-            if (Array.isArray(p.value)) {
-                return p.value.filter(item => item && item.trim()).join(', ');
-            }
-            return '';
-        },
-    },
-    {
-        field: 'agency',
-        headerName: 'Agency',
-        width: 150,
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
             if (!p.value) return '';

@@ -173,3 +173,37 @@ export function formatCurrency(value?: number | null): string {
   }).format(value);
 }
 
+/**
+ * Format phone number as US format: (123) 456-7890
+ */
+export function formatUSPhone(phone: string): string {
+  if (!phone || phone === '') return phone;
+
+  // Remove all non-digit characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as US phone number if it has 10 digits
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+
+  // If it has 11 digits and starts with 1, format as US number with country code
+  if (digits.length === 11 && digits.startsWith('1')) {
+    const number = digits.slice(1);
+    return `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6)}`;
+  }
+
+  // Return original if it doesn't match expected formats
+  return phone;
+}
+
+/**
+ * Format year over year change with sign
+ */
+export function formatYoyChange(value: number | null | undefined): string {
+  if (value == null) return 'N/A';
+  const percentage = value * 100;
+  const sign = percentage >= 0 ? '+' : '';
+  return `${sign}${percentage.toFixed(2)}%`;
+}
+

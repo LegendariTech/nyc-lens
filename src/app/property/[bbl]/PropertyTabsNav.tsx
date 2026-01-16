@@ -82,13 +82,13 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   ];
 
   const tabs = [
-    { value: 'overview', label: 'Overview' },
-    { value: 'contacts', label: 'Contacts' },
-    { value: 'transactions', label: 'Transactions' },
-    { value: 'pluto', label: 'PropertyInfo' },
-    { value: 'tax', label: 'Tax' },
-    { value: 'dob', label: 'DOB' },
-    { value: 'hpd', label: 'HPD' },
+    { value: 'overview', label: 'Overview', disabled: false },
+    { value: 'contacts', label: 'Contacts', disabled: false },
+    { value: 'transactions', label: 'Transactions', disabled: false },
+    { value: 'pluto', label: 'BuildingInfo', disabled: false },
+    { value: 'tax', label: 'Tax', disabled: false },
+    { value: 'dob', label: 'DOB', disabled: true },
+    { value: 'hpd', label: 'HPD', disabled: true },
   ];
 
   return (
@@ -98,20 +98,28 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
         {tabs.map((tab) => {
           const isActive = selectedTab === tab.value;
           const isLoading = isPending && isActive && activeTab !== tab.value;
+          const isDisabled = tab.disabled;
 
           return (
             <button
               key={tab.value}
-              onClick={() => handleTabClick(tab.value)}
+              onClick={() => !isDisabled && handleTabClick(tab.value)}
+              disabled={isDisabled}
               className={cn(
                 'inline-flex items-center justify-center gap-2',
                 'whitespace-nowrap rounded-sm px-3 py-1.5',
                 'text-sm font-medium transition-all',
-                'cursor-pointer shrink-0',
+                'shrink-0',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                isActive
+                isDisabled
+                  ? 'cursor-not-allowed opacity-40 text-foreground/50'
+                  : 'cursor-pointer',
+                !isDisabled && isActive
                   ? 'bg-background text-foreground shadow-sm'
-                  : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
+                  : '',
+                !isDisabled && !isActive
+                  ? 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
+                  : ''
               )}
             >
               {isLoading && (

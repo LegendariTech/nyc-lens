@@ -3,6 +3,8 @@ import { PropertyPageLayout } from '../PropertyPageLayout';
 import { OverviewTab } from './OverviewTab';
 import { fetchPlutoData } from '@/data/pluto';
 import { fetchPropertyByBBL } from '@/data/acris';
+import { fetchOwnerContacts } from '@/data/contacts';
+import { fetchPropertyValuation } from '@/data/valuation';
 
 interface OverviewPageProps {
   params: Promise<{
@@ -23,18 +25,24 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
     notFound();
   }
 
-  // Fetch PLUTO data and Elasticsearch property data with error handling
+  // Fetch PLUTO data, Elasticsearch property data, contacts, and valuation data with error handling
   let plutoData = null;
   let propertyData = null;
+  let contactsData = null;
+  let valuationData = null;
   let error: string | undefined;
 
   try {
-    const [plutoResult, acrisResult] = await Promise.all([
+    const [plutoResult, acrisResult, contactsResult, valuationResult] = await Promise.all([
       fetchPlutoData(bbl),
       fetchPropertyByBBL(bbl),
+      fetchOwnerContacts(bbl),
+      fetchPropertyValuation(bbl),
     ]);
     plutoData = plutoResult.data;
     propertyData = acrisResult;
+    contactsData = contactsResult.data;
+    valuationData = valuationResult.data;
   } catch (e) {
     console.error('Error fetching property data:', e);
     error = e instanceof Error ? e.message : 'Failed to load property data';
@@ -45,6 +53,8 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
       <OverviewTab
         plutoData={plutoData}
         propertyData={propertyData}
+        contactsData={contactsData}
+        valuationData={valuationData}
         error={error}
         bbl={bbl}
       />

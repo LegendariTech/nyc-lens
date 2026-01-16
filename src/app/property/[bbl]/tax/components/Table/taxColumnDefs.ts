@@ -1,6 +1,6 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { TaxRow } from '../taxTypes';
-import { formatCurrency } from '@/utils/formatters';
+import { formatCurrency, formatYoyChange } from '@/utils/formatters';
 
 /**
  * Format percentage value
@@ -12,16 +12,6 @@ function formatPercentage(value: number | null | undefined, digits: number = 2):
   // Remove trailing zeros after decimal point
   const trimmed = formatted.replace(/\.?0+$/, '');
   return `${trimmed}%`;
-}
-
-/**
- * Format year over year change with sign
- */
-function formatYoyChange(value: number | null | undefined): string {
-  if (value == null) return 'N/A';
-  const percentage = value * 100;
-  const sign = percentage >= 0 ? '+' : '';
-  return `${sign}${percentage.toFixed(2)}%`;
 }
 
 export const taxColumnDefs: ColDef<TaxRow>[] = [

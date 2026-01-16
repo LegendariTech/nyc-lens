@@ -25,7 +25,7 @@ export function ContactCardList({ contacts }: ContactCardListProps) {
   }
 
   return (
-    <div className="mt-4 space-y-3">
+    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {contacts.map((contact, index) => (
         <ContactCard key={`${contact.bucket_name}-${contact.status}-${index}`} contact={contact} />
       ))}
