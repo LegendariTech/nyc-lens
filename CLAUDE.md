@@ -108,6 +108,18 @@ src/
 - **Text matching**: `src/components/search/textMatcher.ts` with synonym support (`synonyms.json`)
 - **Highlighted results**: `HighlightedText` component highlights matched text
 
+#### Parcel Map
+- **ParcelMap** (`src/components/map/ParcelMap.tsx`): Interactive Mapbox map showing NYC parcel boundaries
+- Uses Mapbox GL JS tileset (`svayser.nys-tax-parcels-prod`) with vector tiles
+- **BBL utilities** (`src/utils/bbl.ts`): Converts between URL format (4-476-1) and SBL format (4004760001)
+- **Features**:
+  - Highlights selected parcel in amber
+  - Hover effects on parcels (blue highlight)
+  - Click to navigate to property overview
+  - Fullscreen modal dialog mode
+  - Satellite view with parcel overlays
+- **Integration**: Used in property overview page, centered on PLUTO coordinates
+
 #### Styling & Design System
 - **Tailwind v4** with tokens in `src/app/globals.css` (see `@theme inline`)
 - **Design tokens**: Use `bg-background`, `text-foreground` (auto dark mode via `prefers-color-scheme`)
@@ -139,6 +151,9 @@ DB_PORT=...
 DB_USER=...
 DB_PASSWORD=...
 DB_DATABASE=...
+
+# Mapbox (Parcel Map)
+NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ1Ijoi...
 ```
 
 ## Important Implementation Notes

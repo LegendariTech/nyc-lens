@@ -2,15 +2,17 @@
 
 import { ContactCard } from './ContactCard';
 import type { OwnerContact } from '@/types/contacts';
+import type { SourceCategory } from '../constants/sourceCategories';
 
 interface ContactCardListProps {
   contacts: OwnerContact[];
+  visibleSources?: Set<SourceCategory>;
 }
 
 /**
  * Mobile-friendly list of contact cards
  */
-export function ContactCardList({ contacts }: ContactCardListProps) {
+export function ContactCardList({ contacts, visibleSources }: ContactCardListProps) {
   if (contacts.length === 0) {
     return (
       <div className="py-8 text-center space-y-2">
@@ -27,7 +29,11 @@ export function ContactCardList({ contacts }: ContactCardListProps) {
   return (
     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {contacts.map((contact, index) => (
-        <ContactCard key={`${contact.bucket_name}-${contact.status}-${index}`} contact={contact} />
+        <ContactCard
+          key={`${contact.bucket_name}-${contact.status}-${index}`}
+          contact={contact}
+          visibleSources={visibleSources}
+        />
       ))}
     </div>
   );

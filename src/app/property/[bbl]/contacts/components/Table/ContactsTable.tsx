@@ -4,18 +4,25 @@ import { useMemo, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { RowHeightParams } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { SideBarModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { SideBarModule, ColumnsToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import { myTheme } from '@/components/table/theme';
-import { ownerContactsColumnDefs } from './columnDefs';
+import { getOwnerContactsColumnDefs } from './columnDefs';
 import type { OwnerContactRow } from './types';
+import type { SourceCategory } from '../../constants/sourceCategories';
 
-ModuleRegistry.registerModules([AllCommunityModule, SideBarModule, ColumnsToolPanelModule]);
+ModuleRegistry.registerModules([AllCommunityModule, SideBarModule, ColumnsToolPanelModule, SetFilterModule]);
 
 interface ContactsTableProps {
     data: OwnerContactRow[];
+    visibleSources?: Set<SourceCategory>;
 }
 
-export function ContactsTable({ data }: ContactsTableProps) {
+export function ContactsTable({ data, visibleSources }: ContactsTableProps) {
+    const columnDefs = useMemo(
+        () => getOwnerContactsColumnDefs(visibleSources),
+        [visibleSources]
+    );
+
     const defaultColDef = useMemo(
         () => ({
             sortable: true,
@@ -123,7 +130,7 @@ export function ContactsTable({ data }: ContactsTableProps) {
                     theme={myTheme}
                     domLayout="autoHeight"
                     defaultColDef={defaultColDef}
-                    columnDefs={ownerContactsColumnDefs}
+                    columnDefs={columnDefs}
                     rowData={data}
                     suppressCellFocus={true}
                     getRowHeight={getRowHeight}

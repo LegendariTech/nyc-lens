@@ -10,6 +10,7 @@ import { OwnerContact } from '@/types/contacts';
 import { PropertyValuation } from '@/types/valuation';
 import { formatValue, formatDate, formatUSPhone, formatCurrency, formatYoyChange } from '@/utils/formatters';
 import { getTaxableAssessedValue, formatTaxYear, transformValuationToTaxRows } from '@/app/property/[bbl]/tax/components/utils';
+import { ParcelMap } from '@/components/map/ParcelMap';
 
 interface OverviewTabProps {
   plutoData: PlutoData | null;
@@ -223,22 +224,26 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     ? (yoyChangeValue >= 0 ? '#4ade80' : '#f87171') // green for positive, red for negative
     : undefined;
 
+  // Extract coordinates for map
+  const latitude = plutoData?.latitude;
+  const longitude = plutoData?.longitude;
+  const hasCoordinates = latitude != null && longitude != null;
+
+  // Mapbox configuration from environment variables
+  const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
       {/* Map Section */}
       <SectionCard title="Location">
         <div className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
-          {/* Google Maps Embed - Satellite View */}
-          {propertyAddress && zipcode ? (
-            <iframe
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(`${propertyAddress}, New York, NY ${zipcode}`)}&maptype=satellite&zoom=19`}
-              title="Property Location Map"
+          {/* Mapbox Parcel Map */}
+          {hasCoordinates && bbl ? (
+            <ParcelMap
+              bbl={bbl}
+              latitude={latitude}
+              longitude={longitude}
+              accessToken={MAPBOX_ACCESS_TOKEN}
               className="absolute inset-0"
             />
           ) : (

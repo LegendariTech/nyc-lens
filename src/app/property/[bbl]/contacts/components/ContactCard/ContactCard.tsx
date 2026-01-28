@@ -4,74 +4,71 @@ import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/formatters';
 import { ExpandableList } from './ExpandableList';
 import type { OwnerContact } from '@/types/contacts';
+import {
+  SOURCE_TO_CATEGORY,
+  CATEGORY_LABELS,
+  CATEGORY_CHIP_STYLES,
+  type SourceCategory,
+} from '../../constants/sourceCategories';
 
 interface ContactCardProps {
   contact: OwnerContact;
+  visibleSources?: Set<SourceCategory>;
 }
 
-// Status metadata for styling
-const STATUS_METADATA = {
-  'current': {
-    label: 'Current',
-    filterBorderActive: 'border-green-500/50',
-    filterBgActive: 'bg-green-500/10',
-    filterTextActive: 'text-green-600 dark:text-green-400',
-    textColor: 'text-green-600',
-    darkTextColor: 'dark:text-green-400',
-  },
-  'past': {
-    label: 'Past',
-    filterBorderActive: 'border-gray-500/50',
-    filterBgActive: 'bg-gray-500/10',
-    filterTextActive: 'text-gray-600 dark:text-gray-400',
-    textColor: 'text-gray-600',
-    darkTextColor: 'dark:text-gray-400',
-  },
-};
-
-export function ContactCard({ contact }: ContactCardProps) {
-  // Use status from contact, default to 'current'
-  const status = contact.status?.toLowerCase() === 'past' ? 'past' : 'current';
-  const metadata = STATUS_METADATA[status];
-
+export function ContactCard({ contact, visibleSources }: ContactCardProps) {
   // Arrays from Elasticsearch
   const phones = contact.owner_phone || [];
   const businessNames = contact.owner_business_name || [];
   const addresses = contact.owner_full_address || [];
   const titles = contact.owner_title || [];
+  const sources = contact.source || [];
 
   // Get contact name (master name or first business name)
   const contactName = contact.owner_master_full_name || businessNames[0] || 'Unknown';
 
+  // Get unique categories for this contact's sources
+  const allCategories = Array.from(
+    new Set(
+      sources
+        .map(src => SOURCE_TO_CATEGORY[src])
+        .filter(cat => cat !== undefined)
+    )
+  );
+
+  // Filter to only show visible categories
+  const visibleCategories = visibleSources
+    ? allCategories.filter(cat => visibleSources.has(cat))
+    : allCategories;
+
   return (
     <div
       className={cn(
-        'relative rounded-lg border bg-foreground/5 p-3 shadow-md',
-        'hover:shadow-lg hover:border-foreground/20 transition-all',
-        metadata.filterBorderActive
+        'relative rounded-lg border border-foreground/20 bg-foreground/5 p-3 shadow-md',
+        'hover:shadow-lg hover:border-foreground/30 transition-all'
       )}
     >
       <div className="space-y-2">
-        {/* Header: Category chip and date */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span
-            className={cn(
-              'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold border',
-              metadata.filterBorderActive,
-              metadata.filterBgActive,
-              metadata.filterTextActive
-            )}
-          >
-            {metadata.label}
-          </span>
+        {/* Header: Source chips and date */}
+        <div className="flex items-start justify-between gap-2">
+          {/* Source chips */}
+          <div className="flex flex-wrap gap-1.5">
+            {visibleCategories.map(category => (
+              <span
+                key={category}
+                className={cn(
+                  'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border',
+                  CATEGORY_CHIP_STYLES[category]
+                )}
+              >
+                {CATEGORY_LABELS[category]}
+              </span>
+            ))}
+          </div>
+
+          {/* Date */}
           {contact.date && (
-            <span
-              className={cn(
-                'text-xs font-semibold',
-                metadata.textColor,
-                metadata.darkTextColor
-              )}
-            >
+            <span className="text-xs font-semibold text-foreground/70 whitespace-nowrap">
               {formatDate(contact.date)}
             </span>
           )}

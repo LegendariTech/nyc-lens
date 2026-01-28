@@ -78,6 +78,8 @@ interface DialogContentProps
   showClose?: boolean;
   /** Size variant of the dialog */
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  /** Custom className for the overlay */
+  overlayClassName?: string;
 }
 
 /**
@@ -87,7 +89,7 @@ interface DialogContentProps
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, showClose = true, size = 'md', ...props }, ref) => {
+>(({ className, children, showClose = true, size = 'md', overlayClassName, ...props }, ref) => {
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -98,7 +100,7 @@ const DialogContent = React.forwardRef<
 
   return (
     <DialogPortal>
-      <DialogOverlay />
+      <DialogOverlay className={overlayClassName} />
       <DialogPrimitive.Content
         ref={ref}
         className={cn(

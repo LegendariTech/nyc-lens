@@ -1,8 +1,11 @@
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { OwnerContactRow } from './types';
 import { formatDate, formatUSPhone } from '@/utils/formatters';
+import { SourceChipsCell } from './SourceChipsCell';
+import type { SourceCategory } from '../../constants/sourceCategories';
 
-export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
+export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>): ColDef<OwnerContactRow>[] {
+    return [
     {
         field: 'date',
         headerName: 'Date',
@@ -55,6 +58,19 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
                 return p.value.filter(item => item && item.trim()).join(', ');
             }
             return '';
+        },
+    },
+    {
+        field: 'source',
+        headerName: 'Source',
+        width: 280,
+        hide: false,
+        cellRenderer: SourceChipsCell,
+        cellRendererParams: {
+            visibleSources,
+        },
+        valueGetter: (params) => {
+            return params.data?.source || [];
         },
     },
     {
@@ -136,17 +152,5 @@ export const ownerContactsColumnDefs: ColDef<OwnerContactRow>[] = [
         hide: true,
         valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
     },
-    {
-        field: 'source',
-        headerName: 'Source',
-        width: 180,
-        hide: true,
-        valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string[]>) => {
-            if (!p.value) return '';
-            if (Array.isArray(p.value)) {
-                return p.value.filter(item => item && item.trim()).join(', ');
-            }
-            return '';
-        },
-    },
 ];
+}
