@@ -43,6 +43,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   // State for showing/hiding alternative addresses and contacts - must be at top before any returns
   const [showAllAddresses, setShowAllAddresses] = React.useState(false);
   const [showAllContacts, setShowAllContacts] = React.useState(false);
+  const [showAllUnmaskedPhones, setShowAllUnmaskedPhones] = React.useState(false);
 
   if (error) {
     return (
@@ -120,9 +121,30 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     ? formatValue(yearAltered, undefined, 'year')
     : '—';
 
+  // Extract unmasked owner from contacts with source "signator"
+  const unmaskedOwners = contactsData
+    ?.filter(contact =>
+      contact.status === 'current' &&
+      contact.source?.includes('signator')
+    )
+    .sort((a, b) => {
+      // Sort by date if available, most recent first
+      const dateA = a.date ? new Date(a.date).getTime() : 0;
+      const dateB = b.date ? new Date(b.date).getTime() : 0;
+      return dateB - dateA;
+    }) || [];
+
+  const unmaskedOwner = unmaskedOwners.length > 0 ? unmaskedOwners[0] : null;
+  const unmaskedOwnerName = unmaskedOwner?.owner_master_full_name || null;
+  const unmaskedOwnerAddress = unmaskedOwner?.owner_full_address?.[0] || null;
+  const unmaskedOwnerPhones = unmaskedOwner?.owner_phone?.filter(phone => phone && phone !== 'N/A') || [];
+
+  const displayedUnmaskedPhones = showAllUnmaskedPhones
+    ? unmaskedOwnerPhones
+    : unmaskedOwnerPhones.slice(0, 1);
+
   // Extract and format ownership data from ACRIS
-  const ownerName = propertyData?.buyer_name || '—';
-  const ownerAddress = 'fix owner address'; // TODO: No owner address field in AcrisRecord
+  const recordedOwnerName = propertyData?.buyer_name || '—';
 
   const saleDate = propertyData?.sale_document_date
     ? formatDate(propertyData.sale_document_date)
@@ -319,11 +341,44 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         <div className="flex-1">
           <h3 className="mb-4 text-lg font-semibold text-foreground">Ownership</h3>
           <dl className="space-y-3">
-            <InfoItem label="Recorded Owner Name" value={ownerName} />
-            <InfoItem label="Owner address" value={ownerAddress} />
+            {/* Unmasked Owner - Most Prominent */}
+            {unmaskedOwnerName && (
+              <div className="pb-3 border-b-2 border-teal-500/30 bg-teal-500/5 -mx-2 px-2 py-2 rounded-md">
+                <dt className="text-xs font-medium text-teal-600 dark:text-teal-400 mb-1.5 uppercase tracking-wide">
+                  Unmasked Owner
+                </dt>
+                <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
+                {unmaskedOwnerAddress && (
+                  <dd className="text-sm text-foreground/70 mb-1">{unmaskedOwnerAddress}</dd>
+                )}
+                {unmaskedOwnerPhones.length > 0 && (
+                  <div>
+                    {displayedUnmaskedPhones.map((phone, idx) => (
+                      <dd key={idx} className="text-sm text-foreground/70">
+                        {formatUSPhone(phone)}
+                      </dd>
+                    ))}
+                    {unmaskedOwnerPhones.length > 1 && (
+                      <button
+                        onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
+                        className="text-xs text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 font-medium mt-1 hover:underline"
+                      >
+                        {showAllUnmaskedPhones
+                          ? 'Show less'
+                          : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Recorded Owner - Secondary */}
+            <InfoItem label="Recorded Owner" value={recordedOwnerName} />
+
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               <InfoItem label="Sale Date" value={saleDate} />
-              <InfoItem label="Sell Price" value={salePrice} />
+              <InfoItem label="Sale Price" value={salePrice} />
             </div>
             <div className="border-t border-border/30 pt-3 mt-3">
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
