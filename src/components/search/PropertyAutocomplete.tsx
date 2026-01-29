@@ -72,8 +72,8 @@ export function PropertyAutocomplete({
       }
     }
 
-    // Default to base property page (which redirects to transactions)
-    return `/property/${bbl}`;
+    // Default to overview page
+    return `/property/${bbl}/overview`;
   };
 
   return (
