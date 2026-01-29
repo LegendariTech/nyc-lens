@@ -6,6 +6,7 @@ import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { AgGridRegistry } from "@/components/AgGridRegistry";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,6 +27,7 @@ export default function RootLayout({
             {children}
           </ResizableSidebarLayout>
         </ViewportProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -23,6 +23,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@types/mssql": "^9.1.8",
+    "@vercel/analytics": "^1.6.1",
     "ag-grid-enterprise": "^34.2.0",
     "ag-grid-react": "^34.2.0",
     "bodybuilder": "^2.5.1",
