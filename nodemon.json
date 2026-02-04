@@ -1,0 +1,16 @@
+{
+  "watch": [
+    "src/services/**/*",
+    "src/data/**/*",
+    "src/app/api/**/*"
+  ],
+  "ext": "ts,tsx,js,jsx",
+  "ignore": [
+    "node_modules",
+    ".next",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "exec": "next dev --turbopack",
+  "delay": 500
+}

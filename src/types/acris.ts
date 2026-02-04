@@ -1,3 +1,12 @@
+export type AcrisSignator = {
+  document_id: string;
+  signator_name: string | null;
+  signator_title: string | null;
+  signator_business_name: string | null;
+  due_date: string | null;
+  error_message: string | null;
+}
+
 export type AcrisRecord = {
   borough: string;
   block: string;
@@ -33,6 +42,7 @@ export type AcrisRecord = {
   hpd_name: string | null;
   hpd_phone: string | null;
   purchase_refinance: string;
+  signators?: AcrisSignator[];
 }
 
 

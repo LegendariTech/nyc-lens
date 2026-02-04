@@ -13,7 +13,8 @@ import {
   SearchIcon,
   BellIcon,
   PanelLeftIcon,
-  PanelRightIcon
+  PanelRightIcon,
+  SettingsIcon
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
@@ -44,6 +45,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Registration Contacts", href: "/hpd/registration-contacts" },
     ],
   },
+  { label: "Settings", href: "/settings" },
 ];
 
 export default function SidebarNav() {
@@ -173,6 +175,7 @@ export default function SidebarNav() {
                   <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center")}>
                     {item.label === "Search" && <SearchIcon className="shrink-0 h-5 w-5" />}
                     {item.label === "Alerts" && <BellIcon className="shrink-0 h-5 w-5" />}
+                    {item.label === "Settings" && <SettingsIcon className="shrink-0 h-5 w-5" />}
                   </span>
                   {!isCollapsed && (
                     <span className="truncate text-sm">

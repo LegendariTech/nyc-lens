@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { search } from '@/data/elasticsearch';
 import { buildEsQueryFromAgGrid, ServerSideGetRowsRequest } from '@/utils/agGrid';
 import type { AcrisPropertiesRequest, AcrisPropertiesResponse } from '@/types/api';
-import type { AcrisRecord } from '@/types/acris';
+import type { AcrisRecord, AcrisSignator } from '@/types/acris';
+import { query } from '@/data/db';
+
+type AcrisSortItem = {
+  colId: keyof AcrisRecord;
+  sort: 'asc' | 'desc';
+};
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,14 +16,14 @@ export async function POST(req: NextRequest) {
     const { request } = body as AcrisPropertiesRequest;
 
     // Merge with defaults
-    const defaultSortModel = [
-      { colId: 'sale_document_date', sort: 'desc' as const },
-      { colId: 'borough', sort: 'asc' as const },
-      { colId: 'block', sort: 'asc' as const },
-      { colId: 'lot', sort: 'asc' as const },
+    const defaultSortModel: AcrisSortItem[] = [
+      { colId: 'mortgage_document_date', sort: 'desc' },
+      { colId: 'borough', sort: 'asc' },
+      { colId: 'block', sort: 'asc' },
+      { colId: 'lot', sort: 'asc' },
     ];
 
-    let effectiveSortModel = defaultSortModel;
+    let effectiveSortModel: AcrisSortItem[] = defaultSortModel;
 
     if (
       request &&
@@ -25,7 +31,8 @@ export async function POST(req: NextRequest) {
       Array.isArray(request.sortModel) &&
       request.sortModel.length > 0
     ) {
-      effectiveSortModel = request.sortModel;
+      // Runtime values from request - type safety ensured by column definitions
+      effectiveSortModel = request.sortModel as AcrisSortItem[];
     }
 
     const fullRequest: ServerSideGetRowsRequest = {
@@ -48,7 +55,56 @@ export async function POST(req: NextRequest) {
     const res = await search(index, base);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];
     const total = (res as { hits?: { total?: { value: number } } })?.hits?.total?.value ?? hits.length;
-    const rows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisRecord[];
+    let rows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisRecord[];
+
+    // Fetch signators for all mortgage document IDs
+    const documentIds = rows
+      .map(r => r.mortgage_document_id)
+      .filter((id): id is string => !!id);
+
+    if (documentIds.length > 0) {
+      try {
+        // Create parameterized query with IN clause
+        const placeholders = documentIds.map((_, i) => `@param${i}`).join(',');
+        const queryText = `
+          SELECT
+            document_id,
+            signator_name,
+            signator_title,
+            signator_business_name,
+            due_date,
+            error_message
+          FROM gold.acris_signator
+          WHERE document_id IN (${placeholders})
+        `;
+
+        // Build parameters object
+        const params: Record<string, string> = {};
+        documentIds.forEach((id, i) => {
+          params[`param${i}`] = id;
+        });
+
+        const signatorsResult = await query<AcrisSignator>(queryText, params);
+        const signatorsByDocId = new Map<string, AcrisSignator[]>();
+
+        // Group signators by document_id
+        for (const signator of signatorsResult.recordset) {
+          if (!signatorsByDocId.has(signator.document_id)) {
+            signatorsByDocId.set(signator.document_id, []);
+          }
+          signatorsByDocId.get(signator.document_id)!.push(signator);
+        }
+
+        // Attach signators to rows
+        rows = rows.map(row => ({
+          ...row,
+          signators: signatorsByDocId.get(row.mortgage_document_id) || [],
+        }));
+      } catch (error) {
+        console.error('Failed to fetch signators:', error);
+        // Continue without signators if query fails
+      }
+    }
 
     const response: AcrisPropertiesResponse = { rows, total };
     return NextResponse.json(response);
