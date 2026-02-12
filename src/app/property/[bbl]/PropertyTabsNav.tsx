@@ -40,18 +40,18 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
     });
   };
 
-  // Function to open AI services with property page URL
-  const getCurrentUrl = () => {
+  // Function to open AI services with property AI data page URL
+  const getAIDataUrl = () => {
     if (typeof window !== 'undefined') {
-      return window.location.href;
+      return `${window.location.origin}/property/${bbl}/ai-data`;
     }
     return '';
   };
 
   const openAIService = (service: string, baseUrl: string) => {
-    const currentUrl = getCurrentUrl();
-    if (currentUrl) {
-      const query = `Read from ${currentUrl} so I can ask questions about it.`;
+    const aiDataUrl = getAIDataUrl();
+    if (aiDataUrl) {
+      const query = `Read from ${aiDataUrl} so I can ask questions about it.`;
       const serviceUrl = `${baseUrl}${encodeURIComponent(query)}`;
       window.open(serviceUrl, '_blank', 'noopener,noreferrer');
     }

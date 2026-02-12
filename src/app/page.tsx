@@ -106,6 +106,96 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Bulk Search Highlight Section */}
+      <div className="border-t border-foreground/10 bg-gradient-to-b from-foreground/[0.02] to-foreground/[0.05] px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm font-medium text-foreground">
+              <TableIcon className="h-4 w-4" />
+              Bulk Data Search
+            </div>
+            <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+              Powerful Data Analysis at Your Fingertips
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-foreground/70">
+              Sort, filter, and analyze thousands of NYC property records simultaneously with our advanced bulk search tools.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {/* Sort Feature */}
+            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
+                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Sort by Latest Mortgages</h3>
+                <p className="mt-1 text-sm text-foreground/70">
+                  Track the most recent mortgage activity by date, amount, or lender. Stay updated on market trends.
+                </p>
+              </div>
+            </div>
+
+            {/* Building Class Filter */}
+            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
+                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Filter by Building Class</h3>
+                <p className="mt-1 text-sm text-foreground/70">
+                  Target specific property types: residential, commercial, condos, co-ops, and more.
+                </p>
+              </div>
+            </div>
+
+            {/* Owner Filter */}
+            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
+                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Search Recorded Owners</h3>
+                <p className="mt-1 text-sm text-foreground/70">
+                  Find all properties owned by specific individuals, companies, or entities across NYC.
+                </p>
+              </div>
+            </div>
+
+            {/* Amount Filter */}
+            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
+                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Filter by Amount Range</h3>
+                <p className="mt-1 text-sm text-foreground/70">
+                  Set minimum and maximum thresholds for mortgage amounts and transaction values.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/bulk-search"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-foreground px-8 py-3 text-base font-medium text-background transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            >
+              <TableIcon className="h-5 w-5" />
+              Try Bulk Search
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Data Sources Section */}
       <div className="border-t border-foreground/10 px-6 py-16">
         <div className="mx-auto max-w-4xl text-center">
