@@ -8,9 +8,32 @@ import dotenv from 'dotenv';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(__dirname, '..', '.env.local') });
 
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const TOTAL_DOCUMENTS = args[0] ? parseInt(args[0], 10) : 1; // First arg: total documents (default: 1)
+const CONCURRENCY = args[1] ? parseInt(args[1], 10) : 1; // Second arg: concurrency (default: 1)
+
+// Validate arguments
+if (isNaN(TOTAL_DOCUMENTS) || TOTAL_DOCUMENTS < 1) {
+  console.error('❌ Error: TOTAL_DOCUMENTS must be a positive number');
+  console.log('Usage: npm run download-docs <limit> <concurrency>');
+  console.log('Example: npm run download-docs 20 3');
+  process.exit(1);
+}
+
+if (isNaN(CONCURRENCY) || CONCURRENCY < 1) {
+  console.error('❌ Error: CONCURRENCY must be a positive number');
+  console.log('Usage: npm run download-docs <limit> <concurrency>');
+  console.log('Example: npm run download-docs 20 3');
+  process.exit(1);
+}
+
+if (CONCURRENCY > TOTAL_DOCUMENTS) {
+  console.warn(`⚠️  Warning: CONCURRENCY (${CONCURRENCY}) is greater than TOTAL_DOCUMENTS (${TOTAL_DOCUMENTS})`);
+  console.warn(`   Setting CONCURRENCY to ${TOTAL_DOCUMENTS}`);
+}
+
 // Configuration
-const TOTAL_DOCUMENTS = 20; // Total number of documents to download
-const CONCURRENCY = 3; // Number of documents to process simultaneously
 const DOWNLOAD_TIMEOUT = 180000; // Timeout for downloads in ms (3 minutes for large PDFs)
 const DOWNLOAD_DIR = '/Users/wice/www/nyc-lens/acris-pdfs';
 const CONTAINER_NAME = 'acris-documents-pdfs';
@@ -47,14 +70,20 @@ async function getPool(): Promise<sql.ConnectionPool> {
 async function getDocumentsToDownload(limit: number): Promise<DocumentToDownload[]> {
   const db = await getPool();
   const result = await db.request().query<DocumentToDownload>(`
-    SELECT TOP ${limit} ap.latest_mortgage_document_id as document_id
-    FROM gold.acris_plus ap
-    LEFT JOIN gold.downloaded_acris_documents dad
-      ON ap.latest_mortgage_document_id = dad.document_id
-    WHERE ap.latest_mortgage_document_id IS NOT NULL
-      AND ap.latest_mortgage_document_id != ''
-      AND (dad.document_id IS NULL OR dad.status = 'failed')
-    ORDER BY ap.latest_mortgage_document_date DESC, ap.latest_mortgage_document_id ASC
+    SELECT TOP ${limit} document_id
+    FROM (
+      SELECT DISTINCT
+        ap.latest_mortgage_document_id as document_id,
+        MAX(ap.latest_mortgage_document_date) as latest_date
+      FROM gold.acris_plus ap
+      LEFT JOIN gold.downloaded_acris_documents dad
+        ON ap.latest_mortgage_document_id = dad.document_id
+      WHERE ap.latest_mortgage_document_id IS NOT NULL
+        AND ap.latest_mortgage_document_id != ''
+        AND (dad.document_id IS NULL OR dad.status = 'failed')
+      GROUP BY ap.latest_mortgage_document_id
+    ) as docs
+    ORDER BY latest_date DESC, document_id ASC
   `);
 
   return result.recordset;
@@ -151,11 +180,18 @@ async function downloadMortgageDocs() {
   console.log(`📊 Configuration: ${TOTAL_DOCUMENTS} documents, concurrency ${CONCURRENCY}`);
 
   const browser = await chromium.launch({
-    headless: false, // Set to true if you want it to run in background
+    headless: false,
+    args: [
+      '--disable-features=TranslateUI',
+      '--disable-popup-blocking',
+      '--no-first-run',
+      '--no-default-browser-check',
+    ],
   });
 
   const context = await browser.newContext({
     acceptDownloads: true,
+    viewport: { width: 1280, height: 720 },
   });
 
   try {
@@ -175,6 +211,13 @@ async function downloadMortgageDocs() {
     let successCount = 0;
     let failureCount = 0;
 
+    // Create reusable pages for each concurrent slot to avoid focus stealing
+    console.log('🌐 Creating browser pages...');
+    const reusablePages = await Promise.all(
+      Array.from({ length: CONCURRENCY }, () => context.newPage())
+    );
+    console.log(`✅ Created ${reusablePages.length} browser page(s)`);
+
     // Process documents in batches based on concurrency
     for (let batchStart = 0; batchStart < documents.length; batchStart += CONCURRENCY) {
       const batchEnd = Math.min(batchStart + CONCURRENCY, documents.length);
@@ -186,11 +229,12 @@ async function downloadMortgageDocs() {
 
       // Process all documents in this batch concurrently
       const batchPromises = batch.map(async (doc, batchIndex) => {
+        // Reuse page for this slot instead of creating new ones
+        const docPage = reusablePages[batchIndex];
         const globalIndex = batchStart + batchIndex;
         const documentId = doc.document_id;
         const docUrl = `https://a836-acris.nyc.gov/DS/DocumentSearch/DocumentImageView?doc_id=${documentId}`;
         const expectedFilename = `${documentId}&page.pdf`;
-        let docPage;
         let downloadedFilePath: string | null = null;
 
         try {
@@ -199,17 +243,16 @@ async function downloadMortgageDocs() {
           console.log(`   Expected filename: ${expectedFilename}`);
           console.log(`   URL: ${docUrl}`);
 
-          // Mark as downloading in database
+          // Mark as downloading in database right before processing
           console.log(`   [${globalIndex + 1}] 💾 Marking as downloading in DB...`);
           await updateDocumentStatus(documentId, 'downloading');
 
-          // Open document in new tab
-          docPage = await context.newPage();
-          await docPage.goto(docUrl, { waitUntil: 'load' });
+          // Navigate to document (reusing existing page)
+          await docPage.goto(docUrl, { waitUntil: 'load', timeout: 30000 });
 
           // Wait for the iframe to load
           console.log(`   [${globalIndex + 1}] ⏳ Waiting for PDF viewer to load...`);
-          await docPage.waitForSelector('iframe[name="mainframe"]', { timeout: 10000 });
+          await docPage.waitForSelector('iframe[name="mainframe"]', { timeout: 20000 });
           await docPage.waitForTimeout(2000); // Wait for PDF to render
 
           // Get the iframe
@@ -262,9 +305,6 @@ async function downloadMortgageDocs() {
 
           console.log(`   [${globalIndex + 1}] ✅ Complete!`);
 
-          // Close the document tab
-          await docPage.close();
-
           successCount++;
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
@@ -278,15 +318,6 @@ async function downloadMortgageDocs() {
             console.log(`   [${globalIndex + 1}] 💾 Marked as failed in DB`);
           } catch (dbError) {
             console.error(`   [${globalIndex + 1}] ⚠️  Failed to update DB:`, dbError);
-          }
-
-          // Close the tab if it was opened
-          if (docPage) {
-            try {
-              await docPage.close();
-            } catch (e) {
-              // Ignore errors when closing page
-            }
           }
 
           failureCount++;
@@ -319,10 +350,18 @@ async function downloadMortgageDocs() {
     if (failureCount > 0) {
       console.log(`⚠️  Some downloads failed (check database for error messages)`);
     }
-    console.log('\n⏳ Browser will stay open. Press Ctrl+C to close when ready.');
 
-    // Keep browser open indefinitely - user can close it manually
-    await new Promise(() => { }); // Never resolves - keeps browser open
+    // Close reusable pages
+    console.log('\n🧹 Cleaning up browser pages...');
+    for (const page of reusablePages) {
+      try {
+        await page.close();
+      } catch (e) {
+        // Ignore errors when closing
+      }
+    }
+
+    console.log('✅ All done! Closing browser...');
 
   } catch (error) {
     console.error('❌ Error:', error);

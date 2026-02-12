@@ -5,11 +5,13 @@ This script automates downloading mortgage documents from NYC ACRIS and uploadin
 ## What it does
 
 1. **Queries database** for unprocessed mortgage documents (not downloaded or failed downloads)
-2. **Downloads PDFs** from ACRIS using Playwright automation
-3. **Uploads to Azure Blob Storage** (container: `acris-documents-pdfs`)
-4. **Tracks progress** in `gold.downloaded_acris_documents` table
-5. **Cleans up** local files after successful upload
-6. **Processes in batches** with configurable concurrency
+2. **Opens browser pages** - Creates one page per concurrency slot (reused throughout)
+3. **Downloads PDFs** from ACRIS using Playwright automation
+4. **Uploads to Azure Blob Storage** (container: `acris-documents-pdfs`)
+5. **Tracks progress** in `gold.downloaded_acris_documents` table
+6. **Cleans up** local files after successful upload
+7. **Processes in batches** with configurable concurrency
+8. **Closes cleanly** when all documents are processed
 
 ## Prerequisites
 
@@ -37,28 +39,84 @@ AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=...;A
 
 ## Usage
 
-Run the script using npm:
+### Basic Usage
+
+Run with default settings (1 document, concurrency 1):
 
 ```bash
 npm run download-docs
 ```
 
+### With Custom Parameters
+
+Pass limit and concurrency as arguments:
+
+```bash
+npm run download-docs <limit> <concurrency>
+```
+
+**Examples:**
+
+```bash
+# Download 20 documents with concurrency 3
+npm run download-docs 20 3
+
+# Download 50 documents with concurrency 5
+npm run download-docs 50 5
+
+# Download 100 documents, one at a time (safest for large files)
+npm run download-docs 100 1
+```
+
 Or run directly with npx:
 
 ```bash
-npx tsx scripts/download-mortgage-docs.ts
+npx tsx scripts/download-mortgage-docs.ts 20 3
+```
+
+### Parameters
+
+1. **`<limit>`** (required): Total number of documents to download
+   - Must be a positive integer
+   - Default: `1` if not specified
+
+2. **`<concurrency>`** (optional): Number of documents to process simultaneously
+   - Must be a positive integer
+   - Default: `1` if not specified
+   - Script warns if concurrency > limit
+
+### Validation
+
+The script validates inputs and shows helpful error messages:
+
+```bash
+# Invalid limit
+npm run download-docs abc 3
+# ❌ Error: TOTAL_DOCUMENTS must be a positive number
+# Usage: npm run download-docs <limit> <concurrency>
+
+# Concurrency higher than limit
+npm run download-docs 5 10
+# ⚠️  Warning: CONCURRENCY (10) is greater than TOTAL_DOCUMENTS (5)
+# Setting CONCURRENCY to 5
 ```
 
 ## Configuration
 
-Edit these constants in `download-mortgage-docs.ts`:
+### Command-Line Parameters
 
-- `TOTAL_DOCUMENTS`: Total number of documents to download (default: `20`)
-- `CONCURRENCY`: Number of documents to process simultaneously (default: `3`)
+- **First argument**: Total documents to download (default: `1`)
+- **Second argument**: Concurrency level (default: `1`)
+
+### Script Constants
+
+Edit these in `download-mortgage-docs.ts` if needed:
+
 - `DOWNLOAD_TIMEOUT`: Timeout for each download in milliseconds (default: `180000` = 3 minutes)
 - `DOWNLOAD_DIR`: Temporary local directory for downloads (default: `/Users/wice/www/nyc-lens/acris-pdfs`)
 - `CONTAINER_NAME`: Azure blob container name (default: `'acris-documents-pdfs'`)
-- `headless`: Set to `true` in the `chromium.launch()` call to run without opening a browser window
+
+**Note:** The script runs with a visible browser window. The browser opens once at the start with pages for each concurrent slot, then reuses those pages throughout processing. This prevents the browser from stealing focus repeatedly. You can minimize the browser window after it opens.
 
 ## How It Works
 
@@ -113,13 +171,18 @@ Filenames follow pattern: `{document_id}&page.pdf` (e.g., `2026020200271002&page
 
 ## Concurrency Example
 
-With `TOTAL_DOCUMENTS = 9` and `CONCURRENCY = 3`:
+Running `npm run download-docs 9 3` (9 documents, concurrency 3):
 
 - **Batch 1/3**: Downloads docs 1-3 → Uploads all 3 → Deletes local files → ✅ Complete
 - **Batch 2/3**: Downloads docs 4-6 → Uploads all 3 → Deletes local files → ✅ Complete
 - **Batch 3/3**: Downloads docs 7-9 → Uploads all 3 → Deletes local files → ✅ Complete
 
 This prevents overwhelming either the ACRIS server or Azure Storage while maintaining good throughput.
+
+**Recommended Settings:**
+- For stability: `npm run download-docs 100 1` (one at a time)
+- For speed: `npm run download-docs 50 3` (3 concurrent downloads)
+- For testing: `npm run download-docs 5 2` (small batch)
 
 ## Handling Large Files
 
@@ -150,6 +213,19 @@ Large PDF documents (50+ pages) may take several minutes to download. The script
 - Increase `DOWNLOAD_TIMEOUT` for large files
 - Reduce `CONCURRENCY` to avoid rate limiting
 - Check network connection
+
+### PDF viewer not loading
+- The ACRIS PDF viewer requires a full browser environment
+- Browser window must be visible (cannot run in headless mode)
+- Old documents (pre-2020) may have been deleted from ACRIS
+- Check database `error_message` column for failed documents
+
+### Browser window behavior
+- The browser opens once at the start with `CONCURRENCY` number of pages
+- These pages are reused for all documents (no new windows/tabs created)
+- The browser will only steal focus once when it first opens
+- After that, you can minimize the window and continue working
+- The script automatically closes when all documents are processed
 
 ## Running Continuously
 

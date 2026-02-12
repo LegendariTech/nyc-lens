@@ -12,4 +12,5 @@ export { AnthropicIcon } from './AnthropicIcon';
 export { PerplexityIcon } from './PerplexityIcon';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
 export { SettingsIcon } from './SettingsIcon';
+export { TableIcon } from './TableIcon';
 

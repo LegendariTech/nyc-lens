@@ -2,11 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 import { useSidebar } from "./SidebarContext";
-import { useViewport } from "./ViewportContext";
 import {
   HomeIcon,
   ChevronRightIcon,
@@ -14,7 +13,8 @@ import {
   BellIcon,
   PanelLeftIcon,
   PanelRightIcon,
-  SettingsIcon
+  SettingsIcon,
+  TableIcon
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
@@ -26,48 +26,32 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Search", href: "/search" },
-  { label: "Alerts", href: "/get-notified" },
-  {
-    label: "DOB",
-    children: [
-      { label: "Complaints", href: "/dob/complaints" },
-      { label: "Certificate of Occupancy", href: "/dob/certificate-of-occupancy" },
-      { label: "Permits", href: "/dob/permits" },
-      { label: "Violations: DOB Now", href: "/dob/violations-dob-now" },
-      { label: "Violations: BIS", href: "/dob/violations-bis" },
-    ],
-  },
-  {
-    label: "HPD",
-    children: [
-      { label: "Violations", href: "/hpd/violations" },
-      { label: "Permits", href: "/hpd/permits" },
-      { label: "Registration Contacts", href: "/hpd/registration-contacts" },
-    ],
-  },
-  { label: "Settings", href: "/settings" },
+  { label: "Bulk Search", href: "/bulk-search" },
+  // { label: "Alerts", href: "/get-notified" },
+  // {
+  //   label: "DOB",
+  //   children: [
+  //     { label: "Complaints", href: "/dob/complaints" },
+  //     { label: "Certificate of Occupancy", href: "/dob/certificate-of-occupancy" },
+  //     { label: "Permits", href: "/dob/permits" },
+  //     { label: "Violations: DOB Now", href: "/dob/violations-dob-now" },
+  //     { label: "Violations: BIS", href: "/dob/violations-bis" },
+  //   ],
+  // },
+  // {
+  //   label: "HPD",
+  //   children: [
+  //     { label: "Violations", href: "/hpd/violations" },
+  //     { label: "Permits", href: "/hpd/permits" },
+  //     { label: "Registration Contacts", href: "/hpd/registration-contacts" },
+  //   ],
+  // },
+  // { label: "Settings", href: "/settings" },
 ];
 
 export default function SidebarNav() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { isCollapsed, setIsCollapsed, setIsMobileOpen } = useSidebar();
-  const { isMobile } = useViewport();
-
-  // Check if bulk mode is active via URL param
-  const isBulkMode = searchParams.get('bulk') === 'true';
-
-  // On mobile: never show bulk items. Desktop: show when bulk mode is ON or on their own pages
-  const showBulkItems = !isMobile && (isBulkMode || pathname.startsWith("/dob") || pathname.startsWith("/hpd"));
-
-  // Filter nav items based on bulk mode
-  const visibleNavItems = useMemo(() => {
-    if (showBulkItems) {
-      return NAV_ITEMS;
-    }
-    // Hide DOB and HPD when bulk mode is off
-    return NAV_ITEMS.filter(item => item.label !== "DOB" && item.label !== "HPD");
-  }, [showBulkItems]);
 
   const initiallyOpen = useMemo(() => ({
     DOB: pathname.startsWith("/dob"),
@@ -125,13 +109,13 @@ export default function SidebarNav() {
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               )}
               onClick={() => setIsMobileOpen(false)}
-              title="NYC Lens - Home"
+              title="Open Block - Home"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center">
                 <HomeIcon className="text-foreground shrink-0 h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1 whitespace-nowrap text-lg font-semibold text-nav-item">
-                NYC Lens
+                Open Block
               </span>
             </Link>
 
@@ -150,7 +134,7 @@ export default function SidebarNav() {
       </div>
 
       <ul className={cn("flex flex-col gap-1")}>
-        {visibleNavItems.map((item) => {
+        {NAV_ITEMS.map((item) => {
           if (item.href) {
             const isActive = pathname === item.href;
             return (
@@ -174,6 +158,7 @@ export default function SidebarNav() {
                 >
                   <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center")}>
                     {item.label === "Search" && <SearchIcon className="shrink-0 h-5 w-5" />}
+                    {item.label === "Bulk Search" && <TableIcon className="shrink-0 h-5 w-5" />}
                     {item.label === "Alerts" && <BellIcon className="shrink-0 h-5 w-5" />}
                     {item.label === "Settings" && <SettingsIcon className="shrink-0 h-5 w-5" />}
                   </span>

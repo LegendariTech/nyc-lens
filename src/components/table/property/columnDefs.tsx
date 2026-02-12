@@ -49,62 +49,62 @@ export const colDefs: ColDef<AcrisRecord>[] = [
       return params.node?.rowIndex != null ? params.node.rowIndex + 1 : '';
     },
   },
-  {
-    field: 'mortgage_document_id',
-    headerName: 'Mortgage Doc',
-    width: 150,
-    cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
-      if (!params.value) return null;
-      const docUrl = `https://a836-acris.nyc.gov/DS/DocumentSearch/DocumentImageView?doc_id=${params.value}`;
+  // {
+  //   field: 'mortgage_document_id',
+  //   headerName: 'Mortgage Doc',
+  //   width: 150,
+  //   cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
+  //     if (!params.value) return null;
+  //     const docUrl = `https://a836-acris.nyc.gov/DS/DocumentSearch/DocumentImageView?doc_id=${params.value}`;
 
-      // Check if signators exist for this record
-      const hasSignators = params.data?.signators && Array.isArray(params.data.signators) && params.data.signators.length > 0;
-      const linkText = hasSignators ? 'Viewed' : 'View';
+  //     // Check if signators exist for this record
+  //     const hasSignators = params.data?.signators && Array.isArray(params.data.signators) && params.data.signators.length > 0;
+  //     const linkText = hasSignators ? 'Viewed' : 'View';
 
-      return (
-        <a
-          href={docUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 hover:text-blue-300"
-        >
-          {linkText}
-        </a>
-      );
-    },
-    sortable: false,
-    filter: false,
-  },
-  {
-    field: 'signators',
-    headerName: 'Signators',
-    width: 300,
-    cellRenderer: (params: { value?: Array<{ signator_name: string | null; signator_title: string | null; signator_business_name: string | null }> }) => {
-      const signators = params.value;
-      if (!signators || signators.length === 0) return null;
+  //     return (
+  //       <a
+  //         href={docUrl}
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //         className="text-blue-400 hover:text-blue-300"
+  //       >
+  //         {linkText}
+  //       </a>
+  //     );
+  //   },
+  //   sortable: false,
+  //   filter: false,
+  // },
+  // {
+  //   field: 'signators',
+  //   headerName: 'Signators',
+  //   width: 300,
+  //   cellRenderer: (params: { value?: Array<{ signator_name: string | null; signator_title: string | null; signator_business_name: string | null }> }) => {
+  //     const signators = params.value;
+  //     if (!signators || signators.length === 0) return null;
 
-      return (
-        <div className="flex flex-col gap-1 py-1">
-          {signators.map((sig, idx) => (
-            <div key={idx} className="text-xs">
-              {sig.signator_business_name && (
-                <div className="font-semibold">{sig.signator_business_name}</div>
-              )}
-              {sig.signator_name && (
-                <div>
-                  {sig.signator_name}
-                  {sig.signator_title && <span className="text-foreground/70"> ({sig.signator_title})</span>}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      );
-    },
-    sortable: false,
-    filter: false,
-    autoHeight: true,
-  },
+  //     return (
+  //       <div className="flex flex-col gap-1 py-1">
+  //         {signators.map((sig, idx) => (
+  //           <div key={idx} className="text-xs">
+  //             {sig.signator_business_name && (
+  //               <div className="font-semibold">{sig.signator_business_name}</div>
+  //             )}
+  //             {sig.signator_name && (
+  //               <div>
+  //                 {sig.signator_name}
+  //                 {sig.signator_title && <span className="text-foreground/70"> ({sig.signator_title})</span>}
+  //               </div>
+  //             )}
+  //           </div>
+  //         ))}
+  //       </div>
+  //     );
+  //   },
+  //   sortable: false,
+  //   filter: false,
+  //   autoHeight: true,
+  // },
   {
     field: 'borough',
     // hide: true,
@@ -247,6 +247,57 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     }
   },
   {
+    field: 'mortgage_document_date',
+    headerName: 'Mortgage Date',
+    valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
+    filter: 'agDateColumnFilter',
+    floatingFilter: true,
+    filterParams: {
+      ...DEFAULT_DATE_FILTER_PARAMS
+    }
+  },
+  {
+    field: 'mortgage_document_amount',
+    headerName: 'Mortgage Amount',
+    filter: 'agNumberColumnFilter',
+    floatingFilter: true,
+    valueFormatter: ({ value }) => formatCurrency(value),
+    filterParams: {
+      ...DEFAULT_NUMBER_FILTER_PARAMS
+    }
+  },
+  {
+    field: 'borrower_name',
+    headerName: 'Borrower',
+    width: 250,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    filterParams: {
+      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
+    }
+  },
+  {
+    field: 'lender_name',
+    headerName: 'Lender',
+    width: 250,
+    filter: 'agTextColumnFilter',
+    floatingFilter: true,
+    filterParams: {
+      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
+    }
+  },
+  {
+    field: 'mortgage_recorded_date',
+    hide: true,
+    headerName: 'Mortgage Recorded Date',
+    valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
+    filter: 'agDateColumnFilter',
+    floatingFilter: true,
+    filterParams: {
+      ...DEFAULT_DATE_FILTER_PARAMS
+    }
+  },
+  {
     field: 'sale_document_date',
     headerName: 'Sale Date',
     width: 200,
@@ -276,57 +327,6 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     floatingFilter: true,
     filterParams: {
       ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'lender_name',
-    headerName: 'Lender',
-    width: 250,
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'borrower_name',
-    headerName: 'Borrower',
-    width: 250,
-    filter: 'agTextColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_MATCH_TEXT_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'mortgage_document_amount',
-    headerName: 'Mortgage Amount',
-    filter: 'agNumberColumnFilter',
-    floatingFilter: true,
-    valueFormatter: ({ value }) => formatCurrency(value),
-    filterParams: {
-      ...DEFAULT_NUMBER_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'mortgage_document_date',
-    headerName: 'Mortgage Date',
-    valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
-    filter: 'agDateColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_DATE_FILTER_PARAMS
-    }
-  },
-  {
-    field: 'mortgage_recorded_date',
-    hide: true,
-    headerName: 'Mortgage Recorded Date',
-    valueFormatter: ({ value }) => formatDateMMDDYYYY(value),
-    filter: 'agDateColumnFilter',
-    floatingFilter: true,
-    filterParams: {
-      ...DEFAULT_DATE_FILTER_PARAMS
     }
   },
   {
