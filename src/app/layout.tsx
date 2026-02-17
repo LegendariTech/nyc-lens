@@ -5,7 +5,6 @@ import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
 import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
-import { AgGridRegistry } from "@/components/AgGridRegistry";
 import { Analytics } from "@vercel/analytics/next";
 import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
 
@@ -26,7 +25,6 @@ export default function RootLayout({
       </head>
       <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
-        <AgGridRegistry />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}

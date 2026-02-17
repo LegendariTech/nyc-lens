@@ -2,6 +2,7 @@
 
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { DataTabLayout } from '@/components/layout';
+import { AgGridProvider } from '@/components/table/AgGridProvider';
 import { DobViolationsTable } from './TableNow';
 import { DobViolationsBISTable } from './TableBIS';
 import type { DobSafetyViolationsResult, DobViolationsBISResult } from '@/data/dobViolations';
@@ -43,8 +44,10 @@ export function DobViolationsDisplay({ bbl, safetyViolations, bisViolations }: D
   const hasBISData = bisViolations.data && bisViolations.data.length > 0;
 
   return (
-    <DataTabLayout sections={[]} showSidebar={false}>
-      <div className="space-y-6">
+    <>
+      <AgGridProvider />
+      <DataTabLayout sections={[]} showSidebar={false}>
+        <div className="space-y-6">
         {safetyViolations.metadata && (
           <div className="max-w-screen-xl">
             <DatasetInfoCard
@@ -127,8 +130,9 @@ export function DobViolationsDisplay({ bbl, safetyViolations, bisViolations }: D
           )}
         </div>
 
-      </div>
-    </DataTabLayout>
+        </div>
+      </DataTabLayout>
+    </>
   );
 }
 

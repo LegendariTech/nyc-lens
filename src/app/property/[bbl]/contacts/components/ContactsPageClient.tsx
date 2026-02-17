@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { ContactsTabDisplay } from './ContactsTabDisplay';
+import { AgGridProvider } from '@/components/table/AgGridProvider';
 import { Card, CardContent } from '@/components/ui';
 import type { OwnerContact } from '@/types/contacts';
 
@@ -21,7 +22,9 @@ export function ContactsPageClient({ bbl, address, contactsData, contactsError }
     const maxWidth = tableView ? 'full' : 'xl';
 
     return (
-        <PropertyPageLayout bbl={bbl} activeTab="contacts" address={address} maxWidth={maxWidth}>
+        <>
+            <AgGridProvider />
+            <PropertyPageLayout bbl={bbl} activeTab="contacts" address={address} maxWidth={maxWidth}>
             {/* Handle error state */}
             {contactsError && (
                 <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
@@ -52,5 +55,6 @@ export function ContactsPageClient({ bbl, address, contactsData, contactsError }
                 />
             )}
         </PropertyPageLayout>
+        </>
     );
 }

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import PropertyTable, { type PropertyTableRef } from "@/components/table/property/PropertyTable";
+import { AgGridProvider } from "@/components/table/AgGridProvider";
 import { Button } from "@/components/ui/Button";
 
 export default function BulkSearchPage() {
@@ -12,7 +13,9 @@ export default function BulkSearchPage() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <>
+      <AgGridProvider />
+      <div className="flex h-full w-full flex-col">
       {/* Top bar with reset button */}
       <div className="flex h-10 shrink-0 items-center justify-between border-b border-foreground/20 bg-background px-4">
         <div className="flex items-center gap-3">
@@ -33,5 +36,6 @@ export default function BulkSearchPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

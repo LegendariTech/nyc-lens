@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TaxTable } from './Table/TaxTable';
+import { AgGridProvider } from '@/components/table/AgGridProvider';
 import { transformValuationToTaxRows } from './utils';
 import { AssessmentDetail } from './AssessmentDetail';
 import { RawDataView } from './RawDataView';
@@ -45,7 +46,9 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <>
+      <AgGridProvider />
+      <div className="space-y-4">
       {/* Tab Controls */}
       <TabControlsBar
         showRawViewToggle
@@ -137,6 +140,7 @@ export function TaxTabDisplay({ valuationData, bbl }: TaxTabDisplayProps) {
         </>
       )}
     </div>
+    </>
   );
 }
 
