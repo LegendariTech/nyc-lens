@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['mapbox-gl', 'react-map-gl', 'ag-grid-react', 'ag-grid-enterprise'],
   },
 
+  // Enable source maps for production debugging
+  productionBrowserSourceMaps: true,
+
   async headers() {
     return [
       {

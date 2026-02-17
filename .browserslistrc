@@ -1,14 +1,16 @@
-# Target modern browsers with baseline 2023+ support
-# This eliminates unnecessary polyfills for Array.at, flat, flatMap, etc.
-# See: https://github.com/browserslist/browserslist
+# Target modern browsers with ES2020+ support
+# Eliminates polyfills for Array.at, flat, flatMap, Object.fromEntries, Object.hasOwn
+# Requires: Chrome 92+, Firefox 90+, Safari 15.4+, Edge 92+
 
-# Modern browsers (baseline widely available)
-last 2 Chrome versions
-last 2 Firefox versions
-last 2 Safari versions
-last 2 Edge versions
+# Modern browsers only (2022+)
+chrome >= 92
+firefox >= 90
+safari >= 15.4
+edge >= 92
 
-# Exclude IE and older browsers
+# Exclude all legacy browsers
 not IE 11
 not dead
 not op_mini all
+not android < 92
+not ios < 15.4
