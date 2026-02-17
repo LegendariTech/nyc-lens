@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
     'mssql',
   ],
 
+  // Optimize for modern browsers to reduce polyfills
+  compiler: {
+    // Remove console logs in production
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // Optimize bundle for modern ES features
+  experimental: {
+    // Use modern JavaScript output
+    optimizePackageImports: ['mapbox-gl', 'react-map-gl', 'ag-grid-react', 'ag-grid-enterprise'],
+  },
+
   async headers() {
     return [
       {
