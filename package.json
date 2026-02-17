@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon",
     "dev:next": "next dev --turbopack",
-    "build": "next build",
+    "build": "TURBOPACK=0 next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest --run --project=unit",
