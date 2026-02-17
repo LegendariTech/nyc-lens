@@ -35,18 +35,18 @@
   - [x] Already deployed (completed previously)
   - [x] Project linked to Vercel
 
-- [ ] 2.2 Configure Custom Domain
-  - [ ] Add domain in Vercel Dashboard (if not already done)
-  - [ ] Update DNS records at registrar
-  - [ ] Wait for DNS propagation
-  - [ ] Verify HTTPS works
+- [x] 2.2 Configure Custom Domain
+  - [x] Domain added in Vercel Dashboard
+  - [x] DNS records updated at registrar
+  - [x] DNS propagation complete
+  - [x] HTTPS verified and working
 
-- [x] 2.3 Configure Environment Variables
+- [ ] 2.3 Configure Environment Variables
   - [x] Added to local .env.local:
     - NEXT_PUBLIC_GA_MEASUREMENT_ID=G-HP5HY2DQRD
     - NEXT_PUBLIC_GTM_ID=GTM-WH5CNTZ4
-  - [ ] Add same variables to Vercel Dashboard
-  - [ ] Redeploy: `vercel --prod`
+  - [ ] Add same variables to Vercel Dashboard (TO DO)
+  - [ ] Redeploy: `vercel --prod` (TO DO)
 
 - [ ] 2.4 Enable HTTPS & Security
   - [ ] Verify SSL certificate active
