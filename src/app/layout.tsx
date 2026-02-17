@@ -7,6 +7,7 @@ import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { AgGridRegistry } from "@/components/AgGridRegistry";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
 
 export const metadata: Metadata = {
   title: "Open Block - NYC Real Estate Data",
@@ -20,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <GoogleTagManager />
+      </head>
       <body className={cn("font-sans antialiased")}>
+        <GoogleTagManagerNoScript />
         <AgGridRegistry />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>

@@ -1,6 +1,6 @@
 # SEO Implementation Progress Tracker
 
-**Last Updated**: [Add date when you start]
+**Last Updated**: 2026-02-17
 **Project**: BBL Club NYC Real Estate Data Explorer
 **Timeline**: Week by week progress tracking
 
@@ -11,38 +11,41 @@
 ### Monday: Accounts & Deployment Setup
 
 **PHASE 1: Account Setup & Registration** ⏱️ 1-2 hours
-- [ ] 1.1 Verify Vercel Account
-  - [ ] Vercel account accessible
-  - [ ] Install Vercel CLI: `npm i -g vercel`
-  - [ ] Verify: `vercel whoami`
+- [x] 1.1 Verify Vercel Account
+  - [x] Vercel account accessible
+  - [x] Install Vercel CLI: `npm i -g vercel`
+  - [x] Verify: `vercel whoami`
 
-- [ ] 1.2 Create/Access Google Services
-  - [ ] Google Analytics 4 property created
-    - Record Measurement ID: `G-_______________`
-  - [ ] Google Search Console property added
-    - Record Property URL: `https://_______________`
-  - [ ] Google Tag Manager container created
-    - Record Container ID: `GTM-_______`
+- [x] 1.2 Create/Access Google Services
+  - [x] Google Analytics 4 property created
+    - Record Measurement ID: `G-HP5HY2DQRD`
+  - [x] Google Search Console property added (Domain property)
+    - Record Property URL: `[Your domain - will be verified in Phase 2]`
+  - [x] Google Tag Manager container created
+    - Record Container ID: `GTM-WH5CNTZ4`
 
-- [ ] 1.3 Document Service IDs
-  - [ ] All IDs saved in secure location
+- [x] 1.3 Document Service IDs
+  - [x] All IDs saved in secure location
+    - GA4: G-HP5HY2DQRD
+    - GTM: GTM-WH5CNTZ4
+    - Search Console: Domain property (verify in Phase 2)
 
 **PHASE 2: Deploy & Domain Configuration** ⏱️ 2-4 hours
-- [ ] 2.1 Initial Vercel Deployment
-  - [ ] Run `vercel` from project root
-  - [ ] Link to existing/new project
-  - [ ] Note deployment URL: `https://_______________`
+- [x] 2.1 Initial Vercel Deployment
+  - [x] Already deployed (completed previously)
+  - [x] Project linked to Vercel
 
 - [ ] 2.2 Configure Custom Domain
-  - [ ] Add domain in Vercel Dashboard
+  - [ ] Add domain in Vercel Dashboard (if not already done)
   - [ ] Update DNS records at registrar
   - [ ] Wait for DNS propagation
   - [ ] Verify HTTPS works
 
-- [ ] 2.3 Configure Environment Variables
-  - [ ] Add existing variables to Vercel
-  - [ ] Add `NEXT_PUBLIC_GA_MEASUREMENT_ID`
-  - [ ] Add `NEXT_PUBLIC_GTM_ID`
+- [x] 2.3 Configure Environment Variables
+  - [x] Added to local .env.local:
+    - NEXT_PUBLIC_GA_MEASUREMENT_ID=G-HP5HY2DQRD
+    - NEXT_PUBLIC_GTM_ID=GTM-WH5CNTZ4
+  - [ ] Add same variables to Vercel Dashboard
   - [ ] Redeploy: `vercel --prod`
 
 - [ ] 2.4 Enable HTTPS & Security
@@ -103,12 +106,13 @@
 
 **PHASE 4: Analytics & Tracking Setup** ⏱️ 4-6 hours
 
-- [ ] 4.1 Install GTM Component
-  - [ ] Create `src/components/analytics/GoogleTagManager.tsx`
-  - [ ] Update `src/app/layout.tsx` with GTM
-  - [ ] Add GTM script in head
-  - [ ] Add noscript iframe after body
-  - [ ] Deploy
+- [x] 4.1 Install GTM Component
+  - [x] Create `src/components/analytics/GoogleTagManager.tsx`
+  - [x] Update `src/app/layout.tsx` with GTM
+  - [x] Add GTM script in head
+  - [x] Add noscript iframe after body
+  - [x] Production-only initialization (won't load in dev)
+  - [ ] Deploy (pending after env vars added to Vercel)
 
 - [ ] 4.2 Configure GA4 in GTM
   - [ ] Open GTM Dashboard
