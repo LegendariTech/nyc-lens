@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui';
 import { getBuildingClassCategory, BUILDING_CLASS_CODE_MAP } from '@/constants/building';
@@ -11,7 +12,16 @@ import { OwnerContact } from '@/types/contacts';
 import { PropertyValuation } from '@/types/valuation';
 import { formatValue, formatDate, formatUSPhone, formatCurrency, formatYoyChange } from '@/utils/formatters';
 import { getTaxableAssessedValue, formatTaxYear, transformValuationToTaxRows } from '@/app/property/[bbl]/tax/components/utils';
-import { ParcelMap } from '@/components/map/ParcelMap';
+
+// Lazy load heavy Mapbox component
+const ParcelMap = dynamic(() => import('@/components/map/ParcelMap').then(mod => ({ default: mod.ParcelMap })), {
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-foreground/5">
+      <p className="text-sm text-foreground/80">Loading map...</p>
+    </div>
+  ),
+  ssr: false,
+});
 
 interface OverviewTabProps {
   plutoData: PlutoData | null;
@@ -25,7 +35,7 @@ interface OverviewTabProps {
 function InfoItem({ label, value, className, valueStyle }: { label: string; value: string | number; className?: string; valueStyle?: React.CSSProperties }) {
   return (
     <div className={className}>
-      <dt className="text-xs font-medium text-foreground/50 mb-1">{label}</dt>
+      <dt className="text-xs font-medium text-foreground/80 mb-1">{label}</dt>
       <dd className="text-sm font-medium text-foreground" style={valueStyle}>{value}</dd>
     </div>
   );
@@ -62,7 +72,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     return (
       <Card>
         <CardContent>
-          <p className="text-sm text-foreground/70">No data available for this property.</p>
+          <p className="text-sm text-foreground/90">No data available for this property.</p>
         </CardContent>
       </Card>
     );
@@ -313,7 +323,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                 <svg className="mx-auto h-12 w-12 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
-                <p className="text-sm text-foreground/50">Location map unavailable</p>
+                <p className="text-sm text-foreground/80">Location map unavailable</p>
               </div>
             </div>
           )}
@@ -329,7 +339,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
           {alternativeAddresses.length > 0 && (
             <div>
-              <dt className="text-xs font-medium text-foreground/50 mb-1.5">Alternative addresses</dt>
+              <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
               <dd className="space-y-1">
                 {displayedAddresses.map((addr, idx) => (
                   <div key={idx} className="text-sm text-foreground/80">{addr}</div>
@@ -368,7 +378,8 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         <div className="flex justify-end mt-4">
           <Link
             href={`/property/${bbl}/pluto`}
-            className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            aria-label="View more building information"
+            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
           >
             Show More
           </Link>
@@ -388,12 +399,12 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                 </dt>
                 <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
                 {unmaskedOwnerAddress && (
-                  <dd className="text-sm text-foreground/70 mb-1">{unmaskedOwnerAddress}</dd>
+                  <dd className="text-sm text-foreground/90 mb-1">{unmaskedOwnerAddress}</dd>
                 )}
                 {unmaskedOwnerPhones.length > 0 && (
                   <div>
                     {displayedUnmaskedPhones.map((phone, idx) => (
-                      <dd key={idx} className="text-sm text-foreground/70">
+                      <dd key={idx} className="text-sm text-foreground/90">
                         {formatUSPhone(phone)}
                       </dd>
                     ))}
@@ -433,7 +444,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         <div className="flex justify-end mt-4">
           <Link
             href={`/property/${bbl}/transactions`}
-            className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
           >
             Show Transactions
           </Link>
@@ -455,7 +466,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
               <InfoItem label="Transitional Value Exemption" value={transitionalValueExemption} />
             )}
             <div className="pt-2 border-t border-border/30 mt-2">
-              <dt className="text-xs font-medium text-foreground/50 mb-1">Taxable Assessed Value ({taxYear})</dt>
+              <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({taxYear})</dt>
               <dd className="text-sm font-medium text-foreground">{taxableAssessedValueDisplay}</dd>
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
@@ -471,7 +482,8 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         <div className="flex justify-end mt-4">
           <Link
             href={`/property/${bbl}/tax`}
-            className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            aria-label="View more tax information"
+            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
           >
             Show More
           </Link>
@@ -492,7 +504,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                   <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
                     <div className="text-sm font-medium text-foreground">{contactName}</div>
                     {phoneNumbers.map((phone, phoneIdx) => (
-                      <div key={phoneIdx} className="text-xs text-foreground/60 mt-0.5">
+                      <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
                         {formatUSPhone(phone)}
                       </div>
                     ))}
@@ -511,13 +523,14 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
               )}
             </div>
           ) : (
-            <p className="text-sm text-foreground/50">No contact information available</p>
+            <p className="text-sm text-foreground/80">No contact information available</p>
           )}
         </div>
         <div className="flex justify-end mt-4">
           <Link
             href={`/property/${bbl}/contacts`}
-            className="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            aria-label="View more contact information"
+            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
           >
             Show More
           </Link>

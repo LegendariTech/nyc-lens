@@ -9,6 +9,9 @@ import { fetchPropertyValuation } from '@/data/valuation';
 import { BOROUGH_NAMES } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
 
+// Revalidate property data every hour
+export const revalidate = 3600;
+
 interface OverviewPageProps {
   params: Promise<{
     bbl: string;

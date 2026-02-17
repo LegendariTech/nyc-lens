@@ -66,14 +66,36 @@
 
 - [x] 3.0 Property Overview Page Optimization (PRIORITY TASK)
   - [x] Add `generateMetadata()` function with dynamic title/description
-  - [x] Add H1 heading: "Property Information for {address}"
-  - [x] Add 2-3 paragraph intro (~150 words)
-  - [x] Fix heading hierarchy (H3 → H2) for all sections
-  - [x] Add section descriptions (~150 words total)
+  - [x] Add H1 heading with full address + zipcode
+  - [x] Add 2 paragraph intro (~150 words)
+  - [x] Keep data cards clean (no descriptions)
+  - [x] Add full-width FAQ section at bottom (5 Q&A pairs)
   - [x] Add Schema.org Place structured data
-  - [x] Add BreadcrumbList structured data
-  - [x] Create Breadcrumbs component
+  - [x] Full address format: "{address}, {borough}, NY {zipcode}"
   - [x] Test build successfully
+
+**PageSpeed Insights Fixes - COMPLETED** ✅
+
+- [x] 3.0.1 Accessibility Improvements (89 → 95-100)
+  - [x] Fix color contrast (8 text elements /50-70 → /80-90)
+  - [x] Fix touch targets (buttons 48px minimum)
+  - [x] Add aria-labels to identical links
+  - [x] Improve <dl> structure
+
+- [x] 3.0.2 Performance Optimizations
+  - [x] Lazy load ParcelMap component (dynamic import)
+  - [x] Add ISR caching (revalidate: 3600)
+  - [x] Reduce initial JavaScript load
+
+- [x] 3.0.3 Security Headers
+  - [x] Add HSTS (Strict-Transport-Security)
+  - [x] Add CSP (Content-Security-Policy)
+  - [x] Add XFO (X-Frame-Options)
+  - [x] Add COOP (Cross-Origin-Opener-Policy)
+  - [x] Add X-Content-Type-Options
+  - [x] Add Permissions-Policy
+  - [x] Add Referrer-Policy
+  - [x] Add X-DNS-Prefetch-Control
 
 - [ ] 3.1 Create Dynamic Sitemap
   - [ ] Create `src/app/sitemap.ts`
