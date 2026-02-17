@@ -24,18 +24,6 @@ const nextConfig: NextConfig = {
   // Enable source maps for production debugging
   productionBrowserSourceMaps: true,
 
-  // Webpack configuration to exclude polyfills
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Exclude Next.js polyfill module for modern browsers
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'next/dist/build/polyfills/polyfill-module': require.resolve('./polyfill-stub.js'),
-      };
-    }
-    return config;
-  },
-
   async headers() {
     return [
       {

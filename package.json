@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon",
     "dev:next": "next dev --turbopack",
-    "build": "next build --webpack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest --run --project=unit",
@@ -78,6 +78,7 @@
     "nodemon": "^3.1.11",
     "playwright": "^1.56.1",
     "storybook": "^9.1.13",
+    "string-replace-loader": "^3.3.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
