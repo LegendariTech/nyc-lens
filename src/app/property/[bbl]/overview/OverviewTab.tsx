@@ -3,7 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui';
-import { getBuildingClassCategory } from '@/constants/building';
+import { getBuildingClassCategory, BUILDING_CLASS_CODE_MAP } from '@/constants/building';
+import { BOROUGH_NAMES } from '@/constants/nyc';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
@@ -33,7 +34,7 @@ function InfoItem({ label, value, className, valueStyle }: { label: string; valu
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm">
-      <h3 className="mb-4 text-lg font-semibold text-foreground">{title}</h3>
+      <h2 className="mb-4 text-lg font-semibold text-foreground">{title}</h2>
       {children}
     </div>
   );
@@ -254,8 +255,46 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   // Mapbox configuration from environment variables
   const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
+  // Get borough name for intro text
+  const boroughCode = bbl?.split('-')[0];
+  const boroughName = boroughCode ? BOROUGH_NAMES[boroughCode] || 'NYC' : 'NYC';
+
+  // Build full address with zipcode for SEO
+  const fullAddress = propertyAddress
+    ? `${propertyAddress}, ${boroughName}, NY${zipcode ? ` ${zipcode}` : ''}`
+    : `BBL ${bbl}, ${boroughName}`;
+
+  // Build descriptive intro text
+  const buildingTypeDesc = plutoData?.bldgclass && BUILDING_CLASS_CODE_MAP[plutoData.bldgclass]
+    ? BUILDING_CLASS_CODE_MAP[plutoData.bldgclass].toLowerCase()
+    : 'property';
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="space-y-6">
+      {/* SEO-optimized header and intro */}
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold text-foreground">
+          Property Information for {fullAddress}
+        </h1>
+
+        <div className="space-y-3 text-base text-foreground/80 leading-relaxed">
+          <p>
+            Access comprehensive NYC property records for {fullAddress}. This page provides detailed information from official New York City databases including building characteristics, ownership records, sales history, tax assessments, and contact information. All data is sourced from NYC Department of Finance, Department of City Planning (PLUTO), and ACRIS (Automated City Register Information System).
+          </p>
+
+          {plutoData?.yearbuilt && (
+            <p>
+              This {buildingTypeDesc} was constructed in {plutoData.yearbuilt}
+              {plutoData.unitstotal && Number(plutoData.unitstotal) > 0 && ` and contains ${totalUnits} ${Number(plutoData.unitstotal) === 1 ? 'residential unit' : 'residential units'}`}
+              {squareFeet !== '—' && `. The building spans ${squareFeet} square feet`}
+              {plutoData?.lotarea && Number(plutoData.lotarea) > 0 && ` on a ${formatValue(plutoData.lotarea, undefined, 'number')} square foot lot`}.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Property data sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
       {/* Map Section */}
       <SectionCard title="Location">
         <div className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
@@ -314,7 +353,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* Building Section */}
       <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
         <div className="flex-1">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">Building</h3>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Building</h2>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
             <InfoItem label="Building class" value={buildingClass} />
             <InfoItem label="Square feet" value={squareFeet} />
@@ -339,7 +378,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* Ownership Section */}
       <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
         <div className="flex-1">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">Ownership</h3>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
           <dl className="space-y-3">
             {/* Unmasked Owner - Most Prominent */}
             {unmaskedOwnerName && (
@@ -404,7 +443,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* Tax Data Section - Tax Information */}
       <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
         <div className="flex-1">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">Tax Information</h3>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Tax Information</h2>
           <dl className="space-y-3">
             <InfoItem label="Estimated Market Value" value={estimatedMarketValue} />
             <InfoItem label="Assessed Value" value={assessedValue} />
@@ -442,7 +481,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* Contacts Section */}
       <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
         <div className="flex-1">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">Contacts</h3>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
           {displayedContacts.length > 0 ? (
             <div className="space-y-3">
               {displayedContacts.map((contact, index) => {
@@ -482,6 +521,81 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           >
             Show More
           </Link>
+        </div>
+      </div>
+      </div>
+
+      {/* SEO-friendly FAQ section - Full width plain text below cards */}
+      <div className="mt-8 space-y-6">
+        <h2 className="text-xl font-semibold text-foreground mb-4">
+          About {fullAddress}
+        </h2>
+
+        <div className="space-y-4 text-sm text-foreground/80 leading-relaxed max-w-4xl">
+          {/* FAQ 1: Building Size */}
+          {squareFeet !== '—' && (
+            <p>
+              <strong className="text-foreground">How many sq. ft. does {fullAddress} have?</strong>
+              {' '}
+              {buildingClass !== '—' && `This ${buildingClass.toLowerCase()} located at `}
+              {fullAddress} has a total of {squareFeet} square feet
+              {plutoData?.yearbuilt && ` and was built in ${plutoData.yearbuilt}`}.
+            </p>
+          )}
+
+          {/* FAQ 2: Units and Zoning */}
+          {(totalUnits !== '—' || plutoData?.zonedist1) && (
+            <p>
+              <strong className="text-foreground">
+                {totalUnits !== '—'
+                  ? `How many units does ${fullAddress} have?`
+                  : `What zoning district is ${fullAddress} in?`
+                }
+              </strong>
+              {' '}
+              {totalUnits !== '—' && `This property contains ${totalUnits} residential units`}
+              {totalUnits !== '—' && plutoData?.zonedist1 && ` and is located in the `}
+              {plutoData?.zonedist1 && `${plutoData.zonedist1} zoning district`}
+              {plutoData?.lotarea && Number(plutoData.lotarea) > 0 && ` on a ${formatValue(plutoData.lotarea, undefined, 'number')} square foot lot`}.
+            </p>
+          )}
+
+          {/* FAQ 3: Property Ownership & Mortgages */}
+          {(recordedOwnerName !== '—' || propertyData?.mortgage_document_amount) && (
+            <p>
+              <strong className="text-foreground">Who owns {fullAddress} and what are the recent mortgage transactions?</strong>
+              {' '}
+              {recordedOwnerName !== '—' && `According to NYC ACRIS records, ${fullAddress} is owned by ${recordedOwnerName}`}
+              {propertyData?.sale_document_date && saleDate !== '—' && `. The property was last sold on ${saleDate}`}
+              {propertyData?.sale_document_amount && salePrice !== '—' && ` for ${salePrice}`}
+              {propertyData?.mortgage_document_amount && mortgageAmount !== '—' && `. The most recent mortgage recorded is ${mortgageAmount}`}
+              {propertyData?.mortgage_document_date && mortgageDate !== '—' && ` from ${mortgageDate}`}
+              {lenderName !== '—' && ` with lender ${lenderName}`}.
+            </p>
+          )}
+
+          {/* FAQ 4: Tax Assessment & Market Value */}
+          {(estimatedMarketValue !== '—' || propertyTax !== '—') && (
+            <p>
+              <strong className="text-foreground">What is the current market value and property tax for {fullAddress}?</strong>
+              {' '}
+              According to NYC Department of Finance records, {fullAddress}
+              {estimatedMarketValue !== '—' && ` has an estimated market value of ${estimatedMarketValue}`}
+              {estimatedMarketValue !== '—' && propertyTax !== '—' && ` and `}
+              {propertyTax !== '—' && `an annual property tax of ${propertyTax}`}
+              {taxYear !== '—' && ` for the ${taxYear} tax year`}.
+            </p>
+          )}
+
+          {/* FAQ 5: Alternative Addresses */}
+          {alternativeAddresses.length > 0 && (
+            <p>
+              <strong className="text-foreground">What are the alternative addresses for {fullAddress}?</strong>
+              {' '}
+              This property is also known by {alternativeAddresses.length === 1 ? 'the following address' : 'these addresses'}: {alternativeAddresses.slice(0, 5).join(', ')}
+              {alternativeAddresses.length > 5 && ` and ${alternativeAddresses.length - 5} more`}. Alternative addresses are common for NYC properties with multiple entrances or corner locations.
+            </p>
+          )}
         </div>
       </div>
     </div>

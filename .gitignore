@@ -45,3 +45,6 @@ storybook-static
 
 # acris pdfs
 /acris-pdfs
+
+# playwright mcp
+.playwright-mcp
