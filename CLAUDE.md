@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NYC Lens is a Next.js 16 application for exploring NYC real estate data (ACRIS, PLUTO, DOB, HPD datasets). Built with React 19, TypeScript, Tailwind CSS v4, and ag-Grid Enterprise for complex data tables with server-side filtering/sorting via Elasticsearch.
+BBL Club is a Next.js 16 application for exploring NYC real estate data (ACRIS, PLUTO, DOB, HPD datasets). Built with React 19, TypeScript, Tailwind CSS v4, and ag-Grid Enterprise for complex data tables with server-side filtering/sorting via Elasticsearch.
 
 ## Development Commands
 

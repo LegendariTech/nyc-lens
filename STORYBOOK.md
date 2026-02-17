@@ -1,6 +1,6 @@
 # Storybook Setup
 
-Storybook is now configured for your NYC Lens project! 🎉
+Storybook is now configured for your BBL Club project! 🎉
 
 ## What is Storybook?
 

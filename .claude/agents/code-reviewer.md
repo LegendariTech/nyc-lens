@@ -58,7 +58,7 @@ Evaluate code across these dimensions:
 - Are there any blocking operations that should be async?
 
 #### Project-Specific Standards
-For this NYC Lens project, verify:
+For this BBL Club project, verify:
 - Styling uses Tailwind v4 tokens (bg-background, text-foreground) and follows css-and-markup-standards.mdc
 - ag-Grid components follow established patterns (server-side model, proper column definitions)
 - BBL format is consistently used (10-digit string, no hyphens)

@@ -113,7 +113,7 @@ npm run download-docs 5 10
 Edit these in `download-mortgage-docs.ts` if needed:
 
 - `DOWNLOAD_TIMEOUT`: Timeout for each download in milliseconds (default: `180000` = 3 minutes)
-- `DOWNLOAD_DIR`: Temporary local directory for downloads (default: `/Users/wice/www/nyc-lens/acris-pdfs`)
+- `DOWNLOAD_DIR`: Temporary local directory for downloads (default: `/Users/wice/www/bbl-club/acris-pdfs`)
 - `CONTAINER_NAME`: Azure blob container name (default: `'acris-documents-pdfs'`)
 
 **Note:** The script runs with a visible browser window. The browser opens once at the start with pages for each concurrent slot, then reuses those pages throughout processing. This prevents the browser from stealing focus repeatedly. You can minimize the browser window after it opens.
@@ -163,7 +163,7 @@ The `gold.downloaded_acris_documents` table tracks:
 ## Output Files
 
 PDFs are:
-- **Downloaded** temporarily to `/Users/wice/www/nyc-lens/acris-pdfs/`
+- **Downloaded** temporarily to `/Users/wice/www/bbl-club/acris-pdfs/`
 - **Uploaded** to Azure Blob Storage container `acris-documents-pdfs`
 - **Deleted** from local disk after successful upload
 
