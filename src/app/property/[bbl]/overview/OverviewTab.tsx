@@ -338,24 +338,33 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           <InfoItem label="BBL" value={bbl || '—'} />
 
           {alternativeAddresses.length > 0 && (
-            <div>
-              <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
-              <dd className="space-y-1">
-                {displayedAddresses.map((addr, idx) => (
-                  <div key={idx} className="text-sm text-foreground/80">{addr}</div>
-                ))}
-                {alternativeAddresses.length > 2 && (
-                  <button
-                    onClick={() => setShowAllAddresses(!showAllAddresses)}
-                    className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium mt-1 hover:underline"
-                  >
-                    {showAllAddresses
-                      ? 'Show less'
-                      : `Show ${alternativeAddresses.length - 2} more`}
-                  </button>
-                )}
-              </dd>
-            </div>
+            <>
+              <div>
+                <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
+                <dd>
+                  <div className="space-y-1">
+                    {displayedAddresses.map((addr, idx) => (
+                      <div key={idx} className="text-sm text-foreground/80">{addr}</div>
+                    ))}
+                  </div>
+                </dd>
+              </div>
+              {alternativeAddresses.length > 2 && (
+                <div>
+                  <dt className="sr-only">Show more addresses</dt>
+                  <dd>
+                    <button
+                      onClick={() => setShowAllAddresses(!showAllAddresses)}
+                      className="text-xs text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline"
+                    >
+                      {showAllAddresses
+                        ? 'Show less'
+                        : `Show ${alternativeAddresses.length - 2} more`}
+                    </button>
+                  </dd>
+                </div>
+              )}
+            </>
           )}
         </dl>
       </SectionCard>
@@ -394,7 +403,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
             {/* Unmasked Owner - Most Prominent */}
             {unmaskedOwnerName && (
               <div className="pb-3 border-b-2 border-teal-500/30 bg-teal-500/5 -mx-2 px-2 py-2 rounded-md">
-                <dt className="text-xs font-medium text-teal-600 dark:text-teal-400 mb-1.5 uppercase tracking-wide">
+                <dt className="text-xs font-medium text-teal-700 dark:text-teal-400 mb-1.5 uppercase tracking-wide">
                   Unmasked Owner
                 </dt>
                 <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
@@ -402,44 +411,50 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                   <dd className="text-sm text-foreground/90 mb-1">{unmaskedOwnerAddress}</dd>
                 )}
                 {unmaskedOwnerPhones.length > 0 && (
-                  <div>
+                  <>
+                    <dt className="sr-only">Phone Numbers</dt>
                     {displayedUnmaskedPhones.map((phone, idx) => (
                       <dd key={idx} className="text-sm text-foreground/90">
                         {formatUSPhone(phone)}
                       </dd>
                     ))}
                     {unmaskedOwnerPhones.length > 1 && (
-                      <button
-                        onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
-                        className="text-xs text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 font-medium mt-1 hover:underline"
-                      >
-                        {showAllUnmaskedPhones
-                          ? 'Show less'
-                          : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
-                      </button>
+                      <dd className="mt-1">
+                        <button
+                          onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
+                          className="text-xs text-teal-700 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300 font-medium hover:underline"
+                        >
+                          {showAllUnmaskedPhones
+                            ? 'Show less'
+                            : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
+                        </button>
+                      </dd>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             )}
 
             {/* Recorded Owner - Secondary */}
             <InfoItem label="Recorded Owner" value={recordedOwnerName} />
-
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <InfoItem label="Sale Date" value={saleDate} />
-              <InfoItem label="Sale Price" value={salePrice} />
-            </div>
-            <div className="border-t border-border/30 pt-3 mt-3">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <InfoItem label="Mortgage Date" value={mortgageDate} />
-                <InfoItem label="Mortgage Amount" value={mortgageAmount} />
-              </div>
-              <div className="mt-2">
-                <InfoItem label="Lender" value={lenderName} />
-              </div>
-            </div>
           </dl>
+
+          {/* Sale Information */}
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
+            <InfoItem label="Sale Date" value={saleDate} />
+            <InfoItem label="Sale Price" value={salePrice} />
+          </dl>
+
+          {/* Mortgage Information */}
+          <div className="border-t border-border/30 pt-3 mt-3">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <InfoItem label="Mortgage Date" value={mortgageDate} />
+              <InfoItem label="Mortgage Amount" value={mortgageAmount} />
+            </dl>
+            <dl className="mt-2">
+              <InfoItem label="Lender" value={lenderName} />
+            </dl>
+          </div>
         </div>
         <div className="flex justify-end mt-4">
           <Link
@@ -465,18 +480,22 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
             {hasTransitionalValueExemption && (
               <InfoItem label="Transitional Value Exemption" value={transitionalValueExemption} />
             )}
-            <div className="pt-2 border-t border-border/30 mt-2">
+          </dl>
+
+          <dl className="pt-2 border-t border-border/30 mt-2">
+            <div>
               <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({taxYear})</dt>
               <dd className="text-sm font-medium text-foreground">{taxableAssessedValueDisplay}</dd>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-              <InfoItem label="Property Tax" value={propertyTax} />
-              <InfoItem
-                label="Year Over Year Change"
-                value={yoyChange}
-                valueStyle={yoyColor ? { color: yoyColor } : undefined}
-              />
-            </div>
+          </dl>
+
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
+            <InfoItem label="Property Tax" value={propertyTax} />
+            <InfoItem
+              label="Year Over Year Change"
+              value={yoyChange}
+              valueStyle={yoyColor ? { color: yoyColor } : undefined}
+            />
           </dl>
         </div>
         <div className="flex justify-end mt-4">
@@ -514,7 +533,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
               {allContacts.length > 4 && (
                 <button
                   onClick={() => setShowAllContacts(!showAllContacts)}
-                  className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline"
+                  className="text-xs text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline"
                 >
                   {showAllContacts
                     ? 'Show less'
