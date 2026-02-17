@@ -213,8 +213,8 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
       {renderHeader?.()}
 
       <div className="relative">
-        <form ref={formRef} className="relative">
-          <div className="relative">
+        <form ref={formRef}>
+          <div className={cn('relative', compact ? 'w-96' : 'w-full')}>
             <input
               ref={inputRef}
               {...(autocomplete.getInputProps({
@@ -236,12 +236,11 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                 }, 200);
               }}
               className={cn(
-                'rounded-md border border-foreground/20 py-3 pl-6',
+                'w-full rounded-md border border-foreground/20 py-3 pl-6',
                 autocompleteState.query ? 'pr-14' : 'pr-6',
                 'text-foreground text-base',
                 'focus:outline-none focus:ring-2 focus:ring-foreground/50',
                 'placeholder:text-foreground/40',
-                compact ? 'w-96' : 'w-full',
                 inputClassName
               )}
               placeholder={placeholder}
