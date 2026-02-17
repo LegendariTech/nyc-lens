@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { search } from '@/data/elasticsearch';
 import { buildEsQueryFromAgGrid, ServerSideGetRowsRequest } from '@/utils/agGrid';
 import type { AcrisPropertiesRequest, AcrisPropertiesResponse } from '@/types/api';
-import type { AcrisRecord, AcrisSignator } from '@/types/acris';
-import { query } from '@/data/db';
+import type { AcrisRecord } from '@/types/acris';
 
 type AcrisSortItem = {
   colId: keyof AcrisRecord;
@@ -55,56 +54,7 @@ export async function POST(req: NextRequest) {
     const res = await search(index, base);
     const hits = (res as { hits?: { hits?: Array<{ _source?: unknown }>; total?: { value: number } } })?.hits?.hits || [];
     const total = (res as { hits?: { total?: { value: number } } })?.hits?.total?.value ?? hits.length;
-    let rows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisRecord[];
-
-    // Fetch signators for all mortgage document IDs
-    const documentIds = rows
-      .map(r => r.mortgage_document_id)
-      .filter((id): id is string => !!id);
-
-    if (documentIds.length > 0) {
-      try {
-        // Create parameterized query with IN clause
-        const placeholders = documentIds.map((_, i) => `@param${i}`).join(',');
-        const queryText = `
-          SELECT
-            document_id,
-            signator_name,
-            signator_title,
-            signator_business_name,
-            due_date,
-            error_message
-          FROM gold.acris_signator
-          WHERE document_id IN (${placeholders})
-        `;
-
-        // Build parameters object
-        const params: Record<string, string> = {};
-        documentIds.forEach((id, i) => {
-          params[`param${i}`] = id;
-        });
-
-        const signatorsResult = await query<AcrisSignator>(queryText, params);
-        const signatorsByDocId = new Map<string, AcrisSignator[]>();
-
-        // Group signators by document_id
-        for (const signator of signatorsResult.recordset) {
-          if (!signatorsByDocId.has(signator.document_id)) {
-            signatorsByDocId.set(signator.document_id, []);
-          }
-          signatorsByDocId.get(signator.document_id)!.push(signator);
-        }
-
-        // Attach signators to rows
-        rows = rows.map(row => ({
-          ...row,
-          signators: signatorsByDocId.get(row.mortgage_document_id) || [],
-        }));
-      } catch (error) {
-        console.error('Failed to fetch signators:', error);
-        // Continue without signators if query fails
-      }
-    }
+    const rows = hits.map(h => h._source).filter((r): r is unknown => r !== undefined) as AcrisRecord[];
 
     const response: AcrisPropertiesResponse = { rows, total };
     return NextResponse.json(response);

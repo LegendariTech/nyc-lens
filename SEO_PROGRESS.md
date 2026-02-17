@@ -11,6 +11,7 @@
 ### Monday: Accounts & Deployment Setup
 
 **PHASE 1: Account Setup & Registration** ⏱️ 1-2 hours
+
 - [x] 1.1 Verify Vercel Account
   - [x] Vercel account accessible
   - [x] Install Vercel CLI: `npm i -g vercel`
@@ -31,6 +32,7 @@
     - Search Console: Domain property (verify in Phase 2)
 
 **PHASE 2: Deploy & Domain Configuration** ⏱️ 2-4 hours
+
 - [x] 2.1 Initial Vercel Deployment
   - [x] Already deployed (completed previously)
   - [x] Project linked to Vercel
@@ -45,15 +47,14 @@
   - [x] Added to local .env.local:
     - NEXT_PUBLIC_GA_MEASUREMENT_ID=G-HP5HY2DQRD
     - NEXT_PUBLIC_GTM_ID=GTM-WH5CNTZ4
-  - [ ] Add same variables to Vercel Dashboard (TO DO)
-  - [ ] Redeploy: `vercel --prod` (TO DO)
+  - [x] Add same variables to Vercel Dashboard (TO DO)
+  - [x] Redeploy: `vercel --prod` (TO DO)
 
-- [ ] 2.4 Enable HTTPS & Security
-  - [ ] Verify SSL certificate active
-  - [ ] Test HTTP → HTTPS redirect
+- [x] 2.4 Enable HTTPS & Security
+  - [x] Verify SSL certificate active
+  - [x] Test HTTP → HTTPS redirect
 
 **Notes**:
-
 
 ---
 
@@ -99,7 +100,6 @@
 
 **Notes**:
 
-
 ---
 
 ### Thursday-Friday: Analytics Setup
@@ -112,14 +112,14 @@
   - [x] Add GTM script in head
   - [x] Add noscript iframe after body
   - [x] Production-only initialization (won't load in dev)
-  - [ ] Deploy (pending after env vars added to Vercel)
+  - [x] Deploy (pending after env vars added to Vercel)
 
-- [ ] 4.2 Configure GA4 in GTM
-  - [ ] Open GTM Dashboard
-  - [ ] Create new tag: "GA4 Configuration"
-  - [ ] Add Measurement ID
-  - [ ] Set trigger to "All Pages"
-  - [ ] Publish container (Version 1)
+- [x] 4.2 Configure GA4 in GTM
+  - [x] Open GTM Dashboard
+  - [x] Create new tag: "Google Tag" (GA4)
+  - [x] Add Tag ID: G-HP5HY2DQRD
+  - [x] Set trigger to "All Pages"
+  - [x] Publish container
 
 - [ ] 4.3 Set Up Enhanced Measurement in GA4
   - [ ] Open GA4 → Data Streams
@@ -147,6 +147,7 @@
   - [ ] Test in GA4 DebugView
 
 **Testing Checklist**:
+
 - [ ] GTM Preview mode shows tags firing
 - [ ] GA4 Realtime shows my visit
 - [ ] Custom events appear in GA4
@@ -154,7 +155,6 @@
 - [ ] Sitemap submitted successfully
 
 **Notes**:
-
 
 ---
 
@@ -206,13 +206,13 @@
   - [ ] Allow indexing of empty search page
 
 **Testing Checklist**:
+
 - [ ] View Source shows unique titles on all pages
 - [ ] OG images render in social debuggers
 - [ ] Property pages show address in title
 - [ ] Search results pages have noindex
 
 **Notes**:
-
 
 ---
 
@@ -258,13 +258,13 @@
   - [ ] Test with Rich Results Test
 
 **Testing Checklist**:
+
 - [ ] Rich Results Test shows all schemas valid
 - [ ] No errors in Schema.org validator
 - [ ] SearchAction detected for site search box
 - [ ] Breadcrumbs appear correctly
 
 **Notes**:
-
 
 ---
 
@@ -314,13 +314,13 @@
   - [ ] Lazy load heavy components
 
 **Testing Checklist**:
+
 - [ ] Run Lighthouse: Performance 90+
 - [ ] Security headers return correctly
 - [ ] 404 page renders
 - [ ] Bundle size reasonable (<500KB first load)
 
 **Notes**:
-
 
 ---
 
@@ -364,7 +364,6 @@
   - [ ] Style appropriately
 
 **Notes**:
-
 
 ---
 
@@ -419,14 +418,14 @@
   - [ ] Fix any issues
 
 **Testing Results**:
-- Lighthouse SEO Score: _____
-- Lighthouse Performance Score: _____
+
+- Lighthouse SEO Score: **\_**
+- Lighthouse Performance Score: **\_**
 - Mobile-Friendly: [ ] Yes [ ] No
 - Structured Data: [ ] Valid [ ] Has Errors
 - GTM/GA4: [ ] Working [ ] Issues
 
 **Notes**:
-
 
 ---
 
@@ -465,105 +464,122 @@
 
 **Notes**:
 
-
 ---
 
 ## Post-Launch Tracking (First 30 Days)
 
 ### Week 1 After Launch
-**Date Range**: _____ to _____
+
+**Date Range**: **\_** to **\_**
 
 **Indexing Progress**:
-- Pages Indexed: _____ / _____ (Check Search Console → Coverage)
-- Excluded Pages: _____
-- Errors: _____
+
+- Pages Indexed: **\_** / **\_** (Check Search Console → Coverage)
+- Excluded Pages: **\_**
+- Errors: **\_**
 
 **Traffic**:
-- Total Users (GA4): _____
-- Organic Users: _____
+
+- Total Users (GA4): **\_**
+- Organic Users: **\_**
 - Top Landing Pages:
-  1. _____________________
-  2. _____________________
-  3. _____________________
+  1. ***
+  2. ***
+  3. ***
 
 **Issues Found**:
-- [ ] Issue 1: _____________________
-  - Fix: _____________________
-- [ ] Issue 2: _____________________
-  - Fix: _____________________
+
+- [ ] Issue 1: **********\_**********
+  - Fix: **********\_**********
+- [ ] Issue 2: **********\_**********
+  - Fix: **********\_**********
 
 ---
 
 ### Week 2 After Launch
-**Date Range**: _____ to _____
+
+**Date Range**: **\_** to **\_**
 
 **Indexing Progress**:
-- Pages Indexed: _____ / _____ (+_____ from last week)
-- Excluded Pages: _____
-- Coverage Issues Fixed: _____
+
+- Pages Indexed: **\_** / **\_** (+**\_** from last week)
+- Excluded Pages: **\_**
+- Coverage Issues Fixed: **\_**
 
 **Traffic**:
-- Total Users: _____ (+_____%)
-- Organic Users: _____ (+_____%)
-- Average Engagement Time: _____
+
+- Total Users: **\_** (+**\_**%)
+- Organic Users: **\_** (+**\_**%)
+- Average Engagement Time: **\_**
 
 **Search Console**:
-- Total Clicks: _____
-- Total Impressions: _____
-- Average CTR: _____%
-- Average Position: _____
+
+- Total Clicks: **\_**
+- Total Impressions: **\_**
+- Average CTR: **\_**%
+- Average Position: **\_**
 
 **Top Queries**:
-1. _____________________ (Position: _____)
-2. _____________________ (Position: _____)
-3. _____________________ (Position: _____)
+
+1. **********\_********** (Position: **\_**)
+2. **********\_********** (Position: **\_**)
+3. **********\_********** (Position: **\_**)
 
 ---
 
 ### Week 3 After Launch
-**Date Range**: _____ to _____
+
+**Date Range**: **\_** to **\_**
 
 **Indexing Progress**:
-- Pages Indexed: _____ / _____ (+_____ from last week)
+
+- Pages Indexed: **\_** / **\_** (+**\_** from last week)
 - Indexing Complete: [ ] Yes [ ] No
 
 **Traffic**:
-- Total Users: _____ (+_____%)
-- Organic Users: _____ (+_____%)
-- Bounce Rate: _____%
+
+- Total Users: **\_** (+**\_**%)
+- Organic Users: **\_** (+**\_**%)
+- Bounce Rate: **\_**%
 
 **Rankings** (Manual Check):
-- "BBL Club": Position _____
-- "NYC property records": Position _____
-- "ACRIS search": Position _____
+
+- "BBL Club": Position **\_**
+- "NYC property records": Position **\_**
+- "ACRIS search": Position **\_**
 
 ---
 
 ### Week 4 After Launch (End of Month 1)
-**Date Range**: _____ to _____
+
+**Date Range**: **\_** to **\_**
 
 **Final Month 1 Metrics**:
-- Total Pages Indexed: _____ / _____
-- Total Users: _____
-- Organic Users: _____
-- Organic Conversion Rate: _____%
-- Average Engagement Time: _____
+
+- Total Pages Indexed: **\_** / **\_**
+- Total Users: **\_**
+- Organic Users: **\_**
+- Organic Conversion Rate: **\_**%
+- Average Engagement Time: **\_**
 - Core Web Vitals Status: [ ] Good [ ] Needs Improvement [ ] Poor
 
 **Top Performing Pages**:
-1. _____________________ (_____ views)
-2. _____________________ (_____ views)
-3. _____________________ (_____ views)
+
+1. **********\_********** (**\_** views)
+2. **********\_********** (**\_** views)
+3. **********\_********** (**\_** views)
 
 **Keywords Ranking in Top 10**:
-- _____________________
-- _____________________
-- _____________________
+
+- ***
+- ***
+- ***
 
 **Action Items for Month 2**:
-- [ ] _____________________
-- [ ] _____________________
-- [ ] _____________________
+
+- [ ] ***
+- [ ] ***
+- [ ] ***
 
 ---
 
@@ -572,70 +588,81 @@
 ### Month 2: [Date]
 
 **Goals**:
+
 - Increase organic traffic by 10-20%
 - Improve CTR on high-impression pages
 - Create new content based on search data
 
 **Key Metrics**:
-- Organic Users: _____ (vs Month 1: _____)
-- Total Impressions: _____ (+_____%)
-- Average Position: _____ (vs Month 1: _____)
+
+- Organic Users: **\_** (vs Month 1: **\_**)
+- Total Impressions: **\_** (+**\_**%)
+- Average Position: **\_** (vs Month 1: **\_**)
 
 **Optimization Tasks**:
+
 - [ ] Optimize pages with high impressions, low CTR
-- [ ] Create content for keyword: _____
-- [ ] Build internal links to: _____
-- [ ] Fix technical issues: _____
+- [ ] Create content for keyword: **\_**
+- [ ] Build internal links to: **\_**
+- [ ] Fix technical issues: **\_**
 
 ---
 
 ### Month 3: [Date]
 
 **Goals**:
+
 - Sustain traffic growth
 - Improve rankings for target keywords
 - Expand content to new topics
 
 **Key Metrics**:
-- Organic Users: _____ (vs Month 2: _____)
-- Total Clicks: _____ (+_____%)
-- Keywords in Top 10: _____
+
+- Organic Users: **\_** (vs Month 2: **\_**)
+- Total Clicks: **\_** (+**\_**%)
+- Keywords in Top 10: **\_**
 
 **Growth Initiatives**:
-- [ ] _____________________
-- [ ] _____________________
-- [ ] _____________________
+
+- [ ] ***
+- [ ] ***
+- [ ] ***
 
 ---
 
 ## Notes & Observations
 
 ### Wins 🎉
-- _____________________
-- _____________________
-- _____________________
+
+- ***
+- ***
+- ***
 
 ### Challenges 😅
-- _____________________
-- _____________________
-- _____________________
+
+- ***
+- ***
+- ***
 
 ### Learnings 📚
-- _____________________
-- _____________________
-- _____________________
+
+- ***
+- ***
+- ***
 
 ---
 
 ## Quick Reference
 
 ### Important URLs
-- Production Site: https://_____________________
+
+- Production Site: https://**********\_**********
 - Google Analytics: https://analytics.google.com
 - Google Tag Manager: https://tagmanager.google.com
 - Search Console: https://search.google.com/search-console
 
 ### Quick Commands
+
 ```bash
 # Local development
 npm run dev
@@ -652,6 +679,7 @@ npm test
 ```
 
 ### Key Files Modified
+
 - `src/app/layout.tsx` - Root metadata, GTM, structured data
 - `src/app/sitemap.ts` - Dynamic sitemap
 - `src/app/robots.ts` - Robots.txt
