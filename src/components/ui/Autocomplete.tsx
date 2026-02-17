@@ -237,7 +237,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
               }}
               className={cn(
                 'rounded-md border border-foreground/20 py-3 pl-6',
-                autocompleteState.query ? 'pr-10' : 'pr-6',
+                autocompleteState.query ? 'pr-14' : 'pr-6',
                 'text-foreground text-base',
                 'focus:outline-none focus:ring-2 focus:ring-foreground/50',
                 'placeholder:text-foreground/40',
@@ -256,10 +256,10 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                   inputRef.current?.focus();
                 }}
                 className={cn(
-                  'absolute right-3 top-1/2 -translate-y-1/2',
-                  'flex h-5 w-5 items-center justify-center rounded-full',
-                  'text-foreground/40 hover:text-foreground/70',
-                  'transition-colors'
+                  'absolute right-1 top-1/2 -translate-y-1/2',
+                  'flex h-10 w-10 items-center justify-center rounded-full',
+                  'text-foreground/40 hover:text-foreground/70 hover:bg-foreground/5',
+                  'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50'
                 )}
                 aria-label="Clear input"
               >
@@ -268,6 +268,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   className="h-5 w-5"
+                  aria-hidden="true"
                 >
                   <path
                     fillRule="evenodd"
