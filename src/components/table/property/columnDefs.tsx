@@ -102,7 +102,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
       return (
         <Link
           href={`/property/${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}/overview?address=${address}`}
-          className="text-blue-400 hover:text-blue-300"
+          className="text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
         >
           {params.value}
         </Link>

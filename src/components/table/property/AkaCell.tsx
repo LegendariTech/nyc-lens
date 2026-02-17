@@ -46,7 +46,7 @@ export function AkaCell(props: Props) {
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
         title={title}
-        className="cursor-pointer select-none text-sm text-blue-600 underline dark:text-blue-400"
+        className="cursor-pointer select-none text-sm text-blue-800 underline dark:text-blue-300"
       >
         aka
       </span>

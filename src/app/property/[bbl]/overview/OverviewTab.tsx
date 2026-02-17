@@ -355,7 +355,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                   <dd>
                     <button
                       onClick={() => setShowAllAddresses(!showAllAddresses)}
-                      className="text-xs text-blue-900 hover:text-black dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline"
+                      className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
                     >
                       {showAllAddresses
                         ? 'Show less'
@@ -402,8 +402,8 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           <dl className="space-y-3">
             {/* Unmasked Owner - Most Prominent */}
             {unmaskedOwnerName && (
-              <div className="pb-3 border-b-2 border-teal-500/30 bg-teal-500/5 -mx-2 px-2 py-2 rounded-md">
-                <dt className="text-xs font-medium text-teal-900 dark:text-teal-400 mb-1.5 uppercase tracking-wide">
+              <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
+                <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
                   Unmasked Owner
                 </dt>
                 <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
@@ -422,7 +422,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                       <dd className="mt-1">
                         <button
                           onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
-                          className="text-xs text-teal-900 hover:text-black dark:text-teal-400 dark:hover:text-teal-300 font-medium hover:underline"
+                          className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
                         >
                           {showAllUnmaskedPhones
                             ? 'Show less'
@@ -533,7 +533,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
               {allContacts.length > 4 && (
                 <button
                   onClick={() => setShowAllContacts(!showAllContacts)}
-                  className="text-xs text-blue-900 hover:text-black dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline"
+                  className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
                 >
                   {showAllContacts
                     ? 'Show less'

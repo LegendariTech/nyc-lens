@@ -31,14 +31,14 @@ export const CATEGORY_LABELS: Record<SourceCategory, string> = {
     'tax_owner': 'Tax Owner',
 };
 
-// Category styles for chips
+// Category styles for chips - using darker shades for sufficient contrast
 export const CATEGORY_CHIP_STYLES: Record<SourceCategory, string> = {
-    'dob_permits': 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30',
-    'recorded_owner': 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30',
-    'recorded_borrower': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30',
-    'hpd': 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30',
-    'unmasked_owner': 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30',
-    'tax_owner': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30',
+    'dob_permits': 'bg-blue-500/10 text-blue-800 dark:text-blue-300 border-blue-500/30',
+    'recorded_owner': 'bg-purple-500/10 text-purple-800 dark:text-purple-300 border-purple-500/30',
+    'recorded_borrower': 'bg-indigo-500/10 text-indigo-800 dark:text-indigo-300 border-indigo-500/30',
+    'hpd': 'bg-orange-500/10 text-orange-800 dark:text-orange-300 border-orange-500/30',
+    'unmasked_owner': 'bg-teal-500/10 text-teal-800 dark:text-teal-300 border-teal-500/30',
+    'tax_owner': 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/30',
 };
 
 // Source category metadata for FilterLegend
@@ -54,7 +54,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'DOB Permits',
         filterBorderActive: 'border-blue-500/50',
         filterBgActive: 'bg-blue-500/10',
-        filterTextActive: 'text-blue-600 dark:text-blue-400',
+        filterTextActive: 'text-blue-800 dark:text-blue-300',
         borderColor: 'border-blue-500',
         bgColor: 'bg-blue-500',
     },
@@ -62,7 +62,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'Recorded Owner',
         filterBorderActive: 'border-purple-500/50',
         filterBgActive: 'bg-purple-500/10',
-        filterTextActive: 'text-purple-600 dark:text-purple-400',
+        filterTextActive: 'text-purple-800 dark:text-purple-300',
         borderColor: 'border-purple-500',
         bgColor: 'bg-purple-500',
     },
@@ -70,7 +70,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'Recorded Borrower',
         filterBorderActive: 'border-indigo-500/50',
         filterBgActive: 'bg-indigo-500/10',
-        filterTextActive: 'text-indigo-600 dark:text-indigo-400',
+        filterTextActive: 'text-indigo-800 dark:text-indigo-300',
         borderColor: 'border-indigo-500',
         bgColor: 'bg-indigo-500',
     },
@@ -78,7 +78,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'HPD',
         filterBorderActive: 'border-orange-500/50',
         filterBgActive: 'bg-orange-500/10',
-        filterTextActive: 'text-orange-600 dark:text-orange-400',
+        filterTextActive: 'text-orange-800 dark:text-orange-300',
         borderColor: 'border-orange-500',
         bgColor: 'bg-orange-500',
     },
@@ -86,7 +86,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'Unmasked Owner',
         filterBorderActive: 'border-teal-500/50',
         filterBgActive: 'bg-teal-500/10',
-        filterTextActive: 'text-teal-600 dark:text-teal-400',
+        filterTextActive: 'text-teal-800 dark:text-teal-300',
         borderColor: 'border-teal-500',
         bgColor: 'bg-teal-500',
     },
@@ -94,7 +94,7 @@ export const SOURCE_METADATA: Record<SourceCategory, {
         pluralLabel: 'Tax Owner',
         filterBorderActive: 'border-amber-500/50',
         filterBgActive: 'bg-amber-500/10',
-        filterTextActive: 'text-amber-600 dark:text-amber-400',
+        filterTextActive: 'text-amber-800 dark:text-amber-300',
         borderColor: 'border-amber-500',
         bgColor: 'bg-amber-500',
     },
