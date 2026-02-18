@@ -10,7 +10,7 @@
  *   npx tsx scripts/generate-sitemap.ts
  *
  * Output:
- *   public/sitemap-index.xml
+ *   public/sitemap.xml (main sitemap index)
  *   public/sitemap-static.xml
  *   public/sitemap-properties-1.xml
  */
@@ -266,17 +266,12 @@ async function generateSitemaps() {
     });
   }
 
-  // 4. Generate sitemap index
-  console.log('📑 Generating sitemap index...');
+  // 4. Generate main sitemap index as sitemap.xml
+  console.log('📑 Generating main sitemap...');
   const sitemapIndex = generateSitemapIndex(sitemapFiles);
-  const indexPath = join(PUBLIC_DIR, 'sitemap-index.xml');
-  writeFileSync(indexPath, sitemapIndex, 'utf-8');
-  console.log(`   ✅ Created: sitemap-index.xml (${sitemapFiles.length} sitemaps)\n`);
-
-  // 5. Also create sitemap.xml as alias to sitemap-index.xml
-  const aliasPath = join(PUBLIC_DIR, 'sitemap.xml');
-  writeFileSync(aliasPath, sitemapIndex, 'utf-8');
-  console.log(`   ✅ Created: sitemap.xml (alias to index)\n`);
+  const sitemapPath = join(PUBLIC_DIR, 'sitemap.xml');
+  writeFileSync(sitemapPath, sitemapIndex, 'utf-8');
+  console.log(`   ✅ Created: sitemap.xml (${sitemapFiles.length} sub-sitemaps)\n`);
 
   // Summary
   console.log('✨ Sitemap generation complete!\n');

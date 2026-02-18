@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
-import { DobTabNav } from '../../dob/components/DobTabNav';
-import { PermitIssuanceDisplay } from '../../dob/components/PermitIssuanceDisplay';
+import { DobTabNav, PermitIssuanceDisplay } from '../../dob/components';
 
 interface DobPermitIssuancePageProps {
   params: Promise<{

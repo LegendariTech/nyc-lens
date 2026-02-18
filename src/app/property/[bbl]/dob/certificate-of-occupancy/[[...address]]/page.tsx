@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
-import { DobTabNav } from '../components/DobTabNav';
-import { CertificateOfOccupancyDisplay } from '../components/CertificateOfOccupancyDisplay';
+import { DobTabNav, CertificateOfOccupancyDisplay } from '../../components';
 
 interface DobCertificatePageProps {
   params: Promise<{

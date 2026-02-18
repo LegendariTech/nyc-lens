@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { PropertyPageLayout } from '../../../PropertyPageLayout';
-import { DobTabNav } from '../../components/DobTabNav';
+import { DobTabNav } from '../../components';
 import { DobViolationsDisplay } from '../components/DobViolationsDisplay';
 import { fetchDobSafetyViolations, fetchDobViolationsBIS } from '@/data/dobViolations';
 import { parseAddressFromUrl } from '@/utils/urlSlug';

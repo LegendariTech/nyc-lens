@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
-import { DobTabNav } from '../components/DobTabNav';
-import { ComplaintsDisplay } from '../components/ComplaintsDisplay';
+import { DobTabNav, ComplaintsDisplay } from '../../components';
 
 interface DobComplaintsPageProps {
   params: Promise<{
