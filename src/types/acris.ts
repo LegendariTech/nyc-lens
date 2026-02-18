@@ -30,7 +30,7 @@ export type AcrisRecord = {
   id: string;
   address: string;
   address_with_unit: string;
-  zipcode: string;
+  zip_code: string;
   aka: string[];
   aka_address_street_name: string[];
   aka_address_street_number: string[];

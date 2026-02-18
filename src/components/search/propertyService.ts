@@ -7,7 +7,7 @@ export interface PropertyItem extends BaseAutocompleteItem {
   borough: string;
   block: string;
   lot: string;
-  zipcode: string;
+  zip_code: string;
   aka: string[];
   sale_document_date?: string;
   sale_document_amount?: number;
@@ -103,7 +103,7 @@ export async function fetchProperties(
       borough: row.borough,
       block: row.block,
       lot: row.lot,
-      zipcode: row.zipcode || '',
+      zip_code: row.zip_code || '',
       aka: row.aka || [],
       sale_document_date: row.sale_document_date,
       sale_document_amount: row.sale_document_amount,

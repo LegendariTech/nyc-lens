@@ -119,7 +119,7 @@ export function PropertyAutocomplete({
               street: matchedAddress,
               borough: boroughName,
               state: 'NY',
-              zip: item.zipcode
+              zip: item.zip_code
             });
 
             router.push(url);

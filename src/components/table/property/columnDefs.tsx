@@ -106,7 +106,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
         street: params.value || '',
         borough: boroughName,
         state: 'NY',
-        zip: params?.data?.zipcode
+        zip: params?.data?.zip_code
       });
 
       return (
