@@ -287,6 +287,52 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           Property Information for {fullAddress}
         </h1>
 
+        {/* Quick Links for SEO - helps Google show sitelinks */}
+        <nav aria-label="Property sections" className="flex flex-wrap gap-2">
+          <Link
+            href={`/property/${bbl}/overview`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground text-background rounded-md"
+          >
+            Overview
+          </Link>
+          <Link
+            href={`/property/${bbl}/contacts`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            Contacts
+          </Link>
+          <Link
+            href={`/property/${bbl}/transactions`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            Transactions
+          </Link>
+          <Link
+            href={`/property/${bbl}/pluto`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            Building Info
+          </Link>
+          <Link
+            href={`/property/${bbl}/tax`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            Tax Assessment
+          </Link>
+          <Link
+            href={`/property/${bbl}/dob/violations`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            DOB Violations
+          </Link>
+          <Link
+            href={`/property/${bbl}/hpd`}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium bg-foreground/10 hover:bg-foreground/20 text-foreground rounded-md transition-colors"
+          >
+            HPD Data
+          </Link>
+        </nav>
+
         <div className="space-y-3 text-base text-foreground/80 leading-relaxed">
           <p>
             Access comprehensive NYC property records for {fullAddress}. This page provides detailed information from official New York City databases including building characteristics, ownership records, sales history, tax assessments, and contact information. All data is sourced from NYC Department of Finance, Department of City Planning (PLUTO), and ACRIS (Automated City Register Information System).
