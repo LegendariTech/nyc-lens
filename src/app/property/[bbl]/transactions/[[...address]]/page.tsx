@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
-import { PropertyPageLayout } from '../PropertyPageLayout';
+import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
-import { TransactionsView } from './components/TransactionsView';
-import { mapDocumentToTransaction } from './components/TransactionTimeline/utils';
+import { TransactionsView } from '../components/TransactionsView';
+import { mapDocumentToTransaction } from '../components/TransactionTimeline/utils';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 
 interface TransactionsPageProps {
   params: Promise<{
     bbl: string;
+    address?: string[];
   }>;
   searchParams: Promise<{
     address?: string;
@@ -14,8 +16,10 @@ interface TransactionsPageProps {
 }
 
 export default async function TransactionsPage({ params, searchParams }: TransactionsPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

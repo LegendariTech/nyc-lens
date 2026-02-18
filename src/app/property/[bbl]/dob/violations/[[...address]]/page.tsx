@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
-import { PropertyPageLayout } from '../../PropertyPageLayout';
-import { DobTabNav } from '../components/DobTabNav';
-import { DobViolationsDisplay } from './components/DobViolationsDisplay';
+import { PropertyPageLayout } from '../../../PropertyPageLayout';
+import { DobTabNav } from '../../components/DobTabNav';
+import { DobViolationsDisplay } from '../components/DobViolationsDisplay';
 import { fetchDobSafetyViolations, fetchDobViolationsBIS } from '@/data/dobViolations';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 
 interface DobViolationsPageProps {
   params: Promise<{
     bbl: string;
+    address?: string[];
   }>;
   searchParams: Promise<{
     address?: string;
@@ -14,8 +16,10 @@ interface DobViolationsPageProps {
 }
 
 export default async function DobViolationsPage({ params, searchParams }: DobViolationsPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

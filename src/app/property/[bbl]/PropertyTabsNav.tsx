@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { ButtonGroup } from '@/components/ui';
 import { OpenAIIcon, AnthropicIcon, PerplexityIcon, ExternalLinkIcon } from '@/components/icons';
 import { cn } from '@/utils/cn';
@@ -12,7 +12,11 @@ interface PropertyTabsNavProps {
 }
 
 export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
-  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  // Extract address slug from current URL path
+  // e.g., /property/1-13-1/overview/1-Broadway-Manhattan-NY-10004 → /1-Broadway-Manhattan-NY-10004
+  const addressSlug = pathname?.split('/').slice(4).join('/') || '';
 
   // Build URL for a tab value
   const getTabUrl = (value: string) => {
@@ -23,9 +27,12 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
       newPath = `/property/${bbl}/dob/jobs-filings`;
     }
 
-    // Preserve search params (like address)
-    const params = searchParams.toString();
-    return params ? `${newPath}?${params}` : newPath;
+    // Append address slug if present
+    if (addressSlug) {
+      newPath = `${newPath}/${addressSlug}`;
+    }
+
+    return newPath;
   };
 
   // Function to open AI services with property AI data page URL

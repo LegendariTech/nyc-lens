@@ -1,13 +1,15 @@
 import { notFound } from 'next/navigation';
-import { PropertyPageLayout } from '../PropertyPageLayout';
-import { TaxTabDisplay } from './components/TaxTabDisplay';
+import { PropertyPageLayout } from '../../PropertyPageLayout';
+import { TaxTabDisplay } from '../components/TaxTabDisplay';
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { fetchPropertyValuation } from '@/data/valuation';
-import type { DatasourceMetadata } from '../utils/datasourceDisplay';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
+import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
 
 interface TaxPageProps {
   params: Promise<{
     bbl: string;
+    address?: string[];
   }>;
   searchParams: Promise<{
     address?: string;
@@ -15,8 +17,10 @@ interface TaxPageProps {
 }
 
 export default async function TaxPage({ params, searchParams }: TaxPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
-import { PropertyPageLayout } from '../PropertyPageLayout';
-import { PlutoTabDisplay } from './components/PlutoTabDisplay';
+import { PropertyPageLayout } from '../../PropertyPageLayout';
+import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
 import { fetchPlutoData } from '@/data/pluto';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 
 interface PlutoPageProps {
   params: Promise<{
     bbl: string;
+    address?: string[];
   }>;
   searchParams: Promise<{
     address?: string;
@@ -13,8 +15,10 @@ interface PlutoPageProps {
 }
 
 export default async function PlutoPage({ params, searchParams }: PlutoPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

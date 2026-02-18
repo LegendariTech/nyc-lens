@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { DobTabNav } from '../components/DobTabNav';
 import { DobJobApplicationsDisplay } from './components/DobJobApplicationsDisplay';
@@ -6,6 +7,7 @@ import { fetchDobJobApplications, fetchDobJobApplicationsNow } from '@/data/dobJ
 
 interface DobJobsFilingsPageProps {
   params: Promise<{
+    address?: string[];
     bbl: string;
   }>;
   searchParams: Promise<{
@@ -14,8 +16,10 @@ interface DobJobsFilingsPageProps {
 }
 
 export default async function DobJobsFilingsPage({ params, searchParams }: DobJobsFilingsPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

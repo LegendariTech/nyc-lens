@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { DobTabNav } from '../components/DobTabNav';
 import { CertificateOfOccupancyDisplay } from '../components/CertificateOfOccupancyDisplay';
 
 interface DobCertificatePageProps {
   params: Promise<{
+    address?: string[];
     bbl: string;
   }>;
   searchParams: Promise<{
@@ -13,8 +15,10 @@ interface DobCertificatePageProps {
 }
 
 export default async function DobCertificatePage({ params, searchParams }: DobCertificatePageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
