@@ -83,16 +83,20 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
   return {
     title,
     description,
+    // Add applicationName for site branding in search results
+    applicationName: 'BBL Club',
     openGraph: {
       title,
       description,
-      type: 'article',
+      type: 'website',
       url: `/property/${bbl}/overview`,
+      siteName: 'BBL Club',
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      site: '@bblclub',
     },
   };
 }
@@ -207,6 +211,58 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
     }
   };
 
+  // ItemList to hint important sub-pages for sitelinks
+  const sitelinksData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Property Information Sections",
+    "description": "Key sections of property information available",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Overview",
+        "url": `${propertyUrl}/overview`,
+        "description": "Property overview with building details and ownership"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Owner Contacts",
+        "url": `${propertyUrl}/contacts`,
+        "description": "Contact information for property owners"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Transactions History",
+        "url": `${propertyUrl}/transactions`,
+        "description": "Sales history, mortgages, and deeds"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Tax Assessment",
+        "url": `${propertyUrl}/tax`,
+        "description": "Property tax records and assessments"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "Building Information",
+        "url": `${propertyUrl}/pluto`,
+        "description": "PLUTO building characteristics and zoning"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "name": "DOB Violations",
+        "url": `${propertyUrl}/dob/violations`,
+        "description": "Department of Buildings violations and permits"
+      }
+    ]
+  };
+
   return (
     <>
       {/* Schema.org structured data for SEO */}
@@ -221,6 +277,10 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksData) }}
       />
 
       <PropertyPageLayout bbl={bbl} activeTab="overview" address={address}>
