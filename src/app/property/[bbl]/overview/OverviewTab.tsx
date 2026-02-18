@@ -270,8 +270,10 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   const boroughName = boroughCode ? BOROUGH_NAMES[boroughCode] || 'NYC' : 'NYC';
 
   // Build full address with zipcode for SEO
-  const fullAddress = propertyAddress
-    ? `${propertyAddress}, ${boroughName}, NY${zipcode ? ` ${zipcode}` : ''}`
+  const fullAddress = propertyAddress && zipcode
+    ? `${propertyAddress}, ${boroughName}, NY ${zipcode}`
+    : propertyAddress
+    ? `${propertyAddress}, ${boroughName}, NY`
     : `BBL ${bbl}, ${boroughName}`;
 
   // Build descriptive intro text
