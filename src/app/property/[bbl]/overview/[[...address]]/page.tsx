@@ -200,20 +200,13 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
     ]
   };
 
-  // Website structured data with sitelinks search box
+  // Website structured data (without SearchAction since search is autocomplete-only, not URL-based)
   const websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "BBL Club",
     "url": baseUrl,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${baseUrl}/search?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "description": "NYC Real Estate Data - Property records, ownership, transactions, and tax information"
   };
 
   // ItemList to hint important sub-pages for sitelinks
