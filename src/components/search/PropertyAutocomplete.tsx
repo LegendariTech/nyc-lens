@@ -6,6 +6,8 @@ import { Autocomplete } from '@/components/ui/Autocomplete';
 import { fetchProperties, type PropertyItem } from './propertyService';
 import { PropertyResultItem } from './PropertyResultItem';
 import { findMatchInText } from './textMatcher';
+import { buildPropertyUrl } from '@/utils/urlSlug';
+import { BOROUGH_NAMES } from '@/constants/nyc';
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
@@ -101,11 +103,26 @@ export function PropertyAutocomplete({
             return item.matchedAddress || item.address_with_unit;
           },
           onSelect({ item }) {
-            // Navigate to property page with BBL format and matched address in query string
+            // Navigate to property page with BBL format and SEO-friendly address slug
             const bbl = `${item.borough}-${item.block}-${item.lot}`;
-            const address = encodeURIComponent(item.matchedAddress || item.address_with_unit);
+            const matchedAddress = item.matchedAddress || item.address_with_unit;
+
+            // Extract borough name for URL
+            const boroughName = BOROUGH_NAMES[item.borough.toString()] || '';
+
+            // Determine tab from current path
             const targetPath = getTargetPath(bbl);
-            router.push(`${targetPath}?address=${address}`);
+            const tab = targetPath.split('/').pop() || 'overview';
+
+            // Build SEO-friendly URL with address slug
+            const url = buildPropertyUrl(bbl, tab, {
+              street: matchedAddress,
+              borough: boroughName,
+              state: 'NY',
+              zip: item.zipcode
+            });
+
+            router.push(url);
           },
         },
       ]}

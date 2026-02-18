@@ -1,13 +1,14 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { PropertyPageLayout } from '../PropertyPageLayout';
-import { OverviewTab } from './OverviewTab';
+import { PropertyPageLayout } from '../../PropertyPageLayout';
+import { OverviewTab } from '../OverviewTab';
 import { fetchPlutoData } from '@/data/pluto';
 import { fetchPropertyByBBL } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { BOROUGH_NAMES } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
+import { parseAddressFromUrl } from '@/utils/urlSlug';
 
 // Revalidate property data every hour
 export const revalidate = 3600;
@@ -15,9 +16,10 @@ export const revalidate = 3600;
 interface OverviewPageProps {
   params: Promise<{
     bbl: string;
+    address?: string[];
   }>;
   searchParams: Promise<{
-    address?: string;
+    address?: string; // Still support old query param format for backwards compatibility
   }>;
 }
 
@@ -102,8 +104,11 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
 }
 
 export default async function OverviewPage({ params, searchParams }: OverviewPageProps) {
-  const { bbl } = await params;
-  const { address } = await searchParams;
+  const { bbl, address: addressSegments } = await params;
+  const { address: queryAddress } = await searchParams;
+
+  // Parse address from URL path segments or fall back to query param
+  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

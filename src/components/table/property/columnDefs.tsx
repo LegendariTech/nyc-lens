@@ -2,6 +2,7 @@ import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import { AcrisRecord } from '@/types/acris';
 import { BOROUGH_NAMES, BOROUGH_FILTER_VALUES } from '@/constants/nyc';
 import Link from 'next/link';
+import { buildPropertyUrl } from '@/utils/urlSlug';
 import {
   DEFAULT_TEXT_FILTER_PARAMS,
   DEFAULT_MATCH_TEXT_FILTER_PARAMS,
@@ -98,10 +99,19 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     floatingFilter: true,
     width: 300,
     cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
-      const address = encodeURIComponent(params.value || '');
+      const bbl = `${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}`;
+      const boroughName = params?.data?.borough ? BOROUGH_NAMES[params.data.borough.toString()] : '';
+
+      const url = buildPropertyUrl(bbl, 'overview', {
+        street: params.value || '',
+        borough: boroughName,
+        state: 'NY',
+        zip: params?.data?.zipcode
+      });
+
       return (
         <Link
-          href={`/property/${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}/overview?address=${address}`}
+          href={url}
           className="text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
         >
           {params.value}
