@@ -158,7 +158,7 @@ export default function TermsPage() {
             If you have questions about these Terms, please contact us at:
           </p>
           <div className="mt-3 p-4 bg-foreground/5 rounded-lg">
-            <p><strong>Email:</strong> legal@bblclub.com</p>
+            <p><strong>Email:</strong> info@bblclub.com</p>
             <p className="mt-1"><strong>Website:</strong> https://bblclub.com</p>
           </div>
         </section>

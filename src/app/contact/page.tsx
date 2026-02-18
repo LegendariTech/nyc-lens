@@ -37,8 +37,8 @@ export default function ContactPage() {
               <p className="text-sm mb-2">GDPR, CCPA requests, data deletion, privacy questions</p>
               <p className="text-sm">
                 <strong>Email:</strong>{' '}
-                <a href="mailto:privacy@bblclub.com" className="text-blue-600 hover:underline">
-                  privacy@bblclub.com
+                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
+                  info@bblclub.com
                 </a>
               </p>
             </div>
@@ -48,8 +48,8 @@ export default function ContactPage() {
               <p className="text-sm mb-2">Legal questions, terms clarifications, compliance</p>
               <p className="text-sm">
                 <strong>Email:</strong>{' '}
-                <a href="mailto:legal@bblclub.com" className="text-blue-600 hover:underline">
-                  legal@bblclub.com
+                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
+                  info@bblclub.com
                 </a>
               </p>
             </div>
@@ -59,8 +59,8 @@ export default function ContactPage() {
               <p className="text-sm mb-2">Report data errors, inaccuracies, or issues</p>
               <p className="text-sm">
                 <strong>Email:</strong>{' '}
-                <a href="mailto:data@bblclub.com" className="text-blue-600 hover:underline">
-                  data@bblclub.com
+                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
+                  info@bblclub.com
                 </a>
               </p>
               <p className="text-xs text-foreground/70 mt-2">
@@ -73,8 +73,8 @@ export default function ContactPage() {
               <p className="text-sm mb-2">Bug reports, technical issues, feature requests</p>
               <p className="text-sm">
                 <strong>Email:</strong>{' '}
-                <a href="mailto:support@bblclub.com" className="text-blue-600 hover:underline">
-                  support@bblclub.com
+                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
+                  info@bblclub.com
                 </a>
               </p>
             </div>
