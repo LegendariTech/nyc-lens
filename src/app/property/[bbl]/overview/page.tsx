@@ -138,15 +138,10 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
   const boroughCode = bbl.split('-')[0];
   const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
 
-  const baseUrl = 'https://bblclub.com';
-  const propertyUrl = `${baseUrl}/property/${bbl}`;
-
-  // Place structured data
-  const placeData = {
+  const structuredData = {
     "@context": "https://schema.org",
     "@type": "Place",
     "name": propertyAddress || `BBL ${bbl}`,
-    "url": `${propertyUrl}/overview`,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": propertyAddress,
@@ -165,62 +160,12 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
     "identifier": bbl,
   };
 
-  // Breadcrumb structured data for better navigation
-  const breadcrumbData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": baseUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Property Search",
-        "item": `${baseUrl}/search`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": propertyAddress || `BBL ${bbl}`,
-        "item": `${propertyUrl}/overview`
-      }
-    ]
-  };
-
-  // Website structured data with sitelinks search box
-  const websiteData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "BBL Club",
-    "url": baseUrl,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${baseUrl}/search?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
-  };
-
   return (
     <>
       {/* Schema.org structured data for SEO */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
       <PropertyPageLayout bbl={bbl} activeTab="overview" address={address}>
