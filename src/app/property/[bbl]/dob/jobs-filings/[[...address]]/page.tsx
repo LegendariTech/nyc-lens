@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
-import { PropertyPageLayout } from '../../PropertyPageLayout';
-import { DobTabNav } from '../../components';
-import { DobJobApplicationsDisplay } from './components/DobJobApplicationsDisplay';
+import { PropertyPageLayout } from '@/app/property/[bbl]/PropertyPageLayout';
+import { DobTabNav } from '@/app/property/[bbl]/dob/components';
+import { DobJobApplicationsDisplay } from '../components/DobJobApplicationsDisplay';
 import { fetchDobJobApplications, fetchDobJobApplicationsNow } from '@/data/dobJobs';
 
 interface DobJobsFilingsPageProps {
