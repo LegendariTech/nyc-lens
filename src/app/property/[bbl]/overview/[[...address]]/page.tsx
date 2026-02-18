@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
   }
 
   const title = `${address}, ${borough} - NYC Property Records | BBL Club`;
-  const description = `View comprehensive property information for ${address} in ${borough}. Access ownership records, sales history, tax assessments, building details, and contact information from official NYC databases.${buildingInfo}`;
+  const description = `${address} in ${borough}: View ownership, sales history, tax assessments, building details & contacts from official NYC databases.${buildingInfo ? ` ${buildingInfo}` : ''}`;
 
   return {
     title,
