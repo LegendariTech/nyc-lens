@@ -14,7 +14,8 @@
     "test:storybook": "vitest --run --project=storybook",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "download-docs": "npx tsx scripts/download-mortgage-docs.ts"
+    "download-docs": "npx tsx scripts/download-mortgage-docs.ts",
+    "generate-sitemap": "npx tsx scripts/generate-sitemap.ts"
   },
   "dependencies": {
     "@algolia/autocomplete-core": "1.19.4",
