@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SearchIcon, TableIcon } from "@/components/icons";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -216,6 +217,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Footer - Homepage only */}
+      <Footer />
       </div>
     </div>
   );

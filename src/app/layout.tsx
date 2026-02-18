@@ -7,7 +7,6 @@ import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { Analytics } from "@vercel/analytics/next";
 import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
-import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "BBL Club - NYC Real Estate Data",
@@ -29,7 +28,6 @@ export default function RootLayout({
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}
-            <Footer />
           </ResizableSidebarLayout>
         </ViewportProvider>
         <Analytics />
