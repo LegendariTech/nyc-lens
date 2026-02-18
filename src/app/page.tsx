@@ -9,7 +9,7 @@ export default function Home() {
       <div className="flex flex-col items-center justify-center px-6 py-16 md:py-24">
         <div className="max-w-4xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            Open Block
+            BBL Club
           </h1>
           <p className="mt-4 text-2xl font-medium text-foreground/80 md:text-3xl">
             NYC Real Estate Data, Transparent & Real-Time

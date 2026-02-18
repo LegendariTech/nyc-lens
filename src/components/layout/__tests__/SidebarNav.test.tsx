@@ -26,7 +26,7 @@ describe("SidebarNav", () => {
   it("renders top-level links and groups", () => {
     currentPathname = "/";
     renderWithProvider(<SidebarNav />);
-    expect(screen.getByRole("link", { name: /Open Block/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /BBL Club/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /^Search$/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Bulk Search/i })).toBeInTheDocument();
   });
@@ -89,7 +89,7 @@ describe("SidebarNav", () => {
       // Text labels should be hidden
       expect(screen.queryByText("Search")).not.toBeInTheDocument();
       expect(screen.queryByText("Bulk Search")).not.toBeInTheDocument();
-      expect(screen.queryByText("Open Block")).not.toBeInTheDocument();
+      expect(screen.queryByText("BBL Club")).not.toBeInTheDocument();
     });
 
     it("shows only icons when collapsed", async () => {

@@ -109,13 +109,13 @@ export default function SidebarNav() {
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               )}
               onClick={() => setIsMobileOpen(false)}
-              title="Open Block - Home"
+              title="BBL Club - Home"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center">
                 <HomeIcon className="text-foreground shrink-0 h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1 whitespace-nowrap text-lg font-semibold text-nav-item">
-                Open Block
+                BBL Club
               </span>
             </Link>
 

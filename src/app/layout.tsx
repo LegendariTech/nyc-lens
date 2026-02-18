@@ -9,7 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
 
 export const metadata: Metadata = {
-  title: "Open Block - NYC Real Estate Data",
+  title: "BBL Club - NYC Real Estate Data",
   description: "Search the latest NYC property transactions, mortgages, and deeds in real-time. Uncover the true owners behind LLCs and access comprehensive tax and building information.",
 };
 

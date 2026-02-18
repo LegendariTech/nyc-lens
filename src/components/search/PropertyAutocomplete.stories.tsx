@@ -154,7 +154,7 @@ export const InHeader: Story = {
       <div className="w-full bg-background border-b border-foreground/10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="text-xl font-bold">Open Block</div>
+            <div className="text-xl font-bold">BBL Club</div>
           </div>
           <div className="flex-1 max-w-xl mx-4">
             <PropertyAutocomplete compact={true} autoFocus={false} />
