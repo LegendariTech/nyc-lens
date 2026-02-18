@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-4xl font-bold text-foreground mb-8">Contact Us</h1>
 
       <div className="space-y-8 text-foreground/90 leading-relaxed">
@@ -167,6 +168,7 @@ export default function ContactPage() {
             <a href="/disclaimer" className="text-blue-600 hover:underline">Disclaimer</a>.
           </p>
         </section>
+      </div>
       </div>
     </div>
   );

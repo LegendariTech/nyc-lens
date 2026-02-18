@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function CookiesPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-4xl font-bold text-foreground mb-8">Cookie Policy</h1>
 
       <div className="space-y-6 text-foreground/90 leading-relaxed">
@@ -245,6 +246,7 @@ export default function CookiesPage() {
             <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>.
           </p>
         </section>
+      </div>
       </div>
     </div>
   );

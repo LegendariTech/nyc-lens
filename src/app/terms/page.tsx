@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-4xl font-bold text-foreground mb-8">Terms of Service</h1>
 
       <div className="space-y-6 text-foreground/90 leading-relaxed">
@@ -167,6 +168,7 @@ export default function TermsPage() {
             These terms of service are provided as a template and should be reviewed by a qualified attorney to ensure compliance with applicable laws and your specific business needs.
           </p>
         </section>
+      </div>
       </div>
     </div>
   );
