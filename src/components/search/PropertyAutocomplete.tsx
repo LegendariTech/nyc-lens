@@ -62,20 +62,27 @@ export function PropertyAutocomplete({
     return item.address_with_unit;
   };
 
-  // Helper to determine the target path based on current location
-  const getTargetPath = (bbl: string): string => {
-    // If we're already on a property page, preserve the current tab/section
+  // Helper to determine the target tab based on current location
+  const getTargetTab = (): string => {
+    // If we're already on a property page, extract just the tab name (not address)
     if (pathname?.startsWith('/property/')) {
-      // Extract the path after the BBL (e.g., /transactions, /tax, /dob/jobs-filings)
-      const currentBblMatch = pathname.match(/^\/property\/[^/]+(\/.*)?$/);
-      if (currentBblMatch && currentBblMatch[1]) {
-        // Keep the same page/tab for the new property
-        return `/property/${bbl}${currentBblMatch[1]}`;
+      // Match pattern: /property/[bbl]/[tab]/[optional-address]
+      // Extract the tab part (overview, contacts, transactions, etc.)
+      const parts = pathname.split('/');
+      if (parts.length >= 4) {
+        const tab = parts[3]; // e.g., "overview", "contacts", "tax"
+
+        // Handle DOB sub-routes (e.g., /property/1-13-1/dob/violations/...)
+        if (tab === 'dob' && parts.length >= 5) {
+          return `dob/${parts[4]}`; // e.g., "dob/violations"
+        }
+
+        return tab;
       }
     }
 
     // Default to overview page
-    return `/property/${bbl}/overview`;
+    return 'overview';
   };
 
   return (
@@ -110,9 +117,8 @@ export function PropertyAutocomplete({
             // Extract borough name for URL
             const boroughName = BOROUGH_NAMES[item.borough.toString()] || '';
 
-            // Determine tab from current path
-            const targetPath = getTargetPath(bbl);
-            const tab = targetPath.split('/').pop() || 'overview';
+            // Get current tab (without address)
+            const tab = getTargetTab();
 
             // Build SEO-friendly URL with address slug
             const url = buildPropertyUrl(bbl, tab, {
