@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ButtonGroup } from '@/components/ui';
 import { OpenAIIcon, AnthropicIcon, PerplexityIcon, ExternalLinkIcon } from '@/components/icons';
 import { cn } from '@/utils/cn';
@@ -12,18 +12,10 @@ interface PropertyTabsNavProps {
 }
 
 export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
 
-  // Simple useState with initial value from props
-  const [selectedTab, setSelectedTab] = useState(activeTab || 'pluto');
-
-  const handleTabClick = (value: string) => {
-    // Immediately update the visual state
-    setSelectedTab(value);
-
-    // Build path-based URL
+  // Build URL for a tab value
+  const getTabUrl = (value: string) => {
     let newPath = `/property/${bbl}/${value}`;
 
     // For DOB, add default subtab
@@ -33,11 +25,7 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
 
     // Preserve search params (like address)
     const params = searchParams.toString();
-    const fullPath = params ? `${newPath}?${params}` : newPath;
-
-    startTransition(() => {
-      router.push(fullPath, { scroll: false });
-    });
+    return params ? `${newPath}?${params}` : newPath;
   };
 
   // Function to open AI services with property AI data page URL
@@ -94,61 +82,57 @@ export function PropertyTabsNav({ activeTab, bbl }: PropertyTabsNavProps) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Tabs */}
-      <div className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1 overflow-x-auto overflow-y-hidden scrollbar-hide">
+      <nav className="inline-flex h-10 items-center justify-start gap-1 rounded-md bg-foreground/5 p-1 overflow-x-auto overflow-y-hidden scrollbar-hide" aria-label="Property information sections">
         {tabs.map((tab) => {
-          const isActive = selectedTab === tab.value;
-          const isLoading = isPending && isActive && activeTab !== tab.value;
+          const isActive = activeTab === tab.value;
           const isDisabled = tab.disabled;
 
+          const linkContent = (
+            <>
+              {tab.label}
+            </>
+          );
+
+          if (isDisabled) {
+            return (
+              <span
+                key={tab.value}
+                className={cn(
+                  'inline-flex items-center justify-center gap-2',
+                  'whitespace-nowrap rounded-sm px-3 py-1.5',
+                  'text-sm font-medium transition-all',
+                  'shrink-0',
+                  'cursor-not-allowed opacity-40 text-foreground/50'
+                )}
+                aria-disabled="true"
+              >
+                {linkContent}
+              </span>
+            );
+          }
+
           return (
-            <button
+            <Link
               key={tab.value}
-              onClick={() => !isDisabled && handleTabClick(tab.value)}
-              disabled={isDisabled}
+              href={getTabUrl(tab.value)}
+              scroll={false}
+              aria-current={isActive ? 'page' : undefined}
               className={cn(
                 'inline-flex items-center justify-center gap-2',
                 'whitespace-nowrap rounded-sm px-3 py-1.5',
                 'text-sm font-medium transition-all',
                 'shrink-0',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-                isDisabled
-                  ? 'cursor-not-allowed opacity-40 text-foreground/50'
-                  : 'cursor-pointer',
-                !isDisabled && isActive
+                isActive
                   ? 'bg-background text-foreground shadow-sm'
-                  : '',
-                !isDisabled && !isActive
-                  ? 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
-                  : ''
+                  : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground'
               )}
             >
-              {isLoading && (
-                <svg
-                  className="size-3 animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              )}
-              {tab.label}
-            </button>
+              {linkContent}
+            </Link>
           );
         })}
-      </div>
+      </nav>
 
       {/* Ask AI Button - Hidden on mobile */}
       <div className="hidden lg:flex lg:justify-end">
