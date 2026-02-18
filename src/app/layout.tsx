@@ -24,14 +24,14 @@ export default function RootLayout({
       <head>
         <GoogleTagManager />
       </head>
-      <body className={cn("font-sans antialiased flex flex-col min-h-screen")}>
+      <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
         <ViewportProvider>
           <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
             {children}
+            <Footer />
           </ResizableSidebarLayout>
         </ViewportProvider>
-        <Footer />
         <Analytics />
       </body>
     </html>
