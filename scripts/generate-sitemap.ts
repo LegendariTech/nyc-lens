@@ -28,7 +28,8 @@ dotenv.config({ path: '.env.local' });
 const BASE_URL = 'https://bblclub.com';
 const PUBLIC_DIR = join(process.cwd(), 'public');
 const PROPERTIES_PER_SITEMAP = 10000; // Google's limit is 50k URLs per sitemap
-const TEST_MODE = true; // Set to false for production to include all properties
+const TEST_MODE = false; // Set to true to limit to 50 properties for testing
+const MAX_RETRIES = 3; // Retry failed Elasticsearch queries
 
 interface PropertyForSitemap {
   borough: string;
@@ -59,57 +60,79 @@ function createElasticsearchClient(): Client {
 }
 
 /**
- * Fetch properties from Elasticsearch for sitemap
+ * Fetch total count of properties with addresses
  */
-async function fetchPropertiesForSitemap(
-  limit: number = 50
-): Promise<PropertyForSitemap[]> {
-  const client = createElasticsearchClient();
-  const indexName = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || 'acris_search_v_6_1';
-
-  try {
-    const response = await client.search({
-      index: indexName,
-      size: limit,
-      _source: ['borough', 'block', 'lot', 'address', 'zip_code', 'mortgage_document_date'],
-      query: {
-        bool: {
-          must: [
-            // Must have an address
-            {
-              exists: {
-                field: 'address',
-              },
-            },
-            // Address must not be empty
-            {
-              bool: {
-                must_not: {
-                  term: {
-                    'address.keyword': '',
-                  },
-                },
-              },
-            },
-          ],
-        },
+async function getTotalPropertiesCount(client: Client, indexName: string): Promise<number> {
+  const response = await client.count({
+    index: indexName,
+    query: {
+      bool: {
+        must: [
+          { exists: { field: 'address' } },
+          { bool: { must_not: { term: { 'address.keyword': '' } } } },
+        ],
       },
-      sort: [
-        {
-          mortgage_document_date: {
-            order: 'desc',
-            missing: '_last',
+    },
+  });
+  return response.count;
+}
+
+/**
+ * Fetch properties from Elasticsearch using search_after for efficient pagination
+ */
+async function fetchPropertiesBatch(
+  client: Client,
+  indexName: string,
+  batchSize: number,
+  searchAfter?: Array<string | number>
+): Promise<{ properties: PropertyForSitemap[]; nextSearchAfter?: Array<string | number> }> {
+  let attempts = 0;
+
+  while (attempts < MAX_RETRIES) {
+    try {
+      const searchParams: any = {
+        index: indexName,
+        size: batchSize,
+        _source: ['borough', 'block', 'lot', 'address', 'zip_code', 'mortgage_document_date'],
+        query: {
+          bool: {
+            must: [
+              { exists: { field: 'address' } },
+              { exists: { field: 'street_name' } }, // Must have street name
+              { bool: { must_not: { term: { 'address.keyword': '' } } } },
+            ],
           },
         },
-      ],
-    });
+        sort: [
+          { 'borough.integer': 'asc' }, // Sort by BBL (safe, always valid)
+          { 'block.integer': 'asc' },
+          { 'lot.integer': 'asc' },
+        ],
+      };
 
-    const hits = response.hits.hits as Array<{ _source: PropertyForSitemap }>;
-    return hits.map(hit => hit._source);
-  } catch (error) {
-    console.error('Error fetching properties from Elasticsearch:', error);
-    throw error;
+      if (searchAfter) {
+        searchParams.search_after = searchAfter;
+      }
+
+      const response = await client.search(searchParams);
+      const hits = response.hits.hits as Array<{ _source: PropertyForSitemap; sort: Array<string | number> }>;
+
+      const properties = hits.map(hit => hit._source);
+      const nextSearchAfter = hits.length > 0 ? hits[hits.length - 1].sort : undefined;
+
+      return { properties, nextSearchAfter };
+    } catch (error) {
+      attempts++;
+      if (attempts >= MAX_RETRIES) {
+        console.error(`\n❌ Failed after ${MAX_RETRIES} attempts:`, error);
+        throw error;
+      }
+      console.log(`\n⚠️  Attempt ${attempts} failed, retrying...`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempts)); // Exponential backoff
+    }
   }
+
+  return { properties: [], nextSearchAfter: undefined };
 }
 
 /**
@@ -186,6 +209,32 @@ function generateStaticSitemap(): string {
 }
 
 /**
+ * Determine priority based on mortgage date
+ * - Recent activity (>= 2020): 0.7 (high priority)
+ * - Older activity (< 2020): 0.6 (medium priority)
+ * - No mortgage date: 0.5 (low priority)
+ */
+function getPriorityForProperty(mortgageDate?: string): string {
+  if (!mortgageDate) {
+    return '0.5'; // No mortgage date
+  }
+
+  const date = new Date(mortgageDate);
+  const year = date.getFullYear();
+
+  // Check if valid date (between 1900-2100)
+  if (year < 1900 || year > 2100) {
+    return '0.5'; // Invalid date, treat as no date
+  }
+
+  if (year >= 2020) {
+    return '0.7'; // Recent activity
+  }
+
+  return '0.6'; // Older activity
+}
+
+/**
  * Generate property pages sitemap
  */
 function generatePropertySitemap(
@@ -211,7 +260,10 @@ function generatePropertySitemap(
     // Use mortgage date as last modified, or current date
     const lastmod = property.mortgage_document_date || new Date().toISOString();
 
-    return generateUrlEntry(url, lastmod, 'monthly', '0.7');
+    // Determine priority based on mortgage date
+    const priority = getPriorityForProperty(property.mortgage_document_date);
+
+    return generateUrlEntry(url, lastmod, 'monthly', priority);
   });
 
   return generateSitemapXml(urls);
@@ -241,32 +293,68 @@ async function generateSitemaps() {
     lastmod: now,
   });
 
-  // 2. Fetch properties from Elasticsearch
-  const limit = TEST_MODE ? 50 : PROPERTIES_PER_SITEMAP;
-  console.log(`🏢 Fetching properties from Elasticsearch (limit: ${limit})...`);
-  const properties = await fetchPropertiesForSitemap(limit);
-  console.log(`   ✅ Found ${properties.length} properties with addresses\n`);
+  // 2. Get total count and initialize pagination
+  const client = createElasticsearchClient();
+  const indexName = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || 'acris_search_v_6_1';
 
-  // 3. Generate property sitemaps (split into batches if needed)
-  const batches = Math.ceil(properties.length / PROPERTIES_PER_SITEMAP);
+  console.log('🏢 Fetching total property count from Elasticsearch...');
+  const totalCount = await getTotalPropertiesCount(client, indexName);
+  const limit = TEST_MODE ? 50 : totalCount;
+  console.log(`   ✅ Found ${totalCount.toLocaleString()} total properties with addresses`);
+  console.log(`   📊 Generating sitemaps for ${limit.toLocaleString()} properties\n`);
 
-  for (let i = 0; i < batches; i++) {
-    const start = i * PROPERTIES_PER_SITEMAP;
-    const end = Math.min(start + PROPERTIES_PER_SITEMAP, properties.length);
-    const batch = properties.slice(start, end);
-    const batchNumber = i + 1;
+  // 3. Generate property sitemaps using search_after pagination
+  let processedCount = 0;
+  let batchNumber = 0;
+  let searchAfter: Array<string | number> | undefined = undefined;
+  const startTime = Date.now();
 
-    console.log(`📋 Generating property sitemap batch ${batchNumber}/${batches}...`);
-    const propertySitemap = generatePropertySitemap(batch, batchNumber);
-    const filename = `sitemap-properties-${batchNumber}.xml`;
+  while (processedCount < limit) {
+    const batchSize = Math.min(PROPERTIES_PER_SITEMAP, limit - processedCount);
+    batchNumber++;
+
+    const percentage = ((processedCount / limit) * 100).toFixed(1);
+    const elapsed = (Date.now() - startTime) / 1000;
+    const rate = processedCount / elapsed;
+    const remaining = (limit - processedCount) / rate;
+
+    console.log(`📋 Batch ${batchNumber} (${percentage}% - ${processedCount.toLocaleString()}/${limit.toLocaleString()} properties)`);
+    if (processedCount > 0) {
+      console.log(`   ⏱️  Speed: ${rate.toFixed(0)} properties/sec | ETA: ${Math.ceil(remaining)}s`);
+    }
+
+    const { properties, nextSearchAfter } = await fetchPropertiesBatch(
+      client,
+      indexName,
+      batchSize,
+      searchAfter
+    );
+
+    if (properties.length === 0) {
+      console.log('   ⚠️  No more properties found, stopping pagination\n');
+      break;
+    }
+
+    // Generate sitemap for this batch
+    const propertySitemap = generatePropertySitemap(properties, batchNumber);
+    const filename = `sitemap-properties-${String(batchNumber).padStart(3, '0')}.xml`;
     const filepath = join(PUBLIC_DIR, filename);
     writeFileSync(filepath, propertySitemap, 'utf-8');
-    console.log(`   ✅ Created: ${filename} (${batch.length} properties)\n`);
+    console.log(`   ✅ Created: ${filename} (${properties.length.toLocaleString()} properties)\n`);
 
     sitemapFiles.push({
       loc: `${BASE_URL}/${filename}`,
       lastmod: now,
     });
+
+    processedCount += properties.length;
+    searchAfter = nextSearchAfter;
+
+    // Safety check: prevent infinite loop
+    if (!nextSearchAfter && processedCount < limit) {
+      console.log('   ⚠️  No search_after returned, stopping pagination\n');
+      break;
+    }
   }
 
   // 4. Generate main sitemap index as sitemap.xml
@@ -277,11 +365,17 @@ async function generateSitemaps() {
   console.log(`   ✅ Created: sitemap.xml (${sitemapFiles.length} sub-sitemaps)\n`);
 
   // Summary
+  const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+  const avgRate = processedCount / (Date.now() - startTime) * 1000;
+
   console.log('✨ Sitemap generation complete!\n');
   console.log('📊 Summary:');
-  console.log(`   - Static pages: 5`);
-  console.log(`   - Property pages: ${properties.length}`);
+  console.log(`   - Static pages: 8`);
+  console.log(`   - Property pages: ${processedCount.toLocaleString()}`);
+  console.log(`   - Property sitemaps: ${batchNumber} files`);
   console.log(`   - Total sitemaps: ${sitemapFiles.length}`);
+  console.log(`   - Generation time: ${totalTime}s`);
+  console.log(`   - Average speed: ${avgRate.toFixed(0)} properties/sec`);
   console.log(`   - Main file: public/sitemap.xml\n`);
   console.log('🌐 Submit to Google Search Console:');
   console.log(`   ${BASE_URL}/sitemap.xml`);
