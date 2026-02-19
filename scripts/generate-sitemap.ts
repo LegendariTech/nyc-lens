@@ -166,11 +166,11 @@ function generateStaticSitemap(): string {
     { url: '/', priority: '1.0', changefreq: 'daily' },
     { url: '/search', priority: '0.9', changefreq: 'daily' },
     { url: '/bulk-search', priority: '0.8', changefreq: 'weekly' },
+    { url: '/contact', priority: '0.5', changefreq: 'monthly' },
     { url: '/terms', priority: '0.3', changefreq: 'yearly' },
     { url: '/privacy', priority: '0.3', changefreq: 'yearly' },
     { url: '/cookies', priority: '0.3', changefreq: 'yearly' },
     { url: '/disclaimer', priority: '0.3', changefreq: 'yearly' },
-    { url: '/contact', priority: '0.5', changefreq: 'monthly' },
   ];
 
   const urls = staticPages.map(page =>

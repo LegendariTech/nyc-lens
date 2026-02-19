@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SearchIcon, TableIcon } from "@/components/icons";
 import { Footer } from "@/components/layout/Footer";
+import { ScreenshotDialog } from "@/components/products/ScreenshotDialog";
 
 export default function Home() {
   return (
@@ -40,159 +41,346 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="border-t border-foreground/10 bg-gradient-to-b from-foreground/[0.02] via-teal-500/5 to-foreground/[0.02] px-6 py-16">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-center text-3xl font-bold bg-gradient-to-r from-foreground via-blue-600 to-foreground bg-clip-text text-transparent">
-            Everything You Need to Know About NYC Properties
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-            {/* Feature 1 */}
-            <div className="rounded-lg border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-background p-6 hover:border-blue-500/40 transition-all hover:shadow-lg hover:shadow-blue-500/10">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Real-Time Transactions</h3>
-              <p className="mt-2 text-foreground/70">
-                Access the latest mortgages, deeds, and property transactions as they&apos;re recorded.
-                Search through millions of ACRIS records with powerful filtering and sorting capabilities.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="rounded-lg border border-teal-500/20 bg-gradient-to-br from-teal-500/5 to-background p-6 hover:border-teal-500/40 transition-all hover:shadow-lg hover:shadow-teal-500/10">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-teal-600 shadow-md">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold bg-gradient-to-r from-teal-600 to-teal-800 bg-clip-text text-transparent">Unmasked LLC Owners</h3>
-              <p className="mt-2 text-foreground/70">
-                See the real people and entities behind LLC-owned properties.
-                We reveal the actual owners and decision-makers, cutting through corporate structures.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="rounded-lg border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-background p-6 hover:border-amber-500/40 transition-all hover:shadow-lg hover:shadow-amber-500/10">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 shadow-md">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold bg-gradient-to-r from-amber-600 to-amber-800 bg-clip-text text-transparent">Comprehensive Tax Data</h3>
-              <p className="mt-2 text-foreground/70">
-                Access detailed property tax assessments, valuations, and exemptions.
-                Track assessment history and understand the tax burden for any NYC property.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="rounded-lg border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-background p-6 hover:border-purple-500/40 transition-all hover:shadow-lg hover:shadow-purple-500/10">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 shadow-md">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a 2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Aggregated Building Contacts</h3>
-              <p className="mt-2 text-foreground/70">
-                Find all relevant contacts for any building - from HPD registrations, property managers,
-                to responsible parties. All contact information aggregated from multiple official sources.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bulk Search Highlight Section */}
-      <div className="border-t border-foreground/10 bg-gradient-to-b from-foreground/[0.02] via-indigo-500/5 to-foreground/[0.05] px-6 py-16">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border border-indigo-500/30 px-4 py-2 text-sm font-semibold text-foreground backdrop-blur-sm">
-              <TableIcon className="h-4 w-4 text-indigo-600" />
-              Bulk Data Search
-            </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-blue-600 to-teal-600 bg-clip-text text-transparent md:text-4xl">
-              Powerful Data Analysis at Your Fingertips
+      {/* Products Showcase Section */}
+      <div className="border-t border-foreground/10 bg-foreground/[0.02] px-6 py-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Powerful Tools for NYC Real Estate Research
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-foreground/70">
-              Sort, filter, and analyze thousands of NYC property records simultaneously with our advanced bulk search tools.
+            <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
+              Access comprehensive property data from multiple official sources, all in one place
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {/* Sort Feature */}
-            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
-                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-                </svg>
-              </div>
+          {/* Product Sections */}
+          <div className="space-y-24">
+            {/* Product 1: Property Overview */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="font-semibold text-foreground">Sort by Latest Mortgages</h3>
-                <p className="mt-1 text-sm text-foreground/70">
-                  Track the most recent mortgage activity by date, amount, or lender. Stay updated on market trends.
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  Comprehensive Property Snapshots
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Get a complete property overview aggregated from multiple official sources.
+                  Our intelligent data fusion combines ACRIS, PLUTO, tax records, and building
+                  data to provide the most valuable information in a single, easy-to-scan view.
                 </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Building characteristics, zoning, and construction details</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Current ownership, sales history, and mortgage information</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Tax assessments, valuations, and exemptions</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Interactive parcel map with location context</span>
+                  </li>
+                </ul>
+              </div>
+              <ScreenshotDialog
+                src="/screenshots/overview.png"
+                alt="Property overview panel showing building details, ownership, tax assessment, and contacts for 7 Leroy Street including interactive map and comprehensive data cards"
+                title="Property Overview"
+              />
+            </div>
+
+            {/* Product 2: Owner Intelligence */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <ScreenshotDialog
+                  src="/screenshots/contacts.png"
+                  alt="Contacts page revealing unmasked owners extracted from mortgage documents with phone numbers and addresses, aggregated from HPD, tax records, and ACRIS databases"
+                  title="Owner Intelligence"
+                />
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  Unmasked Owner Intelligence
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Powered by advanced AI research, we extract and reveal the real individuals
+                  behind LLCs and corporate entities. Our system aggregates owner contacts from
+                  multiple authoritative sources including HPD registrations, tax owner records,
+                  and signatories on mortgage and deed documents.
+                </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Extract signatories from mortgage and deed documents</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Aggregate contacts from HPD, DOB, and tax owner databases</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Direct phone numbers and mailing addresses when available</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Track ownership changes and contact history over time</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            {/* Building Class Filter */}
-            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
-                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
+            {/* Product 3: Transaction Tracking */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="font-semibold text-foreground">Filter by Building Class</h3>
-                <p className="mt-1 text-sm text-foreground/70">
-                  Target specific property types: residential, commercial, condos, co-ops, and more.
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  Real-Time ACRIS Transaction Data
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Access every ACRIS document with comprehensive, real-time data presented
+                  through an extremely user-friendly interface. Track mortgages, deeds,
+                  assignments, and liens as they&apos;re recorded by NYC with complete party
+                  information and document details.
                 </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Complete transaction history with visual timeline</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Filter by document type: deeds, mortgages, UCC filings, and more</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>View full party details including addresses and roles</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Direct links to official ACRIS document images</span>
+                  </li>
+                </ul>
+              </div>
+              <ScreenshotDialog
+                src="/screenshots/transactions.png"
+                alt="Interactive transaction timeline with filtering showing deeds, mortgages, and assignments for 7 Leroy Street with complete party details and document links"
+                title="Transaction Tracking"
+              />
+            </div>
+
+            {/* Product 4: Tax Information */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <ScreenshotDialog
+                  src="/screenshots/tax.png"
+                  alt="Comprehensive tax assessment panel showing market value, assessed value, transitional values, exemptions, and year-over-year tax changes with trend analysis"
+                  title="Tax Assessment Data"
+                />
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  Comprehensive Tax Assessment Data
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Access detailed tax information including market value, assessed value,
+                  transitional values, and exemptions. Track year-over-year changes to
+                  identify trends in property taxation and understand the complete tax burden
+                  for any NYC property.
+                </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-green-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Market value, assessed value, and transitional assessments</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-green-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Tax exemptions and abatements tracking</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-green-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Year-over-year change analysis with trend indicators</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-green-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Multi-year historical tax assessment data</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            {/* Owner Filter */}
-            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
-                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
+            {/* Product 5: Bulk Search */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="font-semibold text-foreground">Search Recorded Owners</h3>
-                <p className="mt-1 text-sm text-foreground/70">
-                  Find all properties owned by specific individuals, companies, or entities across NYC.
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  High-Performance Bulk Search
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Experience blazing-fast bulk search that lets you explore the most recent
+                  transactions and mortgages across NYC. Updated daily with the latest data,
+                  our comprehensive filtering and sorting system delivers instant results
+                  even when searching through millions of records.
                 </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-indigo-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Daily updates with the latest ACRIS transactions</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-indigo-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Advanced filtering by amount, date, borough, building class, and owner</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-indigo-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Instant sorting and pagination through massive datasets</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-indigo-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Export and analyze trends across thousands of properties</span>
+                  </li>
+                </ul>
+              </div>
+              <ScreenshotDialog
+                src="/screenshots/bulk.png"
+                alt="Bulk search interface showing advanced filtering and sorting options for NYC property transactions with real-time data updates and instant performance"
+                title="Bulk Search"
+              />
+            </div>
+
+            {/* Product 6: AI-Optimized Data */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <ScreenshotDialog
+                  src="/screenshots/ai.png"
+                  alt="AI-optimized data page designed for LLM collaboration with ChatGPT and Claude, providing structured property information for enhanced AI-powered research"
+                  title="AI-Powered Research"
+                />
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  AI-Powered Research Assistant
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Our platform includes AI-optimized pages designed specifically for large language
+                  models like ChatGPT and Claude. Simply click &quot;Ask AI&quot; to instantly
+                  collaborate with your preferred AI assistant, giving it access to all property
+                  data to empower your research with intelligent insights and analysis.
+                </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-purple-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Structured data optimized for ChatGPT, Claude, and Perplexity</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-purple-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>One-click AI assistant integration from any property page</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-purple-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Complete property context automatically shared with AI</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-purple-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Enhanced research capabilities with AI-powered analysis</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            {/* Amount Filter */}
-            <div className="flex gap-4 rounded-lg border border-foreground/10 bg-background p-6">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
-                <svg className="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
+            {/* Product 7: Smart Autocomplete Search */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="font-semibold text-foreground">Filter by Amount Range</h3>
-                <p className="mt-1 text-sm text-foreground/70">
-                  Set minimum and maximum thresholds for mortgage amounts and transaction values.
+                <h3 className="text-3xl font-bold text-foreground mb-4">
+                  Intelligent Autocomplete Search
+                </h3>
+                <p className="text-lg text-foreground/80 mb-6">
+                  Experience our powerful and extremely fast autocomplete search that understands
+                  both BBL (Borough-Block-Lot) and street addresses. Our smart search is aware of
+                  alternative addresses (AKAs) and provides instant property previews with
+                  transaction and ownership information right in the suggestions dropdown.
                 </p>
+                <ul className="space-y-3 text-foreground/70">
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Search by street address or BBL format (e.g., &quot;1-13-1&quot;)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Automatically matches alternative addresses (AKAs) for corner buildings</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Instant preview of ownership and recent transaction data</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg className="h-6 w-6 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Lightning-fast results as you type</span>
+                  </li>
+                </ul>
               </div>
+              <ScreenshotDialog
+                src="/screenshots/autocomplete.png"
+                alt="Smart autocomplete search showing instant property suggestions with BBL and address matching, including AKA addresses and transaction previews"
+                title="Autocomplete Search"
+              />
             </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/bulk-search"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:shadow-xl hover:shadow-indigo-500/40 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-            >
-              <TableIcon className="h-5 w-5" />
-              Try Bulk Search
-            </Link>
           </div>
         </div>
       </div>

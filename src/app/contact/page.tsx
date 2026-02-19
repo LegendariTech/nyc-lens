@@ -28,58 +28,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Specific Contact Purposes</h2>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="p-4 border border-foreground/10 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Privacy & Data Requests</h3>
-              <p className="text-sm mb-2">GDPR, CCPA requests, data deletion, privacy questions</p>
-              <p className="text-sm">
-                <strong>Email:</strong>{' '}
-                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
-                  info@bblclub.com
-                </a>
-              </p>
-            </div>
-
-            <div className="p-4 border border-foreground/10 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Legal & Terms</h3>
-              <p className="text-sm mb-2">Legal questions, terms clarifications, compliance</p>
-              <p className="text-sm">
-                <strong>Email:</strong>{' '}
-                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
-                  info@bblclub.com
-                </a>
-              </p>
-            </div>
-
-            <div className="p-4 border border-foreground/10 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Data Corrections</h3>
-              <p className="text-sm mb-2">Report data errors, inaccuracies, or issues</p>
-              <p className="text-sm">
-                <strong>Email:</strong>{' '}
-                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
-                  info@bblclub.com
-                </a>
-              </p>
-              <p className="text-xs text-foreground/70 mt-2">
-                Note: We display public data from NYC agencies. For official corrections, contact the source agency directly.
-              </p>
-            </div>
-
-            <div className="p-4 border border-foreground/10 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Technical Support</h3>
-              <p className="text-sm mb-2">Bug reports, technical issues, feature requests</p>
-              <p className="text-sm">
-                <strong>Email:</strong>{' '}
-                <a href="mailto:info@bblclub.com" className="text-blue-600 hover:underline">
-                  info@bblclub.com
-                </a>
-              </p>
-            </div>
-          </div>
-        </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-4">Data Source Contacts</h2>
@@ -142,23 +90,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Response Time</h2>
-          <p>
-            We strive to respond to all inquiries within 2-3 business days. Privacy requests under GDPR or CCPA will be addressed within the legally required timeframe (typically 30 days).
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Business Hours</h2>
-          <p>
-            Monday - Friday: 9:00 AM - 6:00 PM EST<br />
-            Saturday - Sunday: Closed
-          </p>
-          <p className="text-sm text-foreground/70 mt-2">
-            Email inquiries are monitored during business hours. We will respond as quickly as possible.
-          </p>
-        </section>
 
         <section className="mt-12 pt-6 border-t border-foreground/10">
           <p className="text-sm text-foreground/70">
