@@ -61,11 +61,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://t.contentsquare.net",
               "style-src 'self' 'unsafe-inline' https://api.mapbox.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.elastic-cloud.com https://*.database.windows.net https://api.mapbox.com https://events.mapbox.com https://www.google-analytics.com https://vitals.vercel-insights.com",
+              "connect-src 'self' https://*.elastic-cloud.com https://*.database.windows.net https://api.mapbox.com https://events.mapbox.com https://www.google-analytics.com https://vitals.vercel-insights.com https://*.contentsquare.net",
               "frame-src 'self' https://www.googletagmanager.com",
               "worker-src 'self' blob:",
             ].join('; '),

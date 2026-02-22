@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { TaxTabDisplay } from '../components/TaxTabDisplay';
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
+import { fetchPropertyByBBL } from '@/data/acris';
+import { BOROUGH_NAMES } from '@/constants/nyc';
 
 interface TaxPageProps {
   params: Promise<{
@@ -14,6 +17,31 @@ interface TaxPageProps {
   searchParams: Promise<{
     address?: string;
   }>;
+}
+
+export async function generateMetadata({ params }: TaxPageProps): Promise<Metadata> {
+  const { bbl } = await params;
+  const boroughCode = bbl.split('-')[0];
+  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
+
+  let address = `BBL ${bbl}`;
+  try {
+    const propertyData = await fetchPropertyByBBL(bbl);
+    if (propertyData?.address) {
+      address = propertyData.address;
+    }
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+  }
+
+  return {
+    title: `Tax Assessment & Valuation - ${address}`,
+    description: `View property tax assessment history for ${address} in ${borough}. Market value, assessed value, exemptions, and annual property tax from NYC Department of Finance records.`,
+    openGraph: {
+      title: `Tax Assessment - ${address}`,
+      description: `Property tax and valuation history for ${address}`,
+    },
+  };
 }
 
 export default async function TaxPage({ params, searchParams }: TaxPageProps) {
