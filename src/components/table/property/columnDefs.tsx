@@ -93,7 +93,7 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     }
   },
   {
-    field: 'address',
+    field: 'address_with_unit',
     headerName: 'Address',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
