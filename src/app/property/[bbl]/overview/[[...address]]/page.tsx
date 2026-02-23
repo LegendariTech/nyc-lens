@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { OverviewTab } from '../OverviewTab';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
-import { fetchPropertyByBBL } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { getBoroughDisplayName } from '@/constants/nyc';
@@ -97,31 +97,29 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
     notFound();
   }
 
-  // Fetch PLUTO data, Elasticsearch property data, contacts, and valuation data with error handling
-  let plutoData = null;
-  let propertyData = null;
+  // Fetch property data
+  // Note: getPropertyData fetches PLUTO & ACRIS from cache (warmed by layout.tsx)
+  const { plutoData, propertyData, error: propertyError } = await getPropertyData(bbl);
+
+  // Fetch additional data needed for overview page
   let contactsData = null;
   let valuationData = null;
-  let error: string | undefined;
+  let error: string | undefined = propertyError;
 
   try {
-    const [plutoResult, acrisResult, contactsResult, valuationResult] = await Promise.all([
-      fetchPlutoData(bbl),
-      fetchPropertyByBBL(bbl),
+    const [contactsResult, valuationResult] = await Promise.all([
       fetchOwnerContacts(bbl),
       fetchPropertyValuation(bbl),
     ]);
-    plutoData = plutoResult.data;
-    propertyData = acrisResult;
     contactsData = contactsResult.data;
     valuationData = valuationResult.data;
   } catch (e) {
-    console.error('Error fetching property data:', e);
+    console.error('Error fetching additional property data:', e);
     error = e instanceof Error ? e.message : 'Failed to load property data';
   }
 
   // Generate structured data for SEO
-  const streetAddress = propertyData?.address || plutoData?.address;
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
   const unit = propertyData?.unit || undefined;
   const zipcode = propertyData?.zip_code ?? plutoData?.zipcode;
   const latitude = plutoData?.latitude;
@@ -131,7 +129,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
 
   // Build formatted full address using formatFullAddress
   const fullFormattedAddress = streetAddress && zipcode
-    ? formatFullAddress(streetAddress, unit, boroughCode, zipcode)
+    ? formatFullAddress(streetAddress, undefined, boroughCode, zipcode)
     : streetAddress
       ? `${streetAddress}, ${borough}, NY`
       : `BBL ${bbl}`;
