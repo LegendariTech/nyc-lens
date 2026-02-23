@@ -8,7 +8,6 @@ import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { getBoroughDisplayName } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { formatFullAddress } from '@/utils/formatters';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
@@ -90,7 +89,7 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
 }
 
 export default async function OverviewPage({ params }: OverviewPageProps) {
-  const { bbl } = await params;
+  const { bbl, address: addressSegments } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
@@ -271,7 +270,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksData) }}
       />
 
-      <PropertyPageLayout bbl={bbl} activeTab="overview" address={fullFormattedAddress}>
+      <PropertyPageLayout bbl={bbl} activeTab="overview" address={streetAddress || undefined}>
         <OverviewTab
           plutoData={plutoData}
           propertyData={propertyData}
@@ -280,6 +279,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
           error={error}
           bbl={bbl}
           fullFormattedAddress={fullFormattedAddress}
+          addressSegment={addressSegments?.[0]}
         />
       </PropertyPageLayout>
     </>

@@ -31,6 +31,7 @@ interface OverviewTabProps {
   error?: string;
   bbl?: string;
   fullFormattedAddress?: string;
+  addressSegment?: string;
 }
 
 function InfoItem({ label, value, className, valueStyle }: { label: string; value: string | number; className?: string; valueStyle?: React.CSSProperties }) {
@@ -51,7 +52,14 @@ function SectionCard({ title, children }: { title: string; children: React.React
   );
 }
 
-export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl, fullFormattedAddress }: OverviewTabProps) {
+export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl, fullFormattedAddress, addressSegment }: OverviewTabProps) {
+  // Helper function to build tab URLs with address segment
+  const getTabUrl = (tab: string) => {
+    if (!bbl) return '#';
+    const basePath = `/property/${bbl}/${tab}`;
+    return addressSegment ? `${basePath}/${addressSegment}` : basePath;
+  };
+
   // State for showing/hiding alternative addresses and contacts - must be at top before any returns
   const [showAllAddresses, setShowAllAddresses] = React.useState(false);
   const [showAllContacts, setShowAllContacts] = React.useState(false);
@@ -426,7 +434,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           </div>
           <div className="flex justify-end mt-4">
             <Link
-              href={`/property/${bbl}/pluto`}
+              href={getTabUrl('pluto')}
               aria-label="View more building information"
               className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
             >
@@ -498,7 +506,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           </div>
           <div className="flex justify-end mt-4">
             <Link
-              href={`/property/${bbl}/transactions`}
+              href={getTabUrl('transactions')}
               className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
             >
               Show Transactions
@@ -540,7 +548,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           </div>
           <div className="flex justify-end mt-4">
             <Link
-              href={`/property/${bbl}/tax`}
+              href={getTabUrl('tax')}
               aria-label="View more tax information"
               className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
             >
@@ -587,7 +595,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           </div>
           <div className="flex justify-end mt-4">
             <Link
-              href={`/property/${bbl}/contacts`}
+              href={getTabUrl('contacts')}
               aria-label="View more contact information"
               className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
             >
