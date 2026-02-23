@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ContactsPageClient } from '../components/ContactsPageClient';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
@@ -42,13 +43,19 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         notFound();
     }
 
+    // Get shared property data from cache (warmed by layout)
+    const { plutoData, propertyData } = await getPropertyData(bbl);
+
+    // Extract street address from shared data
+    const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
     // Fetch owner contacts data
     const { data: contactsData, error: contactsError } = await fetchOwnerContacts(bbl);
 
     return (
         <ContactsPageClient
             bbl={bbl}
-            address={address}
+            address={streetAddress || undefined}
             contactsData={contactsData}
             contactsError={contactsError}
         />

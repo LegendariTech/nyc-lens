@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
 import { TransactionsView } from '../components/TransactionsView';
 import { mapDocumentToTransaction } from '../components/TransactionTimeline/utils';
@@ -43,6 +44,12 @@ export default async function TransactionsPage({ params, searchParams }: Transac
     notFound();
   }
 
+  // Get shared property data from cache (warmed by layout)
+  const { plutoData, propertyData } = await getPropertyData(bbl);
+
+  // Extract street address from shared data
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
   // Fetch transactions with error handling
   let transactions: DocumentWithParties[] = [];
   let error: string | undefined;
@@ -55,7 +62,7 @@ export default async function TransactionsPage({ params, searchParams }: Transac
   }
 
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="transactions" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="transactions" address={streetAddress || undefined}>
       {error ? (
         <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">
           <h3 className="mb-2 text-lg font-semibold text-red-600">Error Loading Transactions</h3>
@@ -65,7 +72,7 @@ export default async function TransactionsPage({ params, searchParams }: Transac
         <TransactionsView
           transactions={transactions.map(mapDocumentToTransaction)}
           bbl={bbl}
-          address={address}
+          address={streetAddress || address}
         />
       )}
     </PropertyPageLayout>

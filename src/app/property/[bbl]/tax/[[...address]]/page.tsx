@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { TaxTabDisplay } from '../components/TaxTabDisplay';
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
@@ -44,6 +45,12 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
     notFound();
   }
 
+  // Get shared property data from cache (warmed by layout)
+  const { plutoData, propertyData } = await getPropertyData(bbl);
+
+  // Extract street address from shared data
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
   // Fetch property valuation data
   const { data: valuationData, error: valuationError, metadata } = await fetchPropertyValuation(bbl);
 
@@ -56,7 +63,7 @@ export default async function TaxPage({ params, searchParams }: TaxPageProps) {
   } : null;
 
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="tax" address={address} maxWidth="xl">
+    <PropertyPageLayout bbl={bbl} activeTab="tax" address={streetAddress || undefined} maxWidth="xl">
       {/* Handle error state */}
       {valuationError && (
         <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-6">

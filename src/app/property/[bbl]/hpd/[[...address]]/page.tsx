@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { HpdTab } from '../HpdTab';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
@@ -41,8 +42,14 @@ export default async function HpdPage({ params, searchParams }: HpdPageProps) {
     notFound();
   }
 
+  // Get shared property data from cache (warmed by layout)
+  const { plutoData, propertyData } = await getPropertyData(bbl);
+
+  // Extract street address from shared data
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="hpd" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="hpd" address={streetAddress || undefined}>
       <HpdTab bbl={bbl} />
     </PropertyPageLayout>
   );

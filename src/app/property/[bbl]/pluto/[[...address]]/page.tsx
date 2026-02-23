@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
@@ -42,11 +43,17 @@ export default async function PlutoPage({ params, searchParams }: PlutoPageProps
     notFound();
   }
 
-  // Fetch PLUTO data
+  // Get shared property data from cache (warmed by layout)
+  const { plutoData, propertyData } = await getPropertyData(bbl);
+
+  // Fetch PLUTO data with metadata (returns instantly from cache)
   const { data, metadata, error } = await fetchPlutoData(bbl);
 
+  // Extract street address from shared data
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="pluto" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="pluto" address={streetAddress || undefined}>
       <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} />
     </PropertyPageLayout>
   );
