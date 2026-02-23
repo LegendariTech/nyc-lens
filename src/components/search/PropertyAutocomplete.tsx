@@ -7,7 +7,7 @@ import { fetchProperties, type PropertyItem } from './propertyService';
 import { PropertyResultItem } from './PropertyResultItem';
 import { findMatchInText } from './textMatcher';
 import { buildPropertyUrl } from '@/utils/urlSlug';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getBoroughDisplayName } from '@/constants/nyc';
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
@@ -114,8 +114,8 @@ export function PropertyAutocomplete({
             const bbl = `${item.borough}-${item.block}-${item.lot}`;
             const matchedAddress = item.matchedAddress || item.address_with_unit;
 
-            // Extract borough name for URL
-            const boroughName = BOROUGH_NAMES[item.borough.toString()] || '';
+            // Extract borough name for URL (Manhattan → "New York" for addresses)
+            const boroughName = getBoroughDisplayName(item.borough);
 
             // Get current tab (without address)
             const tab = getTargetTab();
