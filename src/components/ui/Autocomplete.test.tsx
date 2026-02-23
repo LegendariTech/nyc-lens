@@ -387,25 +387,30 @@ describe('Autocomplete', () => {
       const props = createProps({ compact: true });
       const { container } = render(<Autocomplete {...props} />);
 
-      const input = screen.getByRole('textbox');
-      expect(input).toHaveClass('w-96');
+      // In compact mode, the input wrapper should have w-144
+      const inputWrapper = container.querySelector('.w-144');
+      expect(inputWrapper).toBeInTheDocument();
 
       // Container should not have max-w-2xl in compact mode
-      const wrapper = container.querySelector('.w-full');
-      expect(wrapper).not.toHaveClass('max-w-2xl');
+      const outerContainer = container.querySelector('.max-w-2xl');
+      expect(outerContainer).not.toBeInTheDocument();
     });
 
     it('applies full width styling when compact is false', () => {
       const props = createProps({ compact: false });
       const { container } = render(<Autocomplete {...props} />);
 
-      const input = screen.getByRole('textbox');
-      expect(input).toHaveClass('w-full');
-      expect(input).not.toHaveClass('w-96');
+      // In non-compact mode, the input wrapper should have w-full (not w-144)
+      const inputWrapper = container.querySelector('.relative.w-full');
+      expect(inputWrapper).toBeInTheDocument();
+
+      // Input wrapper should not have w-144
+      const compactWrapper = container.querySelector('.w-144');
+      expect(compactWrapper).not.toBeInTheDocument();
 
       // Container should have max-w-2xl
-      const wrapper = container.querySelector('.max-w-2xl');
-      expect(wrapper).toBeInTheDocument();
+      const outerContainer = container.querySelector('.max-w-2xl');
+      expect(outerContainer).toBeInTheDocument();
     });
 
     it('applies custom inputClassName', () => {

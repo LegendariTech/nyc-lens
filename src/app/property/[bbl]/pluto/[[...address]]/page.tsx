@@ -4,8 +4,7 @@ import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
 import { fetchPlutoData } from '@/data/pluto';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
-import { fetchPropertyByBBL } from '@/data/acris';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface PlutoPageProps {
   params: Promise<{
@@ -19,25 +18,14 @@ interface PlutoPageProps {
 
 export async function generateMetadata({ params }: PlutoPageProps): Promise<Metadata> {
   const { bbl } = await params;
-  const boroughCode = bbl.split('-')[0];
-  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
-
-  let address = `BBL ${bbl}`;
-  try {
-    const propertyData = await fetchPropertyByBBL(bbl);
-    if (propertyData?.address) {
-      address = propertyData.address;
-    }
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-  }
+  const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
   return {
-    title: `Building Information - ${address}`,
-    description: `View PLUTO building data for ${address} in ${borough}. Property characteristics, lot size, zoning, building class, units, square footage, and construction details from NYC Department of City Planning.`,
+    title: `${fullFormattedAddress} - Building Information`,
+    description: `View PLUTO building data for ${fullFormattedAddress}. Property characteristics, lot size, zoning, building class, units, square footage, and construction details from NYC Department of City Planning.`,
     openGraph: {
-      title: `Building Information - ${address}`,
-      description: `PLUTO property data for ${address}`,
+      title: `${fullFormattedAddress} - Building Information`,
+      description: `PLUTO property data for ${fullFormattedAddress}`,
     },
   };
 }

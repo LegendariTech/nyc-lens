@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui';
 import { getBuildingClassCategory, BUILDING_CLASS_CODE_MAP } from '@/constants/building';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getBoroughDisplayName } from '@/constants/nyc';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
@@ -30,6 +30,7 @@ interface OverviewTabProps {
   valuationData: PropertyValuation[] | null;
   error?: string;
   bbl?: string;
+  fullFormattedAddress?: string;
 }
 
 function InfoItem({ label, value, className, valueStyle }: { label: string; value: string | number; className?: string; valueStyle?: React.CSSProperties }) {
@@ -50,7 +51,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
   );
 }
 
-export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl }: OverviewTabProps) {
+export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl, fullFormattedAddress }: OverviewTabProps) {
   // State for showing/hiding alternative addresses and contacts - must be at top before any returns
   const [showAllAddresses, setShowAllAddresses] = React.useState(false);
   const [showAllContacts, setShowAllContacts] = React.useState(false);
@@ -105,7 +106,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     (propertyData?.street_number && propertyData?.street_name
       ? `${propertyData.street_number} ${propertyData.street_name}`
       : null);
-  const zipcode = plutoData?.zipcode;
+  const zipcode = propertyData?.zip_code ?? plutoData?.zipcode;
   const alternativeAddresses = propertyData?.aka || [];
 
   const displayedAddresses = showAllAddresses
@@ -287,16 +288,18 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   // Mapbox configuration from environment variables
   const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
-  // Get borough name for intro text
+  // Use formatted address passed from parent or fall back to building it
   const boroughCode = bbl?.split('-')[0];
-  const boroughName = boroughCode ? BOROUGH_NAMES[boroughCode] || 'NYC' : 'NYC';
+  const boroughName = boroughCode ? getBoroughDisplayName(boroughCode) || 'NYC' : 'NYC';
 
-  // Build full address with zipcode for SEO
-  const fullAddress = propertyAddress && zipcode
-    ? `${propertyAddress}, ${boroughName}, NY ${zipcode}`
-    : propertyAddress
-    ? `${propertyAddress}, ${boroughName}, NY`
-    : `BBL ${bbl}, ${boroughName}`;
+  // Use the formatted address from parent if available, otherwise build fallback
+  const fullAddress = fullFormattedAddress || (
+    propertyAddress && zipcode
+      ? `${propertyAddress}, ${boroughName}, NY ${zipcode}`
+      : propertyAddress
+        ? `${propertyAddress}, ${boroughName}, NY`
+        : `BBL ${bbl}, ${boroughName}`
+  );
 
   // Build descriptive intro text
   const buildingTypeDesc = plutoData?.bldgclass && BUILDING_CLASS_CODE_MAP[plutoData.bldgclass]
@@ -308,7 +311,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* SEO-optimized header and intro */}
       <div className="space-y-4">
         <h1 className="text-3xl font-bold text-foreground">
-          Property Information for {fullAddress}
+          {fullAddress}
         </h1>
 
         <div className="space-y-3 text-base text-foreground/80 leading-relaxed">
@@ -329,269 +332,269 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
       {/* Property data sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      {/* Map Section */}
-      <SectionCard title="Location">
-        <div ref={mapContainerRef} className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
-          {/* Mapbox Parcel Map - Only load when visible */}
-          {hasCoordinates && bbl ? (
-            shouldLoadMap ? (
-              <ParcelMap
-                bbl={bbl}
-                latitude={latitude}
-                longitude={longitude}
-                accessToken={MAPBOX_ACCESS_TOKEN}
-                className="absolute inset-0"
-              />
+        {/* Map Section */}
+        <SectionCard title="Location">
+          <div ref={mapContainerRef} className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
+            {/* Mapbox Parcel Map - Only load when visible */}
+            {hasCoordinates && bbl ? (
+              shouldLoadMap ? (
+                <ParcelMap
+                  bbl={bbl}
+                  latitude={latitude}
+                  longitude={longitude}
+                  accessToken={MAPBOX_ACCESS_TOKEN}
+                  className="absolute inset-0"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="animate-pulse">
+                      <svg className="mx-auto h-12 w-12 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                      </svg>
+                    </div>
+                    <p className="text-sm text-foreground/80">Map loading...</p>
+                  </div>
+                </div>
+              )
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="animate-pulse">
-                    <svg className="mx-auto h-12 w-12 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-foreground/80">Map loading...</p>
+                  <svg className="mx-auto h-12 w-12 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  <p className="text-sm text-foreground/80">Location map unavailable</p>
                 </div>
               </div>
-            )
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <svg className="mx-auto h-12 w-12 text-foreground/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                <p className="text-sm text-foreground/80">Location map unavailable</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </SectionCard>
+            )}
+          </div>
+        </SectionCard>
 
-      {/* Address Section */}
-      <SectionCard title="Address">
-        <dl className="space-y-3">
-          <InfoItem label="Property address" value={propertyAddress || '—'} />
-          <InfoItem label="Zip code" value={zipcode || '—'} />
-          <InfoItem label="BBL" value={bbl || '—'} />
+        {/* Address Section */}
+        <SectionCard title="Address">
+          <dl className="space-y-3">
+            <InfoItem label="Property address" value={propertyAddress || '—'} />
+            <InfoItem label="Zip code" value={zipcode || '—'} />
+            <InfoItem label="BBL" value={bbl || '—'} />
 
-          {alternativeAddresses.length > 0 && (
-            <>
-              <div>
-                <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
-                <dd>
-                  <div className="space-y-1">
-                    {displayedAddresses.map((addr, idx) => (
-                      <div key={idx} className="text-sm text-foreground/80">{addr}</div>
-                    ))}
-                  </div>
-                </dd>
-              </div>
-              {alternativeAddresses.length > 2 && (
+            {alternativeAddresses.length > 0 && (
+              <>
                 <div>
-                  <dt className="sr-only">Show more addresses</dt>
+                  <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
                   <dd>
-                    <button
-                      onClick={() => setShowAllAddresses(!showAllAddresses)}
-                      className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
-                    >
-                      {showAllAddresses
-                        ? 'Show less'
-                        : `Show ${alternativeAddresses.length - 2} more`}
-                    </button>
+                    <div className="space-y-1">
+                      {displayedAddresses.map((addr, idx) => (
+                        <div key={idx} className="text-sm text-foreground/80">{addr}</div>
+                      ))}
+                    </div>
                   </dd>
                 </div>
-              )}
-            </>
-          )}
-        </dl>
-      </SectionCard>
-
-      {/* Building Section */}
-      <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-        <div className="flex-1">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Building</h2>
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-            <InfoItem label="Building class" value={buildingClass} />
-            <InfoItem label="Square feet" value={squareFeet} />
-            <InfoItem label="Dimensions" value={buildingDimensions} />
-            <InfoItem label="Buildings on lot" value={buildingsOnLot} />
-            <InfoItem label="Stories" value={stories} />
-            <InfoItem label="Total Units" value={totalUnits} />
-            <InfoItem label="Year built" value={yearBuilt} />
-            <InfoItem label="Year altered" value={yearLastAltered} />
-          </dl>
-        </div>
-        <div className="flex justify-end mt-4">
-          <Link
-            href={`/property/${bbl}/pluto`}
-            aria-label="View more building information"
-            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-          >
-            Show More
-          </Link>
-        </div>
-      </div>
-
-      {/* Ownership Section */}
-      <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-        <div className="flex-1">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
-          <dl className="space-y-3">
-            {/* Unmasked Owner - Most Prominent */}
-            {unmaskedOwnerName && (
-              <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
-                <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
-                  Unmasked Owner
-                </dt>
-                <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
-                {unmaskedOwnerAddress && (
-                  <dd className="text-sm text-foreground/90 mb-1">{unmaskedOwnerAddress}</dd>
+                {alternativeAddresses.length > 2 && (
+                  <div>
+                    <dt className="sr-only">Show more addresses</dt>
+                    <dd>
+                      <button
+                        onClick={() => setShowAllAddresses(!showAllAddresses)}
+                        className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+                      >
+                        {showAllAddresses
+                          ? 'Show less'
+                          : `Show ${alternativeAddresses.length - 2} more`}
+                      </button>
+                    </dd>
+                  </div>
                 )}
-                {unmaskedOwnerPhones.length > 0 && (
-                  <>
-                    <dt className="sr-only">Phone Numbers</dt>
-                    {displayedUnmaskedPhones.map((phone, idx) => (
-                      <dd key={idx} className="text-sm text-foreground/90">
-                        {formatUSPhone(phone)}
-                      </dd>
-                    ))}
-                    {unmaskedOwnerPhones.length > 1 && (
-                      <dd className="mt-1">
-                        <button
-                          onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
-                          className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
-                        >
-                          {showAllUnmaskedPhones
-                            ? 'Show less'
-                            : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
-                        </button>
-                      </dd>
-                    )}
-                  </>
-                )}
-              </div>
+              </>
             )}
-
-            {/* Recorded Owner - Secondary */}
-            <InfoItem label="Recorded Owner" value={recordedOwnerName} />
           </dl>
+        </SectionCard>
 
-          {/* Sale Information */}
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
-            <InfoItem label="Sale Date" value={saleDate} />
-            <InfoItem label="Sale Price" value={salePrice} />
-          </dl>
-
-          {/* Mortgage Information */}
-          <div className="border-t border-border/30 pt-3 mt-3">
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <InfoItem label="Mortgage Date" value={mortgageDate} />
-              <InfoItem label="Mortgage Amount" value={mortgageAmount} />
-            </dl>
-            <dl className="mt-2">
-              <InfoItem label="Lender" value={lenderName} />
+        {/* Building Section */}
+        <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
+          <div className="flex-1">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">Building</h2>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <InfoItem label="Building class" value={buildingClass} />
+              <InfoItem label="Square feet" value={squareFeet} />
+              <InfoItem label="Dimensions" value={buildingDimensions} />
+              <InfoItem label="Buildings on lot" value={buildingsOnLot} />
+              <InfoItem label="Stories" value={stories} />
+              <InfoItem label="Total Units" value={totalUnits} />
+              <InfoItem label="Year built" value={yearBuilt} />
+              <InfoItem label="Year altered" value={yearLastAltered} />
             </dl>
           </div>
+          <div className="flex justify-end mt-4">
+            <Link
+              href={`/property/${bbl}/pluto`}
+              aria-label="View more building information"
+              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            >
+              Show More
+            </Link>
+          </div>
         </div>
-        <div className="flex justify-end mt-4">
-          <Link
-            href={`/property/${bbl}/transactions`}
-            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-          >
-            Show Transactions
-          </Link>
-        </div>
-      </div>
 
-      {/* Tax Data Section - Tax Information */}
-      <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-        <div className="flex-1">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Tax Information</h2>
-          <dl className="space-y-3">
-            <InfoItem label="Estimated Market Value" value={estimatedMarketValue} />
-            <InfoItem label="Assessed Value" value={assessedValue} />
-            {hasMarketValueExemption && (
-              <InfoItem label="Market Value Exemption" value={marketValueExemption} />
-            )}
-            <InfoItem label="Transitional Assessed Value" value={transitionalAssessedValue} />
-            {hasTransitionalValueExemption && (
-              <InfoItem label="Transitional Value Exemption" value={transitionalValueExemption} />
-            )}
-          </dl>
-
-          <dl className="pt-2 border-t border-border/30 mt-2">
-            <div>
-              <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({taxYear})</dt>
-              <dd className="text-sm font-medium text-foreground">{taxableAssessedValueDisplay}</dd>
-            </div>
-          </dl>
-
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-            <InfoItem label="Property Tax" value={propertyTax} />
-            <InfoItem
-              label="Year Over Year Change"
-              value={yoyChange}
-              valueStyle={yoyColor ? { color: yoyColor } : undefined}
-            />
-          </dl>
-        </div>
-        <div className="flex justify-end mt-4">
-          <Link
-            href={`/property/${bbl}/tax`}
-            aria-label="View more tax information"
-            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-          >
-            Show More
-          </Link>
-        </div>
-      </div>
-
-      {/* Contacts Section */}
-      <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-        <div className="flex-1">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
-          {displayedContacts.length > 0 ? (
-            <div className="space-y-3">
-              {displayedContacts.map((contact, index) => {
-                const contactName = contact.owner_master_full_name || 'Unknown';
-                const phoneNumbers = contact.owner_phone || [];
-
-                return (
-                  <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
-                    <div className="text-sm font-medium text-foreground">{contactName}</div>
-                    {phoneNumbers.map((phone, phoneIdx) => (
-                      <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
-                        {formatUSPhone(phone)}
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
-              {allContacts.length > 4 && (
-                <button
-                  onClick={() => setShowAllContacts(!showAllContacts)}
-                  className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
-                >
-                  {showAllContacts
-                    ? 'Show less'
-                    : `Show ${allContacts.length - 4} more`}
-                </button>
+        {/* Ownership Section */}
+        <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
+          <div className="flex-1">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
+            <dl className="space-y-3">
+              {/* Unmasked Owner - Most Prominent */}
+              {unmaskedOwnerName && (
+                <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
+                  <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
+                    Unmasked Owner
+                  </dt>
+                  <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
+                  {unmaskedOwnerAddress && (
+                    <dd className="text-sm text-foreground/90 mb-1">{unmaskedOwnerAddress}</dd>
+                  )}
+                  {unmaskedOwnerPhones.length > 0 && (
+                    <>
+                      <dt className="sr-only">Phone Numbers</dt>
+                      {displayedUnmaskedPhones.map((phone, idx) => (
+                        <dd key={idx} className="text-sm text-foreground/90">
+                          {formatUSPhone(phone)}
+                        </dd>
+                      ))}
+                      {unmaskedOwnerPhones.length > 1 && (
+                        <dd className="mt-1">
+                          <button
+                            onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
+                            className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+                          >
+                            {showAllUnmaskedPhones
+                              ? 'Show less'
+                              : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
+                          </button>
+                        </dd>
+                      )}
+                    </>
+                  )}
+                </div>
               )}
+
+              {/* Recorded Owner - Secondary */}
+              <InfoItem label="Recorded Owner" value={recordedOwnerName} />
+            </dl>
+
+            {/* Sale Information */}
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
+              <InfoItem label="Sale Date" value={saleDate} />
+              <InfoItem label="Sale Price" value={salePrice} />
+            </dl>
+
+            {/* Mortgage Information */}
+            <div className="border-t border-border/30 pt-3 mt-3">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+                <InfoItem label="Mortgage Date" value={mortgageDate} />
+                <InfoItem label="Mortgage Amount" value={mortgageAmount} />
+              </dl>
+              <dl className="mt-2">
+                <InfoItem label="Lender" value={lenderName} />
+              </dl>
             </div>
-          ) : (
-            <p className="text-sm text-foreground/80">No contact information available</p>
-          )}
+          </div>
+          <div className="flex justify-end mt-4">
+            <Link
+              href={`/property/${bbl}/transactions`}
+              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            >
+              Show Transactions
+            </Link>
+          </div>
         </div>
-        <div className="flex justify-end mt-4">
-          <Link
-            href={`/property/${bbl}/contacts`}
-            aria-label="View more contact information"
-            className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-          >
-            Show More
-          </Link>
+
+        {/* Tax Data Section - Tax Information */}
+        <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
+          <div className="flex-1">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">Tax Information</h2>
+            <dl className="space-y-3">
+              <InfoItem label="Estimated Market Value" value={estimatedMarketValue} />
+              <InfoItem label="Assessed Value" value={assessedValue} />
+              {hasMarketValueExemption && (
+                <InfoItem label="Market Value Exemption" value={marketValueExemption} />
+              )}
+              <InfoItem label="Transitional Assessed Value" value={transitionalAssessedValue} />
+              {hasTransitionalValueExemption && (
+                <InfoItem label="Transitional Value Exemption" value={transitionalValueExemption} />
+              )}
+            </dl>
+
+            <dl className="pt-2 border-t border-border/30 mt-2">
+              <div>
+                <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({taxYear})</dt>
+                <dd className="text-sm font-medium text-foreground">{taxableAssessedValueDisplay}</dd>
+              </div>
+            </dl>
+
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
+              <InfoItem label="Property Tax" value={propertyTax} />
+              <InfoItem
+                label="Year Over Year Change"
+                value={yoyChange}
+                valueStyle={yoyColor ? { color: yoyColor } : undefined}
+              />
+            </dl>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Link
+              href={`/property/${bbl}/tax`}
+              aria-label="View more tax information"
+              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            >
+              Show More
+            </Link>
+          </div>
         </div>
-      </div>
+
+        {/* Contacts Section */}
+        <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
+          <div className="flex-1">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
+            {displayedContacts.length > 0 ? (
+              <div className="space-y-3">
+                {displayedContacts.map((contact, index) => {
+                  const contactName = contact.owner_master_full_name || 'Unknown';
+                  const phoneNumbers = contact.owner_phone || [];
+
+                  return (
+                    <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
+                      <div className="text-sm font-medium text-foreground">{contactName}</div>
+                      {phoneNumbers.map((phone, phoneIdx) => (
+                        <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
+                          {formatUSPhone(phone)}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+                {allContacts.length > 4 && (
+                  <button
+                    onClick={() => setShowAllContacts(!showAllContacts)}
+                    className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+                  >
+                    {showAllContacts
+                      ? 'Show less'
+                      : `Show ${allContacts.length - 4} more`}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-foreground/80">No contact information available</p>
+            )}
+          </div>
+          <div className="flex justify-end mt-4">
+            <Link
+              href={`/property/${bbl}/contacts`}
+              aria-label="View more contact information"
+              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+            >
+              Show More
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* SEO-friendly FAQ section - Full width plain text below cards */}

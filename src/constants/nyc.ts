@@ -59,6 +59,14 @@ export function getBoroughName(code: string | number): string {
 }
 
 /**
+ * Get borough name for display in titles and addresses (Manhattan → "New York")
+ */
+export function getBoroughDisplayName(code: string | number): string {
+  const name = getBoroughName(code);
+  return name === 'Manhattan' ? 'New York' : name;
+}
+
+/**
  * Get borough slug for URL generation
  */
 export function getBoroughSlug(boroughCode: number): string | null {

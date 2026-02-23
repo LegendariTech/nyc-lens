@@ -6,8 +6,7 @@ import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { parseAddressFromUrl } from '@/utils/urlSlug';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
-import { fetchPropertyByBBL } from '@/data/acris';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface TaxPageProps {
   params: Promise<{
@@ -21,25 +20,14 @@ interface TaxPageProps {
 
 export async function generateMetadata({ params }: TaxPageProps): Promise<Metadata> {
   const { bbl } = await params;
-  const boroughCode = bbl.split('-')[0];
-  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
-
-  let address = `BBL ${bbl}`;
-  try {
-    const propertyData = await fetchPropertyByBBL(bbl);
-    if (propertyData?.address) {
-      address = propertyData.address;
-    }
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-  }
+  const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
   return {
-    title: `Tax Assessment & Valuation - ${address}`,
-    description: `View property tax assessment history for ${address} in ${borough}. Market value, assessed value, exemptions, and annual property tax from NYC Department of Finance records.`,
+    title: `${fullFormattedAddress} - Tax Assessment & Valuation`,
+    description: `View property tax assessment history for ${fullFormattedAddress}. Market value, assessed value, exemptions, and annual property tax from NYC Department of Finance records.`,
     openGraph: {
-      title: `Tax Assessment - ${address}`,
-      description: `Property tax and valuation history for ${address}`,
+      title: `${fullFormattedAddress} - Tax Assessment & Valuation`,
+      description: `Property tax and valuation history for ${fullFormattedAddress}`,
     },
   };
 }
