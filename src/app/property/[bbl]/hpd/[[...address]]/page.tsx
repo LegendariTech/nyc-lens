@@ -3,16 +3,12 @@ import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { HpdTab } from '../HpdTab';
 import { getPropertyData } from '../../utils/getPropertyData';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface HpdPageProps {
   params: Promise<{
     bbl: string;
     address?: string[];
-  }>;
-  searchParams: Promise<{
-    address?: string;
   }>;
 }
 
@@ -30,11 +26,8 @@ export async function generateMetadata({ params }: HpdPageProps): Promise<Metada
   };
 }
 
-export default async function HpdPage({ params, searchParams }: HpdPageProps) {
-  const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function HpdPage({ params }: HpdPageProps) {
+  const { bbl } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

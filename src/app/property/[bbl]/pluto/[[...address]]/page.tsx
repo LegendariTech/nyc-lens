@@ -4,16 +4,12 @@ import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface PlutoPageProps {
   params: Promise<{
     bbl: string;
     address?: string[];
-  }>;
-  searchParams: Promise<{
-    address?: string;
   }>;
 }
 
@@ -31,11 +27,8 @@ export async function generateMetadata({ params }: PlutoPageProps): Promise<Meta
   };
 }
 
-export default async function PlutoPage({ params, searchParams }: PlutoPageProps) {
-  const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function PlutoPage({ params }: PlutoPageProps) {
+  const { bbl } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
@@ -43,14 +36,14 @@ export default async function PlutoPage({ params, searchParams }: PlutoPageProps
     notFound();
   }
 
-  // Get shared property data from cache (warmed by layout)
-  const { plutoData, propertyData } = await getPropertyData(bbl);
-
-  // Fetch PLUTO data with metadata (returns instantly from cache)
+  // Fetch PLUTO data with metadata (returns instantly from cache warmed by layout)
   const { data, metadata, error } = await fetchPlutoData(bbl);
 
+  // Get propertyData for address extraction (returns instantly from cache)
+  const { propertyData } = await getPropertyData(bbl);
+
   // Extract street address from shared data
-  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+  const streetAddress = propertyData?.address_with_unit || data?.address;
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="pluto" address={streetAddress || undefined}>

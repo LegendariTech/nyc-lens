@@ -253,12 +253,11 @@ describe('TransactionsView', () => {
       expect(screen.getByTestId('transaction-timeline')).toBeInTheDocument();
     });
 
-    it('renders with address prop', () => {
+    it('renders with bbl prop', () => {
       render(
         <TransactionsView
           transactions={mockTransactions}
           bbl="1-1-1"
-          address="123 Main St"
         />
       );
 

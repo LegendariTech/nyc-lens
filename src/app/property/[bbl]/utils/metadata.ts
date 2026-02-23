@@ -25,8 +25,10 @@ export async function getFormattedAddressForMetadata(bbl: string): Promise<strin
     ]);
 
     // Get address components and build formatted address
-    const streetAddress = propertyResult?.address || plutoResult.data?.address;
-    const unit = propertyResult?.unit || undefined;
+    // Prefer address_with_unit (already includes unit) for consistency with page components
+    const streetAddress = propertyResult?.address_with_unit || propertyResult?.address || plutoResult.data?.address;
+    // Only use separate unit field if we didn't get address_with_unit (to avoid duplication)
+    const unit = propertyResult?.address_with_unit ? undefined : (propertyResult?.unit || undefined);
     const zipcode = propertyResult?.zip_code || plutoResult.data?.zipcode;
 
     // Build formatted address using formatFullAddress

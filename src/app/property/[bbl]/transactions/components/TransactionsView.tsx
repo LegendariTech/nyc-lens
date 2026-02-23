@@ -9,10 +9,9 @@ import type { Transaction } from './TransactionTimeline/types';
 interface TransactionsViewProps {
     transactions: Transaction[];
     bbl: string;
-    address?: string;
 }
 
-export function TransactionsView({ transactions, bbl, address }: TransactionsViewProps) {
+export function TransactionsView({ transactions, bbl }: TransactionsViewProps) {
     const [tableView, setTableView] = useState(false);
 
     // Parse BBL for DocumentTable
@@ -38,7 +37,6 @@ export function TransactionsView({ transactions, bbl, address }: TransactionsVie
                             borough,
                             block,
                             lot,
-                            address,
                         }}
                     />
                 </div>

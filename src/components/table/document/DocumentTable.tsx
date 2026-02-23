@@ -14,7 +14,6 @@ interface DocumentTableData {
   borough: string;
   block: string;
   lot: string;
-  address?: string;
 }
 
 // Props can be either ag-Grid cell renderer props OR standalone props

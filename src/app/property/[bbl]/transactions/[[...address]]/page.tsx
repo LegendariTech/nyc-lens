@@ -5,16 +5,12 @@ import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
 import { TransactionsView } from '../components/TransactionsView';
 import { mapDocumentToTransaction } from '../components/TransactionTimeline/utils';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface TransactionsPageProps {
   params: Promise<{
     bbl: string;
     address?: string[];
-  }>;
-  searchParams: Promise<{
-    address?: string;
   }>;
 }
 
@@ -32,11 +28,8 @@ export async function generateMetadata({ params }: TransactionsPageProps): Promi
   };
 }
 
-export default async function TransactionsPage({ params, searchParams }: TransactionsPageProps) {
-  const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function TransactionsPage({ params }: TransactionsPageProps) {
+  const { bbl } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
@@ -72,7 +65,6 @@ export default async function TransactionsPage({ params, searchParams }: Transac
         <TransactionsView
           transactions={transactions.map(mapDocumentToTransaction)}
           bbl={bbl}
-          address={streetAddress || address}
         />
       )}
     </PropertyPageLayout>

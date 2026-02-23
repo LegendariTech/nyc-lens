@@ -3,16 +3,12 @@ import type { Metadata } from 'next';
 import { ContactsPageClient } from '../components/ContactsPageClient';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchOwnerContacts } from '@/data/contacts';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface ContactsPageProps {
     params: Promise<{
         bbl: string;
         address?: string[];
-    }>;
-    searchParams: Promise<{
-        address?: string; // Backwards compatibility
     }>;
 }
 
@@ -30,12 +26,8 @@ export async function generateMetadata({ params }: ContactsPageProps): Promise<M
     };
 }
 
-export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
-    const { bbl, address: addressSegments } = await params;
-    const { address: queryAddress } = await searchParams;
-
-    // Parse address from URL path segments or fall back to query param
-    const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function ContactsPage({ params }: ContactsPageProps) {
+    const { bbl } = await params;
 
     // Parse BBL format
     const bblParts = bbl.split('-');

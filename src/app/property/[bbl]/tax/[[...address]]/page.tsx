@@ -5,7 +5,6 @@ import { TaxTabDisplay } from '../components/TaxTabDisplay';
 import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPropertyValuation } from '@/data/valuation';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
@@ -13,9 +12,6 @@ interface TaxPageProps {
   params: Promise<{
     bbl: string;
     address?: string[];
-  }>;
-  searchParams: Promise<{
-    address?: string;
   }>;
 }
 
@@ -33,11 +29,8 @@ export async function generateMetadata({ params }: TaxPageProps): Promise<Metada
   };
 }
 
-export default async function TaxPage({ params, searchParams }: TaxPageProps) {
-  const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function TaxPage({ params }: TaxPageProps) {
+  const { bbl } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');

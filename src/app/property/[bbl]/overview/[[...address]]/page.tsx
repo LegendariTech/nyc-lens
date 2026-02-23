@@ -19,9 +19,6 @@ interface OverviewPageProps {
     bbl: string;
     address?: string[];
   }>;
-  searchParams: Promise<{
-    address?: string; // Still support old query param format for backwards compatibility
-  }>;
 }
 
 export async function generateMetadata({ params }: OverviewPageProps): Promise<Metadata> {
