@@ -234,18 +234,13 @@ export function formatFullAddress(
   zipcode: string,
   state: string = 'NY'
 ): string {
-  // Build address parts
-  const parts: string[] = [addressLine];
-
-  // Add unit if provided
-  if (unit) {
-    parts[0] = `${addressLine} ${unit}`;
-  }
+  // Build street address with unit if provided
+  const streetWithUnit = unit ? `${addressLine} ${unit}` : addressLine;
 
   // Get borough name (Manhattan becomes "New York")
   const boroughName = getBoroughDisplayName(borough);
 
   // Combine: "220 Riverside Blvd 20A, New York, NY 10069"
-  return `${parts[0]}, ${boroughName}, ${state} ${zipcode}`;
+  return `${streetWithUnit}, ${boroughName}, ${state} ${zipcode}`;
 }
 

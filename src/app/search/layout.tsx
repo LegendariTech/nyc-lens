@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description:
       'Search NYC properties by address, owner, or BBL. Access property records, ownership, transactions, and building details.',
     type: 'website',
-    url: '/search',
+    url: 'https://bblclub.com/search',
     siteName: 'BBL Club',
   },
   twitter: {

@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { queryMany } from './db';
 import type { PropertyValuation } from '@/types/valuation';
 import type { DatasourceMetadata } from '@/app/property/[bbl]/utils/datasourceDisplay';
@@ -35,11 +36,14 @@ function parseBBL(bbl: string): { boro: number; block: number; lot: number } | n
 /**
  * Fetch property valuation data for a specific property from the database
  * Returns all valuation records for the given BBL, ordered by year descending
- * 
+ *
  * @param bbl - BBL in format "1-13-1"
  * @returns Promise containing array of valuation records or error
+ *
+ * Wrapped with React.cache() to deduplicate requests within the same render pass.
+ * This prevents duplicate MSSQL queries when called from both generateMetadata() and page components.
  */
-export async function fetchPropertyValuation(bbl: string): Promise<PropertyValuationResult> {
+export const fetchPropertyValuation = cache(async (bbl: string): Promise<PropertyValuationResult> => {
   try {
     // Parse the BBL
     const parsed = parseBBL(bbl);
@@ -93,4 +97,4 @@ export async function fetchPropertyValuation(bbl: string): Promise<PropertyValua
       error: `Failed to load valuation data for BBL ${bbl}: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
-}
+});

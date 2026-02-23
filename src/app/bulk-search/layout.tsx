@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description:
       'Search and filter thousands of NYC properties. Advanced filtering by borough, owner, sale price, mortgage, and more.',
     type: 'website',
-    url: '/bulk-search',
+    url: 'https://bblclub.com/bulk-search',
     siteName: 'BBL Club',
   },
   twitter: {
