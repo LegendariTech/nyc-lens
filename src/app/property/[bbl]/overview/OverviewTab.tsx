@@ -4,16 +4,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui';
-import { getBuildingClassCategory, BUILDING_CLASS_CODE_MAP } from '@/constants/building';
-import { getBoroughDisplayName } from '@/constants/nyc';
+import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
 import { PropertyValuation } from '@/types/valuation';
-import { formatValue, formatDate, formatUSPhone, formatCurrency, formatYoyChange } from '@/utils/formatters';
-import { getTaxableAssessedValue, formatTaxYear, transformValuationToTaxRows } from '@/app/property/[bbl]/tax/components/utils';
+import { formatValue, formatUSPhone } from '@/utils/formatters';
+import {
+  getBuildingSectionData,
+  getAddressSectionData,
+  getOwnershipSectionData,
+  getTaxSectionData,
+  getContactsSectionData,
+} from './utils';
 
-// Lazy load heavy Mapbox component with intersection observer
 const ParcelMap = dynamic(() => import('@/components/map/ParcelMap').then(mod => ({ default: mod.ParcelMap })), {
   loading: () => (
     <div className="absolute inset-0 flex items-center justify-center bg-foreground/5">
@@ -53,19 +57,16 @@ function SectionCard({ title, children }: { title: string; children: React.React
 }
 
 export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl, fullFormattedAddress, addressSegment }: OverviewTabProps) {
-  // Helper function to build tab URLs with address segment
   const getTabUrl = (tab: string) => {
     if (!bbl) return '#';
     const basePath = `/property/${bbl}/${tab}`;
     return addressSegment ? `${basePath}/${addressSegment}` : basePath;
   };
 
-  // State for showing/hiding alternative addresses and contacts - must be at top before any returns
   const [showAllAddresses, setShowAllAddresses] = React.useState(false);
   const [showAllContacts, setShowAllContacts] = React.useState(false);
   const [showAllUnmaskedPhones, setShowAllUnmaskedPhones] = React.useState(false);
 
-  // Intersection observer for lazy loading map only when visible
   const [shouldLoadMap, setShouldLoadMap] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +80,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           observer.disconnect();
         }
       },
-      { rootMargin: '200px' } // Start loading 200px before visible
+      { rootMargin: '200px' }
     );
 
     observer.observe(mapContainerRef.current);
@@ -96,9 +97,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     );
   }
 
-  // Use whichever data source is available
   const data = plutoData || propertyData;
-
   if (!data) {
     return (
       <Card>
@@ -109,207 +108,35 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     );
   }
 
-  // Extract address data
-  const propertyAddress = propertyData?.address ||
-    (propertyData?.street_number && propertyData?.street_name
-      ? `${propertyData.street_number} ${propertyData.street_name}`
-      : null);
-  const zipcode = propertyData?.zip_code ?? plutoData?.zipcode;
-  const alternativeAddresses = propertyData?.aka || [];
+  // Prepare all section data via utils
+  const latestValuation = valuationData && valuationData.length > 0 ? valuationData[0] : null;
 
+  const address = getAddressSectionData(propertyData, plutoData, bbl, fullFormattedAddress);
+  const building = getBuildingSectionData(plutoData, latestValuation);
+  const ownership = getOwnershipSectionData(propertyData, contactsData);
+  const tax = getTaxSectionData(valuationData);
+  const allContacts = getContactsSectionData(contactsData);
+
+  // State-dependent slicing
   const displayedAddresses = showAllAddresses
-    ? alternativeAddresses
-    : alternativeAddresses.slice(0, 2);
-
-  // Extract and format building data from PLUTO
-  const buildingClass = plutoData?.bldgclass
-    ? `${getBuildingClassCategory(plutoData.bldgclass)} (${plutoData.bldgclass})`
-    : '—';
-
-  const squareFeet = plutoData?.bldgarea
-    ? formatValue(plutoData.bldgarea, undefined, 'number')
-    : '—';
-
-  const formatDimension = (val: string | number | null | undefined) => {
-    if (val === null || val === undefined) return null;
-    const num = typeof val === 'string' ? parseFloat(val) : val;
-    return isNaN(num) || num === 0 ? null : Math.round(num);
-  };
-
-  const frontFt = formatDimension(plutoData?.bldgfront);
-  const depthFt = formatDimension(plutoData?.bldgdepth);
-  const buildingDimensions = (frontFt && depthFt)
-    ? `${frontFt} ft x ${depthFt} ft`
-    : '—';
-
-  const buildingsOnLot = plutoData?.numbldgs != null
-    ? formatValue(plutoData.numbldgs, undefined, 'number')
-    : '—';
-
-  const stories = plutoData?.numfloors
-    ? formatValue(plutoData.numfloors, undefined, 'number')
-    : '—';
-
-  const totalUnits = plutoData?.unitstotal != null
-    ? formatValue(plutoData.unitstotal, undefined, 'number')
-    : '—';
-
-  const yearBuilt = plutoData?.yearbuilt
-    ? formatValue(plutoData.yearbuilt, undefined, 'year')
-    : '—';
-
-  const yearAltered = plutoData?.yearalter2 || plutoData?.yearalter1;
-  const yearLastAltered = yearAltered
-    ? formatValue(yearAltered, undefined, 'year')
-    : '—';
-
-  // Extract unmasked owner from contacts with source "signator"
-  const unmaskedOwners = contactsData
-    ?.filter(contact =>
-      contact.status === 'current' &&
-      contact.source?.includes('signator')
-    )
-    .sort((a, b) => {
-      // Sort by date if available, most recent first
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateB - dateA;
-    }) || [];
-
-  const unmaskedOwner = unmaskedOwners.length > 0 ? unmaskedOwners[0] : null;
-  const unmaskedOwnerName = unmaskedOwner?.owner_master_full_name || null;
-  const unmaskedOwnerAddress = unmaskedOwner?.owner_full_address?.[0] || null;
-  const unmaskedOwnerPhones = unmaskedOwner?.owner_phone?.filter(phone => phone && phone !== 'N/A') || [];
+    ? address.alternativeAddresses
+    : address.alternativeAddresses.slice(0, 2);
 
   const displayedUnmaskedPhones = showAllUnmaskedPhones
-    ? unmaskedOwnerPhones
-    : unmaskedOwnerPhones.slice(0, 1);
-
-  // Extract and format ownership data from ACRIS
-  const recordedOwnerName = propertyData?.buyer_name || '—';
-
-  const saleDate = propertyData?.sale_document_date
-    ? formatDate(propertyData.sale_document_date)
-    : '—';
-
-  const salePrice = propertyData?.sale_document_amount != null
-    ? formatValue(propertyData.sale_document_amount, undefined, 'currency')
-    : '—';
-
-  const mortgageDate = propertyData?.mortgage_document_date
-    ? formatDate(propertyData.mortgage_document_date)
-    : '—';
-
-  const mortgageAmount = propertyData?.mortgage_document_amount != null
-    ? formatValue(propertyData.mortgage_document_amount, undefined, 'currency')
-    : '—';
-
-  const lenderName = propertyData?.lender_name || '—';
-
-  // Extract and format contacts data - prioritize contacts with phone numbers, then show all others
-  const allContacts = contactsData
-    ?.filter(contact => {
-      // Filter out contacts that are not current
-      if (contact.status !== 'current') {
-        return false;
-      }
-      // Filter out contacts with master name N/A
-      if (!contact.owner_master_full_name || contact.owner_master_full_name === 'N/A') {
-        return false;
-      }
-      return true;
-    })
-    .map(contact => ({
-      ...contact,
-      // Filter out N/A from phone array
-      owner_phone: contact.owner_phone?.filter(phone => phone && phone !== 'N/A') || []
-    }))
-    .sort((a, b) => {
-      // Prioritize contacts with phone numbers first
-      const aHasPhone = a.owner_phone && a.owner_phone.length > 0;
-      const bHasPhone = b.owner_phone && b.owner_phone.length > 0;
-      if (aHasPhone && !bHasPhone) return -1;
-      if (!aHasPhone && bHasPhone) return 1;
-      return 0;
-    }) || [];
+    ? (ownership.unmaskedOwner?.phones ?? [])
+    : (ownership.unmaskedOwner?.phones ?? []).slice(0, 1);
 
   const displayedContacts = showAllContacts
     ? allContacts
     : allContacts.slice(0, 4);
 
-  // Extract and format tax/assessment data from valuation
-  const latestValuation = valuationData && valuationData.length > 0 ? valuationData[0] : null;
-  const taxRows = valuationData ? transformValuationToTaxRows(valuationData) : [];
-  const latestTaxRow = taxRows.length > 0 ? taxRows[0] : null;
-
-  const estimatedMarketValue = latestValuation?.finmkttot != null
-    ? formatCurrency(latestValuation.finmkttot)
-    : '—';
-
-  const assessedValue = latestValuation?.finacttot != null
-    ? formatCurrency(latestValuation.finacttot)
-    : '—';
-
-  const hasMarketValueExemption = latestValuation?.finactextot != null &&
-    latestValuation.finactextot !== 0
-  const marketValueExemption = hasMarketValueExemption
-    ? formatCurrency(latestValuation.finactextot)
-    : '—';
-
-  const transitionalAssessedValue = latestValuation?.fintrntot != null
-    ? formatCurrency(latestValuation.fintrntot)
-    : '—';
-
-  const hasTransitionalValueExemption = latestValuation?.fintrnextot != null &&
-    latestValuation.fintrnextot !== 0
-  const transitionalValueExemption = hasTransitionalValueExemption
-    ? formatCurrency(latestValuation.fintrnextot)
-    : '—';
-
-  const taxableAssessedValue = latestValuation
-    ? getTaxableAssessedValue(latestValuation.fintxbtot, latestValuation.fintxbextot)
-    : null;
-
-  const taxableAssessedValueDisplay = taxableAssessedValue != null
-    ? formatCurrency(taxableAssessedValue)
-    : '—';
-
-  const taxYear = latestValuation?.year
-    ? formatTaxYear(latestValuation.year)
-    : '—';
-
-  const propertyTax = latestTaxRow?.propertyTax != null
-    ? formatCurrency(latestTaxRow.propertyTax)
-    : '—';
-
-  const yoyChangeValue = latestTaxRow?.yoyChange;
-  const yoyChange = formatYoyChange(yoyChangeValue);
-  const yoyColor = yoyChangeValue != null
-    ? (yoyChangeValue >= 0 ? '#4ade80' : '#f87171') // green for positive, red for negative
-    : undefined;
-
-  // Extract coordinates for map
+  // Map data
   const latitude = plutoData?.latitude;
   const longitude = plutoData?.longitude;
   const hasCoordinates = latitude != null && longitude != null;
-
-  // Mapbox configuration from environment variables
   const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
-  // Use formatted address passed from parent or fall back to building it
-  const boroughCode = bbl?.split('-')[0];
-  const boroughName = boroughCode ? getBoroughDisplayName(boroughCode) || 'NYC' : 'NYC';
-
-  // Use the formatted address from parent if available, otherwise build fallback
-  const fullAddress = fullFormattedAddress || (
-    propertyAddress && zipcode
-      ? `${propertyAddress}, ${boroughName}, NY ${zipcode}`
-      : propertyAddress
-        ? `${propertyAddress}, ${boroughName}, NY`
-        : `BBL ${bbl}, ${boroughName}`
-  );
-
-  // Build descriptive intro text
+  // SEO intro
   const buildingTypeDesc = plutoData?.bldgclass && BUILDING_CLASS_CODE_MAP[plutoData.bldgclass]
     ? BUILDING_CLASS_CODE_MAP[plutoData.bldgclass].toLowerCase()
     : 'property';
@@ -319,19 +146,19 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
       {/* SEO-optimized header and intro */}
       <div className="space-y-4">
         <h1 className="text-3xl font-bold text-foreground">
-          {fullAddress}
+          {address.fullAddress}
         </h1>
 
         <div className="space-y-3 text-base text-foreground/80 leading-relaxed">
           <p>
-            Access comprehensive NYC property records for {fullAddress}. This page provides detailed information from official New York City databases including building characteristics, ownership records, sales history, tax assessments, and contact information. All data is sourced from NYC Department of Finance, Department of City Planning (PLUTO), and ACRIS (Automated City Register Information System).
+            Access comprehensive NYC property records for {address.fullAddress}. This page provides detailed information from official New York City databases including building characteristics, ownership records, sales history, tax assessments, and contact information. All data is sourced from NYC Department of Finance, Department of City Planning (PLUTO), and ACRIS (Automated City Register Information System).
           </p>
 
           {plutoData?.yearbuilt && (
             <p>
               This {buildingTypeDesc} was constructed in {plutoData.yearbuilt}
-              {plutoData.unitstotal && Number(plutoData.unitstotal) > 0 && ` and contains ${totalUnits} ${Number(plutoData.unitstotal) === 1 ? 'residential unit' : 'residential units'}`}
-              {squareFeet !== '—' && `. The building spans ${squareFeet} square feet`}
+              {plutoData.unitstotal && Number(plutoData.unitstotal) > 0 && ` and contains ${building.totalUnits} ${Number(plutoData.unitstotal) === 1 ? 'residential unit' : 'residential units'}`}
+              {building.squareFeet !== '—' && `. The building spans ${building.squareFeet} square feet`}
               {plutoData?.lotarea && Number(plutoData.lotarea) > 0 && ` on a ${formatValue(plutoData.lotarea, undefined, 'number')} square foot lot`}.
             </p>
           )}
@@ -343,7 +170,6 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         {/* Map Section */}
         <SectionCard title="Location">
           <div ref={mapContainerRef} className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
-            {/* Mapbox Parcel Map - Only load when visible */}
             {hasCoordinates && bbl ? (
               shouldLoadMap ? (
                 <ParcelMap
@@ -381,11 +207,13 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         {/* Address Section */}
         <SectionCard title="Address">
           <dl className="space-y-3">
-            <InfoItem label="Property address" value={propertyAddress || '—'} />
-            <InfoItem label="Zip code" value={zipcode || '—'} />
-            <InfoItem label="BBL" value={bbl || '—'} />
+            <InfoItem label="Property address" value={address.propertyAddress || '—'} />
+            <InfoItem label="Borough" value={`${address.boroughCode} - ${address.boroughName}`} />
+            <InfoItem label="Block" value={address.block} />
+            <InfoItem label="Lot" value={address.lot} />
+            <InfoItem label="Zip code" value={address.zipcode || '—'} />
 
-            {alternativeAddresses.length > 0 && (
+            {address.alternativeAddresses.length > 0 && (
               <>
                 <div>
                   <dt className="text-xs font-medium text-foreground/80 mb-1.5">Alternative addresses</dt>
@@ -397,7 +225,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                     </div>
                   </dd>
                 </div>
-                {alternativeAddresses.length > 2 && (
+                {address.alternativeAddresses.length > 2 && (
                   <div>
                     <dt className="sr-only">Show more addresses</dt>
                     <dd>
@@ -407,7 +235,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                       >
                         {showAllAddresses
                           ? 'Show less'
-                          : `Show ${alternativeAddresses.length - 2} more`}
+                          : `Show ${address.alternativeAddresses.length - 2} more`}
                       </button>
                     </dd>
                   </div>
@@ -422,14 +250,14 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           <div className="flex-1">
             <h2 className="mb-4 text-lg font-semibold text-foreground">Building</h2>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-              <InfoItem label="Building class" value={buildingClass} />
-              <InfoItem label="Square feet" value={squareFeet} />
-              <InfoItem label="Dimensions" value={buildingDimensions} />
-              <InfoItem label="Buildings on lot" value={buildingsOnLot} />
-              <InfoItem label="Stories" value={stories} />
-              <InfoItem label="Total Units" value={totalUnits} />
-              <InfoItem label="Year built" value={yearBuilt} />
-              <InfoItem label="Year altered" value={yearLastAltered} />
+              <InfoItem label="Building class" value={building.buildingClass} />
+              <InfoItem label="Square feet" value={building.squareFeet} />
+              <InfoItem label="Dimensions" value={building.buildingDimensions} />
+              <InfoItem label="Buildings on lot" value={building.buildingsOnLot} />
+              <InfoItem label="Stories" value={building.stories} />
+              <InfoItem label="Total Units" value={building.totalUnits} />
+              <InfoItem label="Year built" value={building.yearBuilt} />
+              <InfoItem label="Year altered" value={building.yearLastAltered} />
             </dl>
           </div>
           <div className="flex justify-end mt-4">
@@ -448,17 +276,16 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           <div className="flex-1">
             <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
             <dl className="space-y-3">
-              {/* Unmasked Owner - Most Prominent */}
-              {unmaskedOwnerName && (
+              {ownership.unmaskedOwner && (
                 <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
                   <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
                     Unmasked Owner
                   </dt>
-                  <dd className="text-base font-bold text-foreground mb-2">{unmaskedOwnerName}</dd>
-                  {unmaskedOwnerAddress && (
-                    <dd className="text-sm text-foreground/90 mb-1">{unmaskedOwnerAddress}</dd>
+                  <dd className="text-base font-bold text-foreground mb-2">{ownership.unmaskedOwner.name}</dd>
+                  {ownership.unmaskedOwner.address && (
+                    <dd className="text-sm text-foreground/90 mb-1">{ownership.unmaskedOwner.address}</dd>
                   )}
-                  {unmaskedOwnerPhones.length > 0 && (
+                  {ownership.unmaskedOwner.phones.length > 0 && (
                     <>
                       <dt className="sr-only">Phone Numbers</dt>
                       {displayedUnmaskedPhones.map((phone, idx) => (
@@ -466,7 +293,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                           {formatUSPhone(phone)}
                         </dd>
                       ))}
-                      {unmaskedOwnerPhones.length > 1 && (
+                      {ownership.unmaskedOwner.phones.length > 1 && (
                         <dd className="mt-1">
                           <button
                             onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
@@ -474,7 +301,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                           >
                             {showAllUnmaskedPhones
                               ? 'Show less'
-                              : `Show ${unmaskedOwnerPhones.length - 1} more phone${unmaskedOwnerPhones.length > 2 ? 's' : ''}`}
+                              : `Show ${ownership.unmaskedOwner.phones.length - 1} more phone${ownership.unmaskedOwner.phones.length > 2 ? 's' : ''}`}
                           </button>
                         </dd>
                       )}
@@ -483,24 +310,21 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                 </div>
               )}
 
-              {/* Recorded Owner - Secondary */}
-              <InfoItem label="Recorded Owner" value={recordedOwnerName} />
+              <InfoItem label="Recorded Owner" value={ownership.recordedOwnerName} />
             </dl>
 
-            {/* Sale Information */}
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
-              <InfoItem label="Sale Date" value={saleDate} />
-              <InfoItem label="Sale Price" value={salePrice} />
+              <InfoItem label="Sale Date" value={ownership.saleDate} />
+              <InfoItem label="Sale Price" value={ownership.salePrice} />
             </dl>
 
-            {/* Mortgage Information */}
             <div className="border-t border-border/30 pt-3 mt-3">
               <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <InfoItem label="Mortgage Date" value={mortgageDate} />
-                <InfoItem label="Mortgage Amount" value={mortgageAmount} />
+                <InfoItem label="Mortgage Date" value={ownership.mortgageDate} />
+                <InfoItem label="Mortgage Amount" value={ownership.mortgageAmount} />
               </dl>
               <dl className="mt-2">
-                <InfoItem label="Lender" value={lenderName} />
+                <InfoItem label="Lender" value={ownership.lenderName} />
               </dl>
             </div>
           </div>
@@ -514,35 +338,35 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
           </div>
         </div>
 
-        {/* Tax Data Section - Tax Information */}
+        {/* Tax Data Section */}
         <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
           <div className="flex-1">
             <h2 className="mb-4 text-lg font-semibold text-foreground">Tax Information</h2>
             <dl className="space-y-3">
-              <InfoItem label="Estimated Market Value" value={estimatedMarketValue} />
-              <InfoItem label="Assessed Value" value={assessedValue} />
-              {hasMarketValueExemption && (
-                <InfoItem label="Market Value Exemption" value={marketValueExemption} />
+              <InfoItem label="Estimated Market Value" value={tax.estimatedMarketValue} />
+              <InfoItem label="Assessed Value" value={tax.assessedValue} />
+              {tax.hasMarketValueExemption && (
+                <InfoItem label="Market Value Exemption" value={tax.marketValueExemption} />
               )}
-              <InfoItem label="Transitional Assessed Value" value={transitionalAssessedValue} />
-              {hasTransitionalValueExemption && (
-                <InfoItem label="Transitional Value Exemption" value={transitionalValueExemption} />
+              <InfoItem label="Transitional Assessed Value" value={tax.transitionalAssessedValue} />
+              {tax.hasTransitionalValueExemption && (
+                <InfoItem label="Transitional Value Exemption" value={tax.transitionalValueExemption} />
               )}
             </dl>
 
             <dl className="pt-2 border-t border-border/30 mt-2">
               <div>
-                <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({taxYear})</dt>
-                <dd className="text-sm font-medium text-foreground">{taxableAssessedValueDisplay}</dd>
+                <dt className="text-xs font-medium text-foreground/80 mb-1">Taxable Assessed Value ({tax.taxYear})</dt>
+                <dd className="text-sm font-medium text-foreground">{tax.taxableAssessedValue}</dd>
               </div>
             </dl>
 
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-              <InfoItem label="Property Tax" value={propertyTax} />
+              <InfoItem label="Property Tax" value={tax.propertyTax} />
               <InfoItem
                 label="Year Over Year Change"
-                value={yoyChange}
-                valueStyle={yoyColor ? { color: yoyColor } : undefined}
+                value={tax.yoyChange}
+                valueStyle={tax.yoyColor ? { color: tax.yoyColor } : undefined}
               />
             </dl>
           </div>
@@ -563,21 +387,16 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
             <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
             {displayedContacts.length > 0 ? (
               <div className="space-y-3">
-                {displayedContacts.map((contact, index) => {
-                  const contactName = contact.owner_master_full_name || 'Unknown';
-                  const phoneNumbers = contact.owner_phone || [];
-
-                  return (
-                    <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
-                      <div className="text-sm font-medium text-foreground">{contactName}</div>
-                      {phoneNumbers.map((phone, phoneIdx) => (
-                        <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
-                          {formatUSPhone(phone)}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
+                {displayedContacts.map((contact, index) => (
+                  <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
+                    <div className="text-sm font-medium text-foreground">{contact.owner_master_full_name}</div>
+                    {contact.owner_phone.map((phone, phoneIdx) => (
+                      <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
+                        {formatUSPhone(phone)}
+                      </div>
+                    ))}
+                  </div>
+                ))}
                 {allContacts.length > 4 && (
                   <button
                     onClick={() => setShowAllContacts(!showAllContacts)}
@@ -605,75 +424,70 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         </div>
       </div>
 
-      {/* SEO-friendly FAQ section - Full width plain text below cards */}
+      {/* SEO-friendly FAQ section */}
       <div className="mt-8 space-y-6">
         <h2 className="text-xl font-semibold text-foreground mb-4">
-          About {fullAddress}
+          About {address.fullAddress}
         </h2>
 
         <div className="space-y-4 text-sm text-foreground/80 leading-relaxed max-w-4xl">
-          {/* FAQ 1: Building Size */}
-          {squareFeet !== '—' && (
+          {building.squareFeet !== '—' && (
             <p>
-              <strong className="text-foreground">How many sq. ft. does {fullAddress} have?</strong>
+              <strong className="text-foreground">How many sq. ft. does {address.fullAddress} have?</strong>
               {' '}
-              {buildingClass !== '—' && `This ${buildingClass.toLowerCase()} located at `}
-              {fullAddress} has a total of {squareFeet} square feet
+              {building.buildingClass !== '—' && `This ${building.buildingClass.toLowerCase()} located at `}
+              {address.fullAddress} has a total of {building.squareFeet} square feet
               {plutoData?.yearbuilt && ` and was built in ${plutoData.yearbuilt}`}.
             </p>
           )}
 
-          {/* FAQ 2: Units and Zoning */}
-          {(totalUnits !== '—' || plutoData?.zonedist1) && (
+          {(building.totalUnits !== '—' || plutoData?.zonedist1) && (
             <p>
               <strong className="text-foreground">
-                {totalUnits !== '—'
-                  ? `How many units does ${fullAddress} have?`
-                  : `What zoning district is ${fullAddress} in?`
+                {building.totalUnits !== '—'
+                  ? `How many units does ${address.fullAddress} have?`
+                  : `What zoning district is ${address.fullAddress} in?`
                 }
               </strong>
               {' '}
-              {totalUnits !== '—' && `This property contains ${totalUnits} residential units`}
-              {totalUnits !== '—' && plutoData?.zonedist1 && ` and is located in the `}
+              {building.totalUnits !== '—' && `This property contains ${building.totalUnits} residential units`}
+              {building.totalUnits !== '—' && plutoData?.zonedist1 && ` and is located in the `}
               {plutoData?.zonedist1 && `${plutoData.zonedist1} zoning district`}
               {plutoData?.lotarea && Number(plutoData.lotarea) > 0 && ` on a ${formatValue(plutoData.lotarea, undefined, 'number')} square foot lot`}.
             </p>
           )}
 
-          {/* FAQ 3: Property Ownership & Mortgages */}
-          {(recordedOwnerName !== '—' || propertyData?.mortgage_document_amount) && (
+          {(ownership.recordedOwnerName !== '—' || propertyData?.mortgage_document_amount) && (
             <p>
-              <strong className="text-foreground">Who owns {fullAddress} and what are the recent mortgage transactions?</strong>
+              <strong className="text-foreground">Who owns {address.fullAddress} and what are the recent mortgage transactions?</strong>
               {' '}
-              {recordedOwnerName !== '—' && `According to NYC ACRIS records, ${fullAddress} is owned by ${recordedOwnerName}`}
-              {propertyData?.sale_document_date && saleDate !== '—' && `. The property was last sold on ${saleDate}`}
-              {propertyData?.sale_document_amount && salePrice !== '—' && ` for ${salePrice}`}
-              {propertyData?.mortgage_document_amount && mortgageAmount !== '—' && `. The most recent mortgage recorded is ${mortgageAmount}`}
-              {propertyData?.mortgage_document_date && mortgageDate !== '—' && ` from ${mortgageDate}`}
-              {lenderName !== '—' && ` with lender ${lenderName}`}.
+              {ownership.recordedOwnerName !== '—' && `According to NYC ACRIS records, ${address.fullAddress} is owned by ${ownership.recordedOwnerName}`}
+              {propertyData?.sale_document_date && ownership.saleDate !== '—' && `. The property was last sold on ${ownership.saleDate}`}
+              {propertyData?.sale_document_amount && ownership.salePrice !== '—' && ` for ${ownership.salePrice}`}
+              {propertyData?.mortgage_document_amount && ownership.mortgageAmount !== '—' && `. The most recent mortgage recorded is ${ownership.mortgageAmount}`}
+              {propertyData?.mortgage_document_date && ownership.mortgageDate !== '—' && ` from ${ownership.mortgageDate}`}
+              {ownership.lenderName !== '—' && ` with lender ${ownership.lenderName}`}.
             </p>
           )}
 
-          {/* FAQ 4: Tax Assessment & Market Value */}
-          {(estimatedMarketValue !== '—' || propertyTax !== '—') && (
+          {(tax.estimatedMarketValue !== '—' || tax.propertyTax !== '—') && (
             <p>
-              <strong className="text-foreground">What is the current market value and property tax for {fullAddress}?</strong>
+              <strong className="text-foreground">What is the current market value and property tax for {address.fullAddress}?</strong>
               {' '}
-              According to NYC Department of Finance records, {fullAddress}
-              {estimatedMarketValue !== '—' && ` has an estimated market value of ${estimatedMarketValue}`}
-              {estimatedMarketValue !== '—' && propertyTax !== '—' && ` and `}
-              {propertyTax !== '—' && `an annual property tax of ${propertyTax}`}
-              {taxYear !== '—' && ` for the ${taxYear} tax year`}.
+              According to NYC Department of Finance records, {address.fullAddress}
+              {tax.estimatedMarketValue !== '—' && ` has an estimated market value of ${tax.estimatedMarketValue}`}
+              {tax.estimatedMarketValue !== '—' && tax.propertyTax !== '—' && ` and `}
+              {tax.propertyTax !== '—' && `an annual property tax of ${tax.propertyTax}`}
+              {tax.taxYear !== '—' && ` for the ${tax.taxYear} tax year`}.
             </p>
           )}
 
-          {/* FAQ 5: Alternative Addresses */}
-          {alternativeAddresses.length > 0 && (
+          {address.alternativeAddresses.length > 0 && (
             <p>
-              <strong className="text-foreground">What are the alternative addresses for {fullAddress}?</strong>
+              <strong className="text-foreground">What are the alternative addresses for {address.fullAddress}?</strong>
               {' '}
-              This property is also known by {alternativeAddresses.length === 1 ? 'the following address' : 'these addresses'}: {alternativeAddresses.slice(0, 5).join(', ')}
-              {alternativeAddresses.length > 5 && ` and ${alternativeAddresses.length - 5} more`}. Alternative addresses are common for NYC properties with multiple entrances or corner locations.
+              This property is also known by {address.alternativeAddresses.length === 1 ? 'the following address' : 'these addresses'}: {address.alternativeAddresses.slice(0, 5).join(', ')}
+              {address.alternativeAddresses.length > 5 && ` and ${address.alternativeAddresses.length - 5} more`}. Alternative addresses are common for NYC properties with multiple entrances or corner locations.
             </p>
           )}
         </div>
