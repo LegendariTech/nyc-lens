@@ -61,11 +61,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://t.contentsquare.net",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://t.contentsquare.net https://cdn.logr-in.com",
               "style-src 'self' 'unsafe-inline' https://api.mapbox.com https://fonts.googleapis.com https://www.googletagmanager.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.elastic-cloud.com https://*.database.windows.net https://api.mapbox.com https://events.mapbox.com https://www.google-analytics.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://*.contentsquare.net https://tcvsapi.contentsquare.com",
+              "connect-src 'self' https://*.elastic-cloud.com https://*.database.windows.net https://api.mapbox.com https://events.mapbox.com https://www.google-analytics.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://*.contentsquare.net https://tcvsapi.contentsquare.com https://*.lr-intake.com https://*.lr-in.com https://*.logrocket.io https://*.logrocket.com",
               "frame-src 'self' https://www.googletagmanager.com",
               "worker-src 'self' blob:",
             ].join('; '),
