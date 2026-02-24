@@ -1,52 +1,33 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ContactsPageClient } from '../components/ContactsPageClient';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchOwnerContacts } from '@/data/contacts';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
-import { fetchPropertyByBBL } from '@/data/acris';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface ContactsPageProps {
     params: Promise<{
         bbl: string;
         address?: string[];
     }>;
-    searchParams: Promise<{
-        address?: string; // Backwards compatibility
-    }>;
 }
 
 export async function generateMetadata({ params }: ContactsPageProps): Promise<Metadata> {
     const { bbl } = await params;
-    const boroughCode = bbl.split('-')[0];
-    const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
-
-    let address = `BBL ${bbl}`;
-    try {
-        const propertyData = await fetchPropertyByBBL(bbl);
-        if (propertyData?.address) {
-            address = propertyData.address;
-        }
-    } catch (error) {
-        console.error('Error generating metadata:', error);
-    }
+    const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
     return {
-        title: `Property Contacts - ${address}`,
-        description: `Find owner contact information for ${address} in ${borough}. Phone numbers, mailing addresses, and responsible parties from NYC HPD and public records.`,
+        title: `${fullFormattedAddress} - Property Contacts`,
+        description: `Find owner contact information for ${fullFormattedAddress}. Phone numbers, mailing addresses, and responsible parties from NYC HPD and public records.`,
         openGraph: {
-            title: `Property Contacts - ${address}`,
-            description: `Owner contact information for ${address}`,
+            title: `${fullFormattedAddress} - Property Contacts`,
+            description: `Owner contact information for ${fullFormattedAddress}`,
         },
     };
 }
 
-export default async function ContactsPage({ params, searchParams }: ContactsPageProps) {
-    const { bbl, address: addressSegments } = await params;
-    const { address: queryAddress } = await searchParams;
-
-    // Parse address from URL path segments or fall back to query param
-    const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function ContactsPage({ params }: ContactsPageProps) {
+    const { bbl } = await params;
 
     // Parse BBL format
     const bblParts = bbl.split('-');
@@ -54,13 +35,19 @@ export default async function ContactsPage({ params, searchParams }: ContactsPag
         notFound();
     }
 
+    // Get shared property data from cache (warmed by layout)
+    const { plutoData, propertyData } = await getPropertyData(bbl);
+
+    // Extract street address from shared data
+    const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+
     // Fetch owner contacts data
     const { data: contactsData, error: contactsError } = await fetchOwnerContacts(bbl);
 
     return (
         <ContactsPageClient
             bbl={bbl}
-            address={address}
+            address={streetAddress || undefined}
             contactsData={contactsData}
             contactsError={contactsError}
         />

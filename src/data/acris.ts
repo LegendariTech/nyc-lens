@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { search } from './elasticsearch';
 import { AcrisRecord, AcrisDoc, AcrisParty } from '@/types/acris';
 import acrisControlCodes from '@/constants/acris_control_code.json';
@@ -7,8 +8,11 @@ import acrisControlCodes from '@/constants/acris_control_code.json';
  * Fetch a single ACRIS property record by BBL
  * @param bbl - BBL in format "1-13-1" (borough-block-lot with hyphens)
  * @returns ACRIS property record or null if not found
+ *
+ * Wrapped with React.cache() to deduplicate requests within the same render pass.
+ * This prevents duplicate Elasticsearch queries when called from both generateMetadata() and page components.
  */
-export async function fetchPropertyByBBL(bbl: string): Promise<AcrisRecord | null> {
+export const fetchPropertyByBBL = cache(async (bbl: string): Promise<AcrisRecord | null> => {
   try {
     // Parse BBL
     const bblParts = bbl.split('-');
@@ -46,7 +50,7 @@ export async function fetchPropertyByBBL(bbl: string): Promise<AcrisRecord | nul
     console.error('Error fetching property from Elasticsearch:', error);
     throw error;
   }
-}
+});
 
 /**
  * Fetch property documents by BBL from the documents index
@@ -161,8 +165,11 @@ function getPartyTypeLabels(docType: string): { party1Type: string; party2Type: 
  * Fetch all ACRIS transactions with party information
  * @param bbl - BBL in format "1-13-1" (borough-block-lot with hyphens)
  * @returns Array of documents with party information
+ *
+ * Wrapped with React.cache() to deduplicate requests within the same render pass.
+ * This is a complex multi-index query that benefits from caching.
  */
-export async function fetchTransactionsWithParties(bbl: string): Promise<DocumentWithParties[]> {
+export const fetchTransactionsWithParties = cache(async (bbl: string): Promise<DocumentWithParties[]> => {
   try {
     // Parse BBL
     const bblParts = bbl.split('-');
@@ -348,4 +355,4 @@ export async function fetchTransactionsWithParties(bbl: string): Promise<Documen
 
     throw error;
   }
-}
+});

@@ -1,6 +1,6 @@
 import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import { AcrisRecord } from '@/types/acris';
-import { BOROUGH_NAMES, BOROUGH_FILTER_VALUES } from '@/constants/nyc';
+import { BOROUGH_NAMES, BOROUGH_FILTER_VALUES, getBoroughDisplayName } from '@/constants/nyc';
 import Link from 'next/link';
 import { buildPropertyUrl } from '@/utils/urlSlug';
 import {
@@ -93,14 +93,15 @@ export const colDefs: ColDef<AcrisRecord>[] = [
     }
   },
   {
-    field: 'address',
+    field: 'address_with_unit',
     headerName: 'Address',
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     width: 300,
     cellRenderer: (params: ValueFormatterParams<AcrisRecord, string>) => {
       const bbl = `${params?.data?.borough}-${params?.data?.block}-${params?.data?.lot}`;
-      const boroughName = params?.data?.borough ? BOROUGH_NAMES[params.data.borough.toString()] : '';
+      // Use getBoroughDisplayName to convert Manhattan → "New York" for addresses
+      const boroughName = params?.data?.borough ? getBoroughDisplayName(params.data.borough) : '';
 
       const url = buildPropertyUrl(bbl, 'overview', {
         street: params.value || '',

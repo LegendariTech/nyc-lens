@@ -1,3 +1,5 @@
+import { getBoroughDisplayName } from '@/constants/nyc';
+
 /**
  * Column metadata interface for formatValue function
  */
@@ -205,5 +207,40 @@ export function formatYoyChange(value: number | null | undefined): string {
   const percentage = value * 100;
   const sign = percentage >= 0 ? '+' : '';
   return `${sign}${percentage.toFixed(2)}%`;
+}
+
+/**
+ * Format a full address from components
+ *
+ * @param addressLine - Street address (e.g., "220 Riverside Blvd")
+ * @param unit - Unit/apartment number (optional, e.g., "20A")
+ * @param borough - Borough code (1-5)
+ * @param zipcode - ZIP code (e.g., "10069")
+ * @param state - State abbreviation (defaults to "NY")
+ * @returns Formatted address string (e.g., "220 Riverside Blvd 20A, New York, NY 10069")
+ *
+ * @example
+ * formatFullAddress("220 Riverside Blvd", "20A", 1, "10069")
+ * // => "220 Riverside Blvd 20A, New York, NY 10069"
+ *
+ * @example
+ * formatFullAddress("123 Main St", undefined, 3, "11201")
+ * // => "123 Main St, Brooklyn, NY 11201"
+ */
+export function formatFullAddress(
+  addressLine: string,
+  unit: string | undefined,
+  borough: number,
+  zipcode: string,
+  state: string = 'NY'
+): string {
+  // Build street address with unit if provided
+  const streetWithUnit = unit ? `${addressLine} ${unit}` : addressLine;
+
+  // Get borough name (Manhattan becomes "New York")
+  const boroughName = getBoroughDisplayName(borough);
+
+  // Combine: "220 Riverside Blvd 20A, New York, NY 10069"
+  return `${streetWithUnit}, ${boroughName}, ${state} ${zipcode}`;
 }
 

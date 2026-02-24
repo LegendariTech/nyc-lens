@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { search } from '../elasticsearch';
 import type { OwnerContact } from '@/types/contacts';
 
@@ -44,8 +45,11 @@ function parseBBLForContacts(bbl: string): { bbl: string } | null {
  *
  * @param bbl - BBL in format "1-13-1" or "1000130001"
  * @returns Promise containing array of owner contact records or error
+ *
+ * Wrapped with React.cache() to deduplicate requests within the same render pass.
+ * This prevents duplicate Elasticsearch queries when called from both generateMetadata() and page components.
  */
-export async function fetchOwnerContacts(bbl: string): Promise<OwnerContactsResult> {
+export const fetchOwnerContacts = cache(async (bbl: string): Promise<OwnerContactsResult> => {
     try {
         // Parse the BBL
         const parsed = parseBBLForContacts(bbl);
@@ -109,4 +113,4 @@ export async function fetchOwnerContacts(bbl: string): Promise<OwnerContactsResu
             error: `Failed to load owner contacts data for BBL ${bbl}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         };
     }
-}
+});

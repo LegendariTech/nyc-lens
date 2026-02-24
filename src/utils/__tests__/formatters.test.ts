@@ -5,6 +5,7 @@ import {
   formatDateMMDDYYYY,
   formatCurrency,
   formatValue,
+  formatFullAddress,
   type DatasourceColumnMetadata,
 } from '../formatters';
 
@@ -407,6 +408,202 @@ describe('utils/formatters', () => {
     });
   });
 
+  describe('formatFullAddress', () => {
+    describe('All Borough Addresses', () => {
+      it('should format Manhattan address with "New York" (borough 1)', () => {
+        expect(formatFullAddress('220 Riverside Blvd', '20A', 1, '10069')).toBe(
+          '220 Riverside Blvd 20A, New York, NY 10069'
+        );
+      });
+
+      it('should format Bronx address (borough 2)', () => {
+        expect(formatFullAddress('1141 Burnett Pl', '3B', 2, '10472')).toBe(
+          '1141 Burnett Pl 3B, Bronx, NY 10472'
+        );
+      });
+
+      it('should format Brooklyn address (borough 3)', () => {
+        expect(formatFullAddress('123 Main St', '4C', 3, '11201')).toBe(
+          '123 Main St 4C, Brooklyn, NY 11201'
+        );
+      });
+
+      it('should format Queens address (borough 4)', () => {
+        expect(formatFullAddress('45-67 Broadway', '2A', 4, '11373')).toBe(
+          '45-67 Broadway 2A, Queens, NY 11373'
+        );
+      });
+
+      it('should format Staten Island address (borough 5)', () => {
+        expect(formatFullAddress('100 Victory Blvd', '1', 5, '10301')).toBe(
+          '100 Victory Blvd 1, Staten Island, NY 10301'
+        );
+      });
+    });
+
+    describe('Addresses Without Unit', () => {
+      it('should format Manhattan address without unit', () => {
+        expect(formatFullAddress('1 Broadway', undefined, 1, '10004')).toBe(
+          '1 Broadway, New York, NY 10004'
+        );
+      });
+
+      it('should format Bronx address without unit', () => {
+        expect(formatFullAddress('456 Grand Concourse', undefined, 2, '10451')).toBe(
+          '456 Grand Concourse, Bronx, NY 10451'
+        );
+      });
+
+      it('should format Brooklyn address without unit', () => {
+        expect(formatFullAddress('123 Main St', undefined, 3, '11201')).toBe(
+          '123 Main St, Brooklyn, NY 11201'
+        );
+      });
+
+      it('should format Queens address without unit', () => {
+        expect(formatFullAddress('78-90 Metropolitan Ave', undefined, 4, '11385')).toBe(
+          '78-90 Metropolitan Ave, Queens, NY 11385'
+        );
+      });
+
+      it('should format Staten Island address without unit', () => {
+        expect(formatFullAddress('200 Richmond Ter', undefined, 5, '10301')).toBe(
+          '200 Richmond Ter, Staten Island, NY 10301'
+        );
+      });
+    });
+
+    describe('Different State Values', () => {
+      it('should use default state NY when not provided', () => {
+        expect(formatFullAddress('220 Riverside Blvd', '20A', 1, '10069')).toBe(
+          '220 Riverside Blvd 20A, New York, NY 10069'
+        );
+      });
+
+      it('should accept custom state value', () => {
+        expect(formatFullAddress('123 Main St', '4C', 3, '11201', 'NY')).toBe(
+          '123 Main St 4C, Brooklyn, NY 11201'
+        );
+      });
+
+      it('should handle different state abbreviation', () => {
+        // Edge case: if someone passes a different state
+        expect(formatFullAddress('123 Test St', '1A', 1, '12345', 'CA')).toBe(
+          '123 Test St 1A, New York, CA 12345'
+        );
+      });
+    });
+
+    describe('Various Address Formats', () => {
+      it('should handle short street names', () => {
+        expect(formatFullAddress('1 Ave A', '5', 1, '10009')).toBe(
+          '1 Ave A 5, New York, NY 10009'
+        );
+      });
+
+      it('should handle long street names', () => {
+        expect(
+          formatFullAddress('350 West 42nd Street', 'PHB', 1, '10036')
+        ).toBe('350 West 42nd Street PHB, New York, NY 10036');
+      });
+
+      it('should handle numeric street names', () => {
+        expect(formatFullAddress('123 East 86th St', '12A', 1, '10028')).toBe(
+          '123 East 86th St 12A, New York, NY 10028'
+        );
+      });
+
+      it('should handle street names with directions', () => {
+        expect(formatFullAddress('500 West End Ave', 'PH', 1, '10024')).toBe(
+          '500 West End Ave PH, New York, NY 10024'
+        );
+      });
+    });
+
+    describe('Various Unit Formats', () => {
+      it('should handle single letter units', () => {
+        expect(formatFullAddress('123 Main St', 'A', 3, '11201')).toBe(
+          '123 Main St A, Brooklyn, NY 11201'
+        );
+      });
+
+      it('should handle numeric units', () => {
+        expect(formatFullAddress('123 Main St', '101', 3, '11201')).toBe(
+          '123 Main St 101, Brooklyn, NY 11201'
+        );
+      });
+
+      it('should handle alphanumeric units', () => {
+        expect(formatFullAddress('123 Main St', '20A', 1, '10069')).toBe(
+          '123 Main St 20A, New York, NY 10069'
+        );
+      });
+
+      it('should handle penthouse units', () => {
+        expect(formatFullAddress('432 Park Ave', 'PH92', 1, '10022')).toBe(
+          '432 Park Ave PH92, New York, NY 10022'
+        );
+      });
+
+      it('should skip empty string units', () => {
+        expect(formatFullAddress('123 Main St', '', 3, '11201')).toBe(
+          '123 Main St, Brooklyn, NY 11201'
+        );
+      });
+    });
+
+    describe('Manhattan Specific Behavior', () => {
+      it('should always convert Manhattan to "New York" in addresses', () => {
+        // Test that borough 1 specifically becomes "New York" not "Manhattan"
+        const address1 = formatFullAddress('15 Central Park West', '31B', 1, '10023');
+        expect(address1).toContain('New York');
+        expect(address1).not.toContain('Manhattan');
+      });
+
+      it('should format famous Manhattan addresses correctly', () => {
+        expect(formatFullAddress('350 Fifth Ave', undefined, 1, '10118')).toBe(
+          '350 Fifth Ave, New York, NY 10118'
+        );
+
+        expect(formatFullAddress('1 World Trade Center', undefined, 1, '10007')).toBe(
+          '1 World Trade Center, New York, NY 10007'
+        );
+
+        expect(formatFullAddress('Trump Tower', '5818', 1, '10022')).toBe(
+          'Trump Tower 5818, New York, NY 10022'
+        );
+      });
+    });
+
+    describe('Real-world NYC Addresses', () => {
+      it('should format typical residential addresses', () => {
+        expect(formatFullAddress('220 Riverside Blvd', '20A', 1, '10069')).toBe(
+          '220 Riverside Blvd 20A, New York, NY 10069'
+        );
+
+        expect(formatFullAddress('301 East 79th St', '28D', 1, '10075')).toBe(
+          '301 East 79th St 28D, New York, NY 10075'
+        );
+      });
+
+      it('should format commercial addresses', () => {
+        expect(formatFullAddress('1633 Broadway', undefined, 1, '10019')).toBe(
+          '1633 Broadway, New York, NY 10019'
+        );
+
+        expect(formatFullAddress('4 Times Square', undefined, 1, '10036')).toBe(
+          '4 Times Square, New York, NY 10036'
+        );
+      });
+
+      it('should format co-op addresses with units', () => {
+        expect(formatFullAddress('200 East 66th St', '18C', 1, '10065')).toBe(
+          '200 East 66th St 18C, New York, NY 10065'
+        );
+      });
+    });
+  });
+
   describe('Integration Scenarios', () => {
     it('should format property data consistently', () => {
       const propertyValue = 1500000;
@@ -435,6 +632,30 @@ describe('utils/formatters', () => {
         expect(formatCurrency(tx.amount)).toMatch(/^\$[\d,]+$/);
         expect(formatDate(tx.date)).toMatch(/^[A-Z][a-z]{2} \d{1,2}, \d{4}$/);
       });
+    });
+
+    it('should format complete property listing with address', () => {
+      const listing = {
+        street: '220 Riverside Blvd',
+        unit: '20A',
+        borough: 1,
+        zipcode: '10069',
+        price: 2500000,
+        listingDate: '2024-01-15',
+      };
+
+      const formattedAddress = formatFullAddress(
+        listing.street,
+        listing.unit,
+        listing.borough,
+        listing.zipcode
+      );
+      const formattedPrice = formatCurrency(listing.price);
+      const formattedDate = formatDate(listing.listingDate);
+
+      expect(formattedAddress).toBe('220 Riverside Blvd 20A, New York, NY 10069');
+      expect(formattedPrice).toBe('$2,500,000');
+      expect(formattedDate).toBe('Jan 15, 2024');
     });
   });
 });

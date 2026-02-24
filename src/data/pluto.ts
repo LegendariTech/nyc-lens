@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { DatasourceMetadata } from '@/app/property/[bbl]/utils/datasourceDisplay';
 import { queryOne } from './db';
 
@@ -135,8 +136,11 @@ function parseBBL(bbl: string): { borocode: number; block: string; lot: string }
 
 /**
  * Fetch PLUTO data for a specific property from the database
+ *
+ * Wrapped with React.cache() to deduplicate requests within the same render pass.
+ * This prevents duplicate MSSQL queries when called from both generateMetadata() and page components.
  */
-export async function fetchPlutoData(bbl: string): Promise<PlutoDataResult> {
+export const fetchPlutoData = cache(async (bbl: string): Promise<PlutoDataResult> => {
   try {
     // Parse the BBL
     const parsed = parseBBL(bbl);
@@ -188,5 +192,5 @@ export async function fetchPlutoData(bbl: string): Promise<PlutoDataResult> {
       error: `Failed to load PLUTO data for BBL ${bbl}: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
-}
+});
 

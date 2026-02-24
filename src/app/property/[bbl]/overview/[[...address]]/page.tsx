@@ -2,13 +2,14 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { OverviewTab } from '../OverviewTab';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
-import { fetchPropertyByBBL } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getBoroughDisplayName } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
+import { formatFullAddress } from '@/utils/formatters';
+import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 // Revalidate property data every hour
 export const revalidate = 3600;
@@ -18,37 +19,18 @@ interface OverviewPageProps {
     bbl: string;
     address?: string[];
   }>;
-  searchParams: Promise<{
-    address?: string; // Still support old query param format for backwards compatibility
-  }>;
 }
 
 export async function generateMetadata({ params }: OverviewPageProps): Promise<Metadata> {
   const { bbl } = await params;
 
-  // Parse BBL to get borough
-  const bblParts = bbl.split('-');
-  const boroughCode = bblParts[0];
-  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
+  // Get formatted address using shared utility
+  const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
-  // Fetch property data for metadata
-  let address = `BBL ${bbl}`;
+  // Build additional context from PLUTO data
   let buildingInfo = '';
-
   try {
-    const [plutoResult, propertyResult] = await Promise.all([
-      fetchPlutoData(bbl),
-      fetchPropertyByBBL(bbl),
-    ]);
-
-    // Get address from property data or PLUTO
-    if (propertyResult?.address) {
-      address = propertyResult.address;
-    } else if (plutoResult.data?.address) {
-      address = plutoResult.data.address;
-    }
-
-    // Build additional context from PLUTO data
+    const plutoResult = await fetchPlutoData(bbl);
     if (plutoResult.data) {
       const { bldgclass, yearbuilt, unitstotal, bldgarea } = plutoResult.data;
       const parts: string[] = [];
@@ -76,11 +58,11 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
       }
     }
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error('Error fetching building info:', error);
   }
 
-  const title = `${address}, ${borough} - NYC Property Records | BBL Club`;
-  const description = `${address} in ${borough}: View ownership, sales history, tax assessments, building details & contacts from official NYC databases.${buildingInfo ? ` ${buildingInfo}` : ''}`;
+  const title = `${fullFormattedAddress} - NYC Property Records`;
+  const description = `${fullFormattedAddress}: View ownership, sales history, tax assessments, building details & contacts from official NYC databases.${buildingInfo ? ` ${buildingInfo}` : ''}`;
 
   return {
     title,
@@ -103,12 +85,8 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
   };
 }
 
-export default async function OverviewPage({ params, searchParams }: OverviewPageProps) {
+export default async function OverviewPage({ params }: OverviewPageProps) {
   const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  // Parse address from URL path segments or fall back to query param
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
@@ -116,36 +94,42 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
     notFound();
   }
 
-  // Fetch PLUTO data, Elasticsearch property data, contacts, and valuation data with error handling
-  let plutoData = null;
-  let propertyData = null;
+  // Fetch property data
+  // Note: getPropertyData fetches PLUTO & ACRIS from cache (warmed by layout.tsx)
+  const { plutoData, propertyData, error: propertyError } = await getPropertyData(bbl);
+
+  // Fetch additional data needed for overview page
   let contactsData = null;
   let valuationData = null;
-  let error: string | undefined;
+  let error: string | undefined = propertyError;
 
   try {
-    const [plutoResult, acrisResult, contactsResult, valuationResult] = await Promise.all([
-      fetchPlutoData(bbl),
-      fetchPropertyByBBL(bbl),
+    const [contactsResult, valuationResult] = await Promise.all([
       fetchOwnerContacts(bbl),
       fetchPropertyValuation(bbl),
     ]);
-    plutoData = plutoResult.data;
-    propertyData = acrisResult;
     contactsData = contactsResult.data;
     valuationData = valuationResult.data;
   } catch (e) {
-    console.error('Error fetching property data:', e);
+    console.error('Error fetching additional property data:', e);
     error = e instanceof Error ? e.message : 'Failed to load property data';
   }
 
   // Generate structured data for SEO
-  const propertyAddress = propertyData?.address || plutoData?.address;
-  const zipcode = plutoData?.zipcode;
+  const streetAddress = propertyData?.address_with_unit || plutoData?.address;
+  const unit = propertyData?.unit || undefined;
+  const zipcode = propertyData?.zip_code ?? plutoData?.zipcode;
   const latitude = plutoData?.latitude;
   const longitude = plutoData?.longitude;
-  const boroughCode = bbl.split('-')[0];
-  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
+  const boroughCode = parseInt(bbl.split('-')[0]);
+  const borough = getBoroughDisplayName(boroughCode) || 'NYC';
+
+  // Build formatted full address using formatFullAddress
+  const fullFormattedAddress = streetAddress && zipcode
+    ? formatFullAddress(streetAddress, undefined, boroughCode, zipcode)
+    : streetAddress
+      ? `${streetAddress}, ${borough}, NY`
+      : `BBL ${bbl}`;
 
   const baseUrl = 'https://bblclub.com';
   const propertyUrl = `${baseUrl}/property/${bbl}`;
@@ -154,11 +138,11 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
   const placeData = {
     "@context": "https://schema.org",
     "@type": "Place",
-    "name": propertyAddress || `BBL ${bbl}`,
+    "name": fullFormattedAddress,
     "url": `${propertyUrl}/overview`,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": propertyAddress,
+      "streetAddress": unit ? `${streetAddress} ${unit}` : streetAddress,
       "addressLocality": borough,
       "addressRegion": "NY",
       "postalCode": zipcode,
@@ -194,7 +178,7 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
       {
         "@type": "ListItem",
         "position": 3,
-        "name": propertyAddress || `BBL ${bbl}`,
+        "name": fullFormattedAddress,
         "item": `${propertyUrl}/overview`
       }
     ]
@@ -281,7 +265,7 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
         dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksData) }}
       />
 
-      <PropertyPageLayout bbl={bbl} activeTab="overview" address={address}>
+      <PropertyPageLayout bbl={bbl} activeTab="overview" address={streetAddress || undefined}>
         <OverviewTab
           plutoData={plutoData}
           propertyData={propertyData}
@@ -289,6 +273,8 @@ export default async function OverviewPage({ params, searchParams }: OverviewPag
           valuationData={valuationData}
           error={error}
           bbl={bbl}
+          fullFormattedAddress={fullFormattedAddress}
+          addressSegment={addressSegments?.[0]}
         />
       </PropertyPageLayout>
     </>

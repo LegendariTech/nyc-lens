@@ -214,7 +214,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
 
       <div className="relative">
         <form ref={formRef}>
-          <div className={cn('relative', compact ? 'w-96' : 'w-full')}>
+          <div className={cn('relative', compact ? 'w-144' : 'w-full')}>
             <input
               ref={inputRef}
               {...(autocomplete.getInputProps({

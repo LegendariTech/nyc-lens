@@ -2,51 +2,33 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
+import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
-import { parseAddressFromUrl } from '@/utils/urlSlug';
-import { fetchPropertyByBBL } from '@/data/acris';
-import { BOROUGH_NAMES } from '@/constants/nyc';
+import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
 interface PlutoPageProps {
   params: Promise<{
     bbl: string;
     address?: string[];
   }>;
-  searchParams: Promise<{
-    address?: string;
-  }>;
 }
 
 export async function generateMetadata({ params }: PlutoPageProps): Promise<Metadata> {
   const { bbl } = await params;
-  const boroughCode = bbl.split('-')[0];
-  const borough = BOROUGH_NAMES[boroughCode] || 'NYC';
-
-  let address = `BBL ${bbl}`;
-  try {
-    const propertyData = await fetchPropertyByBBL(bbl);
-    if (propertyData?.address) {
-      address = propertyData.address;
-    }
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-  }
+  const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
   return {
-    title: `Building Information - ${address}`,
-    description: `View PLUTO building data for ${address} in ${borough}. Property characteristics, lot size, zoning, building class, units, square footage, and construction details from NYC Department of City Planning.`,
+    title: `${fullFormattedAddress} - Building Information`,
+    description: `View PLUTO building data for ${fullFormattedAddress}. Property characteristics, lot size, zoning, building class, units, square footage, and construction details from NYC Department of City Planning.`,
     openGraph: {
-      title: `Building Information - ${address}`,
-      description: `PLUTO property data for ${address}`,
+      title: `${fullFormattedAddress} - Building Information`,
+      description: `PLUTO property data for ${fullFormattedAddress}`,
     },
   };
 }
 
-export default async function PlutoPage({ params, searchParams }: PlutoPageProps) {
-  const { bbl, address: addressSegments } = await params;
-  const { address: queryAddress } = await searchParams;
-
-  const address = parseAddressFromUrl(addressSegments) || queryAddress;
+export default async function PlutoPage({ params }: PlutoPageProps) {
+  const { bbl } = await params;
 
   // Parse BBL format
   const bblParts = bbl.split('-');
@@ -54,11 +36,17 @@ export default async function PlutoPage({ params, searchParams }: PlutoPageProps
     notFound();
   }
 
-  // Fetch PLUTO data
+  // Fetch PLUTO data with metadata (returns instantly from cache warmed by layout)
   const { data, metadata, error } = await fetchPlutoData(bbl);
 
+  // Get propertyData for address extraction (returns instantly from cache)
+  const { propertyData } = await getPropertyData(bbl);
+
+  // Extract street address from shared data
+  const streetAddress = propertyData?.address_with_unit || data?.address;
+
   return (
-    <PropertyPageLayout bbl={bbl} activeTab="pluto" address={address}>
+    <PropertyPageLayout bbl={bbl} activeTab="pluto" address={streetAddress || undefined}>
       <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} />
     </PropertyPageLayout>
   );

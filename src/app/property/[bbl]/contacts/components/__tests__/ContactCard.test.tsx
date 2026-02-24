@@ -28,9 +28,10 @@ describe('ContactCard', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
-  it('renders status chip with full label', () => {
+  it('renders source category chip with label', () => {
     render(<ContactCard contact={mockContact} />);
-    expect(screen.getByText('Current')).toBeInTheDocument();
+    // The 'latest_sale' source maps to 'recorded_owner' category with label 'Recorded Owner'
+    expect(screen.getByText('Recorded Owner')).toBeInTheDocument();
   });
 
   it('renders date', () => {
