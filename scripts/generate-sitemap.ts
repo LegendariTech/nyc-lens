@@ -19,7 +19,7 @@ import { Client } from '@elastic/elasticsearch';
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { addressToSlug } from '../src/utils/urlSlug';
-import { BOROUGH_NAMES } from '../src/constants/nyc';
+import { getBoroughDisplayName } from '../src/constants/nyc';
 
 // Load environment variables
 import dotenv from 'dotenv';
@@ -35,7 +35,7 @@ interface PropertyForSitemap {
   borough: string;
   block: string;
   lot: string;
-  address: string;
+  address_with_unit: string;
   zip_code?: string;
   mortgage_document_date?: string;
 }
@@ -68,8 +68,8 @@ async function getTotalPropertiesCount(client: Client, indexName: string): Promi
     query: {
       bool: {
         must: [
-          { exists: { field: 'address' } },
-          { bool: { must_not: { term: { 'address.keyword': '' } } } },
+          { exists: { field: 'address_with_unit' } },
+          { bool: { must_not: { term: { 'address_with_unit.keyword': '' } } } },
         ],
       },
     },
@@ -93,13 +93,13 @@ async function fetchPropertiesBatch(
       const searchParams: any = {
         index: indexName,
         size: batchSize,
-        _source: ['borough', 'block', 'lot', 'address', 'zip_code', 'mortgage_document_date'],
+        _source: ['borough', 'block', 'lot', 'address_with_unit', 'zip_code', 'mortgage_document_date'],
         query: {
           bool: {
             must: [
-              { exists: { field: 'address' } },
+              { exists: { field: 'address_with_unit' } },
               { exists: { field: 'street_name' } }, // Must have street name
-              { bool: { must_not: { term: { 'address.keyword': '' } } } },
+              { bool: { must_not: { term: { 'address_with_unit.keyword': '' } } } },
             ],
           },
         },
@@ -243,11 +243,12 @@ function generatePropertySitemap(
 ): string {
   const urls = properties.map(property => {
     const bbl = `${property.borough}-${property.block}-${property.lot}`;
-    const boroughName = BOROUGH_NAMES[property.borough.toString()] || '';
+    // Use getBoroughDisplayName to convert Manhattan → "New York" for addresses
+    const boroughName = getBoroughDisplayName(property.borough);
 
     // Generate SEO-friendly URL with address slug
     const addressSlug = addressToSlug(
-      property.address,
+      property.address_with_unit,
       boroughName,
       'NY',
       property.zip_code
