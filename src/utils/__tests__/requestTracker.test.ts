@@ -253,6 +253,19 @@ describe('extractGeo', () => {
       city: null,
     });
   });
+
+  it('decodes percent-encoded city names', () => {
+    const headers = new Headers({
+      'x-vercel-ip-country': 'US',
+      'x-vercel-ip-country-region': 'CA',
+      'x-vercel-ip-city': 'Santa%20Clara',
+    });
+    expect(extractGeo(headers)).toEqual({
+      country: 'US',
+      region: 'CA',
+      city: 'Santa Clara',
+    });
+  });
 });
 
 describe('classifyRoute', () => {

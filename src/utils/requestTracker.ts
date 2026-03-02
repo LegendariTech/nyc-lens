@@ -145,13 +145,26 @@ export function extractClientIp(headers: Headers): string | null {
 }
 
 /**
+ * Safely decode a percent-encoded header value.
+ */
+function safeDecode(value: string | null): string | null {
+  if (!value) return null;
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+/**
  * Extract geo information from Vercel headers.
+ * City names are percent-encoded per RFC3986 by Vercel.
  */
 export function extractGeo(headers: Headers): GeoInfo {
   return {
     country: headers.get('x-vercel-ip-country') || null,
     region: headers.get('x-vercel-ip-country-region') || null,
-    city: headers.get('x-vercel-ip-city') || null,
+    city: safeDecode(headers.get('x-vercel-ip-city')),
   };
 }
 
