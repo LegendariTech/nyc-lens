@@ -1,4 +1,5 @@
 import 'server-only';
+import { errors } from '@elastic/elasticsearch';
 import { getClient } from './elasticsearch';
 import type { RequestLogDocument } from '@/utils/requestTracker';
 
@@ -58,8 +59,12 @@ async function ensureIndex(indexName: string): Promise<void> {
     });
   } catch (err: unknown) {
     // Ignore "index already exists" — expected with concurrent cold-starts
-    const esError = err as { meta?: { body?: { error?: { type?: string } } } };
-    if (esError?.meta?.body?.error?.type !== 'resource_already_exists_exception') {
+    if (
+      err instanceof errors.ResponseError &&
+      err.body?.error?.type === 'resource_already_exists_exception'
+    ) {
+      // Index was created by another cold-start — safe to proceed
+    } else {
       throw err;
     }
   }
