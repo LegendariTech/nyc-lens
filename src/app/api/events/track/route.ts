@@ -55,17 +55,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Track the event
+    // Track the event (returns false if not configured or write failed)
     const success = await trackEvent(event, data);
 
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Failed to track event' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success }, { status: 200 });
   } catch (error) {
     console.error('Error in event tracking API:', error);
     return NextResponse.json(
