@@ -1,5 +1,5 @@
 import 'server-only';
-import { errors } from '@elastic/elasticsearch';
+import { errors, type Client } from '@elastic/elasticsearch';
 import { getClient } from './elasticsearch';
 import type { RequestLogDocument } from '@/utils/requestTracker';
 
@@ -21,10 +21,8 @@ let indexReady = false;
  * Ensure the requests index exists with explicit mappings.
  * Uses try-catch on create to handle concurrent cold-starts gracefully.
  */
-async function ensureIndex(indexName: string): Promise<void> {
+async function ensureIndex(client: Client, indexName: string): Promise<void> {
   if (indexReady) return;
-
-  const client = getClient();
 
   try {
     await client.indices.create({
@@ -88,7 +86,7 @@ export async function trackRequest(doc: RequestLogDocument): Promise<boolean> {
 
   try {
     const client = getClient();
-    await ensureIndex(indexName);
+    await ensureIndex(client, indexName);
 
     await client.index({
       index: indexName,
