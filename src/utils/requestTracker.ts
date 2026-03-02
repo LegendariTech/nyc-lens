@@ -5,6 +5,7 @@
 
 /** Known bot patterns (covers ~95% of bot traffic) */
 const BOT_PATTERNS: Array<{ pattern: RegExp; name: string }> = [
+  { pattern: /GoogleOther/i, name: 'GoogleOther' },
   { pattern: /Googlebot/i, name: 'Googlebot' },
   { pattern: /Bingbot/i, name: 'Bingbot' },
   { pattern: /Slurp/i, name: 'Yahoo Slurp' },
