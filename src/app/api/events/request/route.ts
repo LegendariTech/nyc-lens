@@ -12,9 +12,8 @@ async function ensureIndex(indexName: string): Promise<void> {
   if (indexReady) return;
 
   const client = getClient();
-  const exists = await client.indices.exists({ index: indexName });
 
-  if (!exists) {
+  try {
     await client.indices.create({
       index: indexName,
       mappings: {
@@ -24,8 +23,6 @@ async function ensureIndex(indexName: string): Promise<void> {
           path: { type: 'keyword' },
           url: { type: 'text' },
           query_params: { type: 'flattened' },
-          status: { type: 'short' },
-          duration_ms: { type: 'float' },
           ip: { type: 'ip' },
           user_agent: { type: 'text' },
           ua_browser: { type: 'keyword' },
@@ -48,6 +45,12 @@ async function ensureIndex(indexName: string): Promise<void> {
         },
       },
     });
+  } catch (err: unknown) {
+    // Ignore "index already exists" — expected with concurrent cold-starts
+    const esError = err as { meta?: { body?: { error?: { type?: string } } } };
+    if (esError?.meta?.body?.error?.type !== 'resource_already_exists_exception') {
+      throw err;
+    }
   }
 
   indexReady = true;
@@ -58,6 +61,7 @@ async function ensureIndex(indexName: string): Promise<void> {
  *
  * Internal endpoint for logging request metadata to Elasticsearch.
  * Called by middleware in a fire-and-forget pattern.
+ * Gated to production only via VERCEL_ENV check.
  */
 export async function POST(req: NextRequest) {
   if (process.env.VERCEL_ENV !== 'production') {
@@ -82,7 +86,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('Failed to log request:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Failed to log request:', message);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

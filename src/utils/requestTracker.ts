@@ -76,36 +76,44 @@ export function parseUserAgent(ua: string | null): ParsedUserAgent {
 
   // Browser detection
   let browser = 'Unknown';
-  if (/Edg\/(\d+)/i.test(ua)) {
-    browser = `Edge ${RegExp.$1}`;
-  } else if (/OPR\/(\d+)/i.test(ua)) {
-    browser = `Opera ${RegExp.$1}`;
-  } else if (/Chrome\/(\d+)/i.test(ua)) {
-    browser = `Chrome ${RegExp.$1}`;
-  } else if (/Firefox\/(\d+)/i.test(ua)) {
-    browser = `Firefox ${RegExp.$1}`;
-  } else if (/Version\/(\d+).*Safari/i.test(ua)) {
-    browser = `Safari ${RegExp.$1}`;
-  } else if (/MSIE (\d+)|Trident/i.test(ua)) {
-    browser = `IE ${RegExp.$1 || '11'}`;
+  const edgMatch = ua.match(/Edg\/(\d+)/i);
+  const oprMatch = ua.match(/OPR\/(\d+)/i);
+  const chromeMatch = ua.match(/Chrome\/(\d+)/i);
+  const ffMatch = ua.match(/Firefox\/(\d+)/i);
+  const safariMatch = ua.match(/Version\/(\d+).*Safari/i);
+  const ieMatch = ua.match(/MSIE (\d+)/i);
+  if (edgMatch) {
+    browser = `Edge ${edgMatch[1]}`;
+  } else if (oprMatch) {
+    browser = `Opera ${oprMatch[1]}`;
+  } else if (chromeMatch) {
+    browser = `Chrome ${chromeMatch[1]}`;
+  } else if (ffMatch) {
+    browser = `Firefox ${ffMatch[1]}`;
+  } else if (safariMatch) {
+    browser = `Safari ${safariMatch[1]}`;
+  } else if (ieMatch || /Trident/i.test(ua)) {
+    browser = `IE ${ieMatch ? ieMatch[1] : '11'}`;
   }
 
   // OS detection
   let os = 'Unknown';
+  const macMatch = ua.match(/Mac OS X (\d+[._]\d+)/i);
+  const androidMatch = ua.match(/Android (\d+)/i);
   if (/Windows NT 10/i.test(ua)) {
     os = 'Windows 10+';
   } else if (/Windows NT/i.test(ua)) {
     os = 'Windows';
-  } else if (/Mac OS X (\d+[._]\d+)/i.test(ua)) {
-    os = `macOS ${RegExp.$1.replace('_', '.')}`;
-  } else if (/Android (\d+)/i.test(ua)) {
-    os = `Android ${RegExp.$1}`;
+  } else if (macMatch) {
+    os = `macOS ${macMatch[1].replace('_', '.')}`;
+  } else if (androidMatch) {
+    os = `Android ${androidMatch[1]}`;
   } else if (/iPhone|iPad|iPod/i.test(ua)) {
     os = 'iOS';
-  } else if (/Linux/i.test(ua)) {
-    os = 'Linux';
   } else if (/CrOS/i.test(ua)) {
     os = 'ChromeOS';
+  } else if (/Linux/i.test(ua)) {
+    os = 'Linux';
   }
 
   // Device detection
@@ -167,14 +175,38 @@ export function parseQueryParams(url: URL): Record<string, string> | null {
   return hasParams ? params : null;
 }
 
+/** Keys stripped from logged request bodies to avoid persisting secrets */
+const SENSITIVE_KEYS = new Set([
+  'password', 'token', 'secret', 'key', 'authorization',
+  'api_key', 'apikey', 'access_token', 'refresh_token',
+  'credit_card', 'ssn', 'credentials',
+]);
+
+/**
+ * Recursively strip sensitive keys from an object before logging.
+ */
+export function sanitizeBody(obj: unknown): unknown {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizeBody);
+
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
+      result[key] = '[REDACTED]';
+    } else {
+      result[key] = sanitizeBody(value);
+    }
+  }
+  return result;
+}
+
 export interface RequestLogDocument {
   '@timestamp': string;
   method: string;
   path: string;
   url: string;
   query_params: Record<string, string> | null;
-  status: number;
-  duration_ms: number;
   ip: string;
   user_agent: string | null;
   ua_browser: string;

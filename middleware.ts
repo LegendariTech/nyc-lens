@@ -5,13 +5,12 @@ import {
   extractGeo,
   classifyRoute,
   parseQueryParams,
+  sanitizeBody,
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
 export async function middleware(request: NextRequest) {
-  const start = Date.now();
   const response = NextResponse.next();
-  const duration = Date.now() - start;
 
   // Only track in production
   if (process.env.VERCEL_ENV !== 'production') {
@@ -30,7 +29,7 @@ export async function middleware(request: NextRequest) {
   const ip = extractClientIp(request.headers);
   const routeType = classifyRoute(url.pathname);
 
-  // Read request body for API POST/PUT routes (truncated to 4KB)
+  // Read request body for API POST/PUT routes (truncated to 4KB, sensitive keys stripped)
   let requestBody: unknown = null;
   if (routeType === 'api' && (request.method === 'POST' || request.method === 'PUT')) {
     try {
@@ -39,7 +38,7 @@ export async function middleware(request: NextRequest) {
       if (text) {
         const truncated = text.length > 4096 ? text.slice(0, 4096) : text;
         try {
-          requestBody = JSON.parse(truncated);
+          requestBody = sanitizeBody(JSON.parse(truncated));
         } catch {
           requestBody = { _raw: truncated };
         }
@@ -55,8 +54,6 @@ export async function middleware(request: NextRequest) {
     path: url.pathname,
     url: url.href,
     query_params: parseQueryParams(url),
-    status: response.status,
-    duration_ms: duration,
     ip,
     user_agent: ua,
     ua_browser: parsed.browser,

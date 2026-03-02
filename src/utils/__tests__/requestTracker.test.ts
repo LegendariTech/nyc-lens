@@ -5,6 +5,7 @@ import {
   extractGeo,
   classifyRoute,
   parseQueryParams,
+  sanitizeBody,
 } from '../requestTracker';
 
 describe('parseUserAgent', () => {
@@ -142,7 +143,7 @@ describe('parseUserAgent', () => {
       expect(result.os).toBe('Linux');
     });
 
-    it('detects ChromeOS', () => {
+    it('detects ChromeOS (not Linux, despite X11 in UA)', () => {
       const result = parseUserAgent('Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36');
       expect(result.os).toBe('ChromeOS');
     });
@@ -294,5 +295,63 @@ describe('parseQueryParams', () => {
   it('handles single param', () => {
     const url = new URL('https://example.com/?foo=bar');
     expect(parseQueryParams(url)).toEqual({ foo: 'bar' });
+  });
+});
+
+describe('sanitizeBody', () => {
+  it('redacts top-level sensitive keys', () => {
+    const input = { username: 'admin', password: 'secret123', query: 'test' };
+    expect(sanitizeBody(input)).toEqual({
+      username: 'admin',
+      password: '[REDACTED]',
+      query: 'test',
+    });
+  });
+
+  it('redacts nested sensitive keys', () => {
+    const input = { auth: { token: 'abc', user: 'bob' }, data: 'ok' };
+    expect(sanitizeBody(input)).toEqual({
+      auth: { token: '[REDACTED]', user: 'bob' },
+      data: 'ok',
+    });
+  });
+
+  it('handles case-insensitive key matching', () => {
+    const input = { Authorization: 'Bearer xyz', API_KEY: 'k123' };
+    expect(sanitizeBody(input)).toEqual({
+      Authorization: '[REDACTED]',
+      API_KEY: '[REDACTED]',
+    });
+  });
+
+  it('redacts inside arrays of objects', () => {
+    const input = [{ secret: 'a' }, { name: 'b' }];
+    expect(sanitizeBody(input)).toEqual([{ secret: '[REDACTED]' }, { name: 'b' }]);
+  });
+
+  it('passes through primitives unchanged', () => {
+    expect(sanitizeBody('hello')).toBe('hello');
+    expect(sanitizeBody(42)).toBe(42);
+    expect(sanitizeBody(true)).toBe(true);
+    expect(sanitizeBody(null)).toBeNull();
+    expect(sanitizeBody(undefined)).toBeUndefined();
+  });
+
+  it('handles empty objects and arrays', () => {
+    expect(sanitizeBody({})).toEqual({});
+    expect(sanitizeBody([])).toEqual([]);
+  });
+
+  it('redacts all known sensitive keys', () => {
+    const input = {
+      password: '1', token: '2', secret: '3', key: '4',
+      authorization: '5', api_key: '6', apikey: '7',
+      access_token: '8', refresh_token: '9',
+      credit_card: '10', ssn: '11', credentials: '12',
+    };
+    const result = sanitizeBody(input) as Record<string, string>;
+    for (const value of Object.values(result)) {
+      expect(value).toBe('[REDACTED]');
+    }
   });
 });
