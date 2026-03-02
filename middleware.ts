@@ -16,8 +16,9 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Skip tracking for the tracking endpoint itself to avoid infinite loops
-  if (request.nextUrl.pathname === '/api/events/request') {
+  const esNode = process.env.ELASTICSEARCH_NODE;
+  const esIndex = process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME;
+  if (!esNode || !esIndex) {
     return response;
   }
 
@@ -54,12 +55,18 @@ export function middleware(request: NextRequest) {
     vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
   };
 
-  // Fire-and-forget: non-blocking tracking
+  // Fire-and-forget: write directly to ES REST API (no internal HTTP round-trip)
   try {
-    const trackingUrl = new URL('/api/events/request', request.url);
-    fetch(trackingUrl, {
+    const esUser = process.env.ELASTICSEARCH_USERNAME || '';
+    const esPass = process.env.ELASTICSEARCH_PASSWORD || '';
+    const authHeader = 'Basic ' + btoa(`${esUser}:${esPass}`);
+
+    fetch(`${esNode}/${esIndex}/_doc`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader,
+      },
       body: JSON.stringify(doc),
       keepalive: true,
     }).catch(() => {
