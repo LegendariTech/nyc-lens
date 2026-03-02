@@ -129,14 +129,18 @@ export function parseUserAgent(ua: string | null): ParsedUserAgent {
 
 /**
  * Extract client IP from request headers.
+ * Prefers x-real-ip (set reliably by Vercel). Falls back to the last
+ * entry in x-forwarded-for (appended by the platform, not spoofable).
  */
 export function extractClientIp(headers: Headers): string | null {
+  const realIp = headers.get('x-real-ip');
+  if (realIp) return realIp;
   const forwarded = headers.get('x-forwarded-for');
   if (forwarded) {
-    // x-forwarded-for can contain multiple IPs; first is the client
-    return forwarded.split(',')[0].trim();
+    const ips = forwarded.split(',').map(s => s.trim());
+    return ips[ips.length - 1];
   }
-  return headers.get('x-real-ip') || null;
+  return null;
 }
 
 /**
@@ -173,32 +177,6 @@ export function parseQueryParams(url: URL): Record<string, string> | null {
     hasParams = true;
   });
   return hasParams ? params : null;
-}
-
-/** Keys stripped from logged request bodies to avoid persisting secrets */
-const SENSITIVE_KEYS = new Set([
-  'password', 'token', 'secret', 'private_key', 'secret_key', 'authorization',
-  'api_key', 'apikey', 'access_token', 'refresh_token',
-  'credit_card', 'ssn', 'credentials',
-]);
-
-/**
- * Recursively strip sensitive keys from an object before logging.
- */
-export function sanitizeBody(obj: unknown): unknown {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(sanitizeBody);
-
-  const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
-    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
-      result[key] = '[REDACTED]';
-    } else {
-      result[key] = sanitizeBody(value);
-    }
-  }
-  return result;
 }
 
 export interface RequestLogDocument {

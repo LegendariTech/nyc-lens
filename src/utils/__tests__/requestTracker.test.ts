@@ -5,7 +5,6 @@ import {
   extractGeo,
   classifyRoute,
   parseQueryParams,
-  sanitizeBody,
 } from '../requestTracker';
 
 describe('parseUserAgent', () => {
@@ -193,26 +192,26 @@ describe('parseUserAgent', () => {
 });
 
 describe('extractClientIp', () => {
-  it('extracts first IP from x-forwarded-for', () => {
-    const headers = new Headers({ 'x-forwarded-for': '203.0.113.50, 70.41.3.18, 150.172.238.178' });
-    expect(extractClientIp(headers)).toBe('203.0.113.50');
-  });
-
-  it('extracts single IP from x-forwarded-for', () => {
-    const headers = new Headers({ 'x-forwarded-for': '203.0.113.50' });
-    expect(extractClientIp(headers)).toBe('203.0.113.50');
-  });
-
-  it('falls back to x-real-ip', () => {
+  it('prefers x-real-ip (Vercel-set, not spoofable)', () => {
     const headers = new Headers({ 'x-real-ip': '10.0.0.1' });
     expect(extractClientIp(headers)).toBe('10.0.0.1');
   });
 
-  it('prefers x-forwarded-for over x-real-ip', () => {
+  it('prefers x-real-ip over x-forwarded-for', () => {
     const headers = new Headers({
-      'x-forwarded-for': '203.0.113.50',
+      'x-forwarded-for': '1.2.3.4, 10.0.0.1',
       'x-real-ip': '10.0.0.1',
     });
+    expect(extractClientIp(headers)).toBe('10.0.0.1');
+  });
+
+  it('uses last IP from x-forwarded-for when x-real-ip is absent', () => {
+    const headers = new Headers({ 'x-forwarded-for': '1.2.3.4, 70.41.3.18, 150.172.238.178' });
+    expect(extractClientIp(headers)).toBe('150.172.238.178');
+  });
+
+  it('handles single IP in x-forwarded-for', () => {
+    const headers = new Headers({ 'x-forwarded-for': '203.0.113.50' });
     expect(extractClientIp(headers)).toBe('203.0.113.50');
   });
 
@@ -298,65 +297,3 @@ describe('parseQueryParams', () => {
   });
 });
 
-describe('sanitizeBody', () => {
-  it('redacts top-level sensitive keys', () => {
-    const input = { username: 'admin', password: 'secret123', query: 'test' };
-    expect(sanitizeBody(input)).toEqual({
-      username: 'admin',
-      password: '[REDACTED]',
-      query: 'test',
-    });
-  });
-
-  it('redacts nested sensitive keys', () => {
-    const input = { auth: { token: 'abc', user: 'bob' }, data: 'ok' };
-    expect(sanitizeBody(input)).toEqual({
-      auth: { token: '[REDACTED]', user: 'bob' },
-      data: 'ok',
-    });
-  });
-
-  it('handles case-insensitive key matching', () => {
-    const input = { Authorization: 'Bearer xyz', API_KEY: 'k123' };
-    expect(sanitizeBody(input)).toEqual({
-      Authorization: '[REDACTED]',
-      API_KEY: '[REDACTED]',
-    });
-  });
-
-  it('redacts inside arrays of objects', () => {
-    const input = [{ secret: 'a' }, { name: 'b' }];
-    expect(sanitizeBody(input)).toEqual([{ secret: '[REDACTED]' }, { name: 'b' }]);
-  });
-
-  it('passes through primitives unchanged', () => {
-    expect(sanitizeBody('hello')).toBe('hello');
-    expect(sanitizeBody(42)).toBe(42);
-    expect(sanitizeBody(true)).toBe(true);
-    expect(sanitizeBody(null)).toBeNull();
-    expect(sanitizeBody(undefined)).toBeUndefined();
-  });
-
-  it('handles empty objects and arrays', () => {
-    expect(sanitizeBody({})).toEqual({});
-    expect(sanitizeBody([])).toEqual([]);
-  });
-
-  it('redacts all known sensitive keys', () => {
-    const input = {
-      password: '1', token: '2', secret: '3', private_key: '4',
-      secret_key: '4b', authorization: '5', api_key: '6', apikey: '7',
-      access_token: '8', refresh_token: '9',
-      credit_card: '10', ssn: '11', credentials: '12',
-    };
-    const result = sanitizeBody(input) as Record<string, string>;
-    for (const value of Object.values(result)) {
-      expect(value).toBe('[REDACTED]');
-    }
-  });
-
-  it('does not redact innocuous "key" fields', () => {
-    const input = { key: 'row-id', name: 'test' };
-    expect(sanitizeBody(input)).toEqual({ key: 'row-id', name: 'test' });
-  });
-});
