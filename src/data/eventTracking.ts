@@ -10,6 +10,35 @@ function getEventsIndexName(): string | null {
   return process.env.ELASTICSEARCH_EVENTS_INDEX_NAME || null;
 }
 
+/** Tracks whether we've already ensured the index exists this process */
+let indexReady = false;
+
+/**
+ * Ensure the events index exists with explicit mappings.
+ * Only runs once per process lifetime.
+ */
+async function ensureIndex(indexName: string): Promise<void> {
+  if (indexReady) return;
+
+  const client = getClient();
+  const exists = await client.indices.exists({ index: indexName });
+
+  if (!exists) {
+    await client.indices.create({
+      index: indexName,
+      mappings: {
+        properties: {
+          event: { type: 'keyword' },
+          timestamp: { type: 'date' },
+          data: { type: 'flattened' },
+        },
+      },
+    });
+  }
+
+  indexReady = true;
+}
+
 /**
  * Track an event by indexing it to Elasticsearch.
  *
@@ -31,6 +60,7 @@ export async function trackEvent(
 
   try {
     const client = getClient();
+    await ensureIndex(indexName);
 
     const trackedEvent: TrackedEvent = {
       event,
@@ -40,7 +70,7 @@ export async function trackEvent(
 
     await client.index({
       index: indexName,
-      body: trackedEvent,
+      document: trackedEvent,
     });
 
     return true;
