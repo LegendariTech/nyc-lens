@@ -130,13 +130,13 @@ export function parseUserAgent(ua: string | null): ParsedUserAgent {
 /**
  * Extract client IP from request headers.
  */
-export function extractClientIp(headers: Headers): string {
+export function extractClientIp(headers: Headers): string | null {
   const forwarded = headers.get('x-forwarded-for');
   if (forwarded) {
     // x-forwarded-for can contain multiple IPs; first is the client
     return forwarded.split(',')[0].trim();
   }
-  return headers.get('x-real-ip') || 'unknown';
+  return headers.get('x-real-ip') || null;
 }
 
 /**
@@ -177,7 +177,7 @@ export function parseQueryParams(url: URL): Record<string, string> | null {
 
 /** Keys stripped from logged request bodies to avoid persisting secrets */
 const SENSITIVE_KEYS = new Set([
-  'password', 'token', 'secret', 'key', 'authorization',
+  'password', 'token', 'secret', 'private_key', 'secret_key', 'authorization',
   'api_key', 'apikey', 'access_token', 'refresh_token',
   'credit_card', 'ssn', 'credentials',
 ]);
@@ -207,7 +207,7 @@ export interface RequestLogDocument {
   path: string;
   url: string;
   query_params: Record<string, string> | null;
-  ip: string;
+  ip: string | null;
   user_agent: string | null;
   ua_browser: string;
   ua_os: string;
@@ -220,7 +220,6 @@ export interface RequestLogDocument {
   geo_country: string | null;
   geo_region: string | null;
   geo_city: string | null;
-  request_body: unknown;
   route_type: RouteType;
   request_id: string;
   host: string | null;

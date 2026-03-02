@@ -216,9 +216,9 @@ describe('extractClientIp', () => {
     expect(extractClientIp(headers)).toBe('203.0.113.50');
   });
 
-  it('returns "unknown" when no IP headers present', () => {
+  it('returns null when no IP headers present', () => {
     const headers = new Headers();
-    expect(extractClientIp(headers)).toBe('unknown');
+    expect(extractClientIp(headers)).toBeNull();
   });
 });
 
@@ -263,7 +263,7 @@ describe('classifyRoute', () => {
 
   it('classifies static assets', () => {
     expect(classifyRoute('/_next/static/chunks/main.js')).toBe('static');
-    expect(classifyRoute('/_next/image?url=/logo.png')).toBe('static');
+    expect(classifyRoute('/_next/image')).toBe('static');
     expect(classifyRoute('/logo.png')).toBe('static');
     expect(classifyRoute('/fonts/inter.woff2')).toBe('static');
     expect(classifyRoute('/favicon.ico')).toBe('static');
@@ -344,8 +344,8 @@ describe('sanitizeBody', () => {
 
   it('redacts all known sensitive keys', () => {
     const input = {
-      password: '1', token: '2', secret: '3', key: '4',
-      authorization: '5', api_key: '6', apikey: '7',
+      password: '1', token: '2', secret: '3', private_key: '4',
+      secret_key: '4b', authorization: '5', api_key: '6', apikey: '7',
       access_token: '8', refresh_token: '9',
       credit_card: '10', ssn: '11', credentials: '12',
     };
@@ -353,5 +353,10 @@ describe('sanitizeBody', () => {
     for (const value of Object.values(result)) {
       expect(value).toBe('[REDACTED]');
     }
+  });
+
+  it('does not redact innocuous "key" fields', () => {
+    const input = { key: 'row-id', name: 'test' };
+    expect(sanitizeBody(input)).toEqual({ key: 'row-id', name: 'test' });
   });
 });

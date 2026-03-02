@@ -6,6 +6,10 @@ function getRequestsIndexName(): string | null {
   return process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME || null;
 }
 
+// Note: indexReady won't survive if the ES index is deleted while a Lambda
+// container is warm. Subsequent writes will fail silently (fire-and-forget
+// caller ignores 500s). This is an acceptable trade-off vs. checking on
+// every request.
 let indexReady = false;
 
 async function ensureIndex(indexName: string): Promise<void> {
@@ -23,7 +27,7 @@ async function ensureIndex(indexName: string): Promise<void> {
           path: { type: 'keyword' },
           url: { type: 'text' },
           query_params: { type: 'flattened' },
-          ip: { type: 'ip' },
+          ip: { type: 'keyword' },
           user_agent: { type: 'text' },
           ua_browser: { type: 'keyword' },
           ua_os: { type: 'keyword' },
@@ -36,7 +40,6 @@ async function ensureIndex(indexName: string): Promise<void> {
           geo_country: { type: 'keyword' },
           geo_region: { type: 'keyword' },
           geo_city: { type: 'keyword' },
-          request_body: { type: 'flattened' },
           route_type: { type: 'keyword' },
           request_id: { type: 'keyword' },
           host: { type: 'keyword' },

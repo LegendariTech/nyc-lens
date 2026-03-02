@@ -5,11 +5,10 @@ import {
   extractGeo,
   classifyRoute,
   parseQueryParams,
-  sanitizeBody,
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Only track in production
@@ -29,30 +28,11 @@ export async function middleware(request: NextRequest) {
   const ip = extractClientIp(request.headers);
   const routeType = classifyRoute(url.pathname);
 
-  // Read request body for API POST/PUT routes (truncated to 4KB, sensitive keys stripped)
-  let requestBody: unknown = null;
-  if (routeType === 'api' && (request.method === 'POST' || request.method === 'PUT')) {
-    try {
-      const cloned = request.clone();
-      const text = await cloned.text();
-      if (text) {
-        const truncated = text.length > 4096 ? text.slice(0, 4096) : text;
-        try {
-          requestBody = sanitizeBody(JSON.parse(truncated));
-        } catch {
-          requestBody = { _raw: truncated };
-        }
-      }
-    } catch {
-      // Body reading can fail — ignore
-    }
-  }
-
   const doc: RequestLogDocument = {
     '@timestamp': new Date().toISOString(),
     method: request.method,
     path: url.pathname,
-    url: url.href,
+    url: url.origin + url.pathname,
     query_params: parseQueryParams(url),
     ip,
     user_agent: ua,
@@ -67,12 +47,11 @@ export async function middleware(request: NextRequest) {
     geo_country: geo.country,
     geo_region: geo.region,
     geo_city: geo.city,
-    request_body: requestBody,
     route_type: routeType,
     request_id: crypto.randomUUID(),
     host: request.headers.get('host') || null,
     protocol: url.protocol.replace(':', ''),
-    vercel_deployment_id: request.headers.get('x-vercel-deployment-url') || null,
+    vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
   };
 
   // Fire-and-forget: non-blocking tracking
