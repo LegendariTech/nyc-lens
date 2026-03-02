@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Autocomplete } from '@/components/ui/Autocomplete';
 import { fetchProperties, type PropertyItem } from './propertyService';
@@ -8,6 +8,11 @@ import { PropertyResultItem } from './PropertyResultItem';
 import { findMatchInText } from './textMatcher';
 import { buildPropertyUrl } from '@/utils/urlSlug';
 import { getBoroughDisplayName } from '@/constants/nyc';
+import { trackEvent, debounce } from '@/utils/trackEvent';
+import { EventType } from '@/types/events';
+
+/** Minimum query length to track (avoid tracking partial input) */
+const MIN_QUERY_LENGTH = 3;
 
 interface PropertyAutocompleteProps {
   compact?: boolean;
@@ -36,6 +41,23 @@ export function PropertyAutocomplete({
 }: PropertyAutocompleteProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  // Debounce tracking to avoid sending events for every keystroke
+  // Only track after user has stopped typing for 1.5 seconds
+  const trackSearchDebounced = useRef(
+    debounce((query: string, resultCount: number, topResult?: PropertyItem) => {
+      trackEvent(EventType.AUTOCOMPLETE_SEARCH, {
+        query,
+        resultCount,
+        topBorough: topResult?.borough,
+        topBuildingClass: topResult?.avroll_building_class,
+      });
+    }, 1500)
+  ).current;
+
+  useEffect(() => {
+    return () => { trackSearchDebounced.cancel(); };
+  }, [trackSearchDebounced]);
 
   // Helper to find the matched address (address_with_unit or AKA)
   const getMatchedAddress = (item: PropertyItem, query: string): string => {
@@ -100,6 +122,12 @@ export function PropertyAutocomplete({
           sourceId: 'properties',
           async getItems() {
             const items = await fetchProperties(query, searchField);
+
+            // Track search event if query is long enough
+            if (query.length >= MIN_QUERY_LENGTH) {
+              trackSearchDebounced(query, items.length, items[0]);
+            }
+
             // Add matched address to each item
             return items.map(item => ({
               ...item,
