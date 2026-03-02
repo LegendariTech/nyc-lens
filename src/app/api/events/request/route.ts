@@ -1,63 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getClient } from '@/data/elasticsearch';
+import { trackRequest } from '@/data/requestTracking';
 import type { RequestLogDocument } from '@/utils/requestTracker';
-
-function getRequestsIndexName(): string | null {
-  return process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME || null;
-}
-
-// Note: indexReady won't survive if the ES index is deleted while a Lambda
-// container is warm. Subsequent writes will fail silently (fire-and-forget
-// caller ignores 500s). This is an acceptable trade-off vs. checking on
-// every request.
-let indexReady = false;
-
-async function ensureIndex(indexName: string): Promise<void> {
-  if (indexReady) return;
-
-  const client = getClient();
-
-  try {
-    await client.indices.create({
-      index: indexName,
-      mappings: {
-        properties: {
-          '@timestamp': { type: 'date' },
-          method: { type: 'keyword' },
-          path: { type: 'keyword' },
-          url: { type: 'text' },
-          query_params: { type: 'flattened' },
-          ip: { type: 'keyword' },
-          user_agent: { type: 'text' },
-          ua_browser: { type: 'keyword' },
-          ua_os: { type: 'keyword' },
-          ua_device: { type: 'keyword' },
-          is_bot: { type: 'boolean' },
-          bot_name: { type: 'keyword' },
-          referer: { type: 'text' },
-          accept_language: { type: 'keyword' },
-          content_type: { type: 'keyword' },
-          geo_country: { type: 'keyword' },
-          geo_region: { type: 'keyword' },
-          geo_city: { type: 'keyword' },
-          route_type: { type: 'keyword' },
-          request_id: { type: 'keyword' },
-          host: { type: 'keyword' },
-          protocol: { type: 'keyword' },
-          vercel_deployment_id: { type: 'keyword' },
-        },
-      },
-    });
-  } catch (err: unknown) {
-    // Ignore "index already exists" — expected with concurrent cold-starts
-    const esError = err as { meta?: { body?: { error?: { type?: string } } } };
-    if (esError?.meta?.body?.error?.type !== 'resource_already_exists_exception') {
-      throw err;
-    }
-  }
-
-  indexReady = true;
-}
 
 /**
  * POST /api/events/request
@@ -71,26 +14,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ skipped: true }, { status: 200 });
   }
 
-  const indexName = getRequestsIndexName();
-  if (!indexName) {
-    return NextResponse.json({ skipped: true }, { status: 200 });
-  }
-
   try {
     const doc: RequestLogDocument = await req.json();
+    const success = await trackRequest(doc);
 
-    const client = getClient();
-    await ensureIndex(indexName);
-
-    await client.index({
-      index: indexName,
-      document: doc,
-    });
-
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error('Failed to log request:', message);
+    console.error('Error in request tracking API:', message);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
