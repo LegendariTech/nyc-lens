@@ -7,7 +7,7 @@ import type { TrackedEvent } from '@/types/events';
  * Returns null if not configured (tracking will be skipped).
  */
 function getEventsIndexName(): string | null {
-  return process.env.ELASTICSEARCH_EVENTS_INDEX_NAME || null;
+  return process.env.ELASTICSEARCH_EVENTS_INDEX_NAME?.trim() || null;
 }
 
 /** Tracks whether we've already ensured the index exists this process */

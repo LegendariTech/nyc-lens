@@ -16,8 +16,8 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const esNode = process.env.ELASTICSEARCH_NODE;
-  const esIndex = process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME;
+  const esNode = process.env.ELASTICSEARCH_NODE?.trim();
+  const esIndex = process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME?.trim();
   if (!esNode || !esIndex) {
     return response;
   }
