@@ -107,8 +107,11 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
     ? `${bblParts[0]}-${bblParts[1]}-${billingLot}`
     : null;
 
-  // Detect billing lot itself: lot >= 7500, no billing_lot, building class starts with "R"
-  const lotNum = parseInt(bblParts[2]);
+  // Detect billing lot (the building-level record for a condo):
+  // - NYC assigns lot numbers >= 7500 to condo billing lots (DOF convention)
+  // - Building class codes starting with "R" are condo-specific (R0-R9, RA-RW)
+  // - Must not itself have a billing_lot (which would make it a unit, not the billing lot)
+  const lotNum = parseInt(bblParts[2], 10);
   const bldgClass = propertyData?.avroll_building_class || '';
   const isBillingLot = !isCondoUnit && lotNum >= 7500 && bldgClass.startsWith('R');
 
@@ -145,9 +148,9 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         unit: record.unit,
         buildingClass: record.avroll_building_class || null,
         owner: record.buyer_name || null,
-        saleAmount: record.sale_document_amount || null,
+        saleAmount: record.sale_document_amount ?? null,
         saleDate: record.sale_document_date || null,
-        mortgageAmount: record.mortgage_document_amount || null,
+        mortgageAmount: record.mortgage_document_amount ?? null,
         lender: record.lender_name || null,
       }));
 

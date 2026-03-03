@@ -36,13 +36,13 @@ export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps
   );
 
   const trackFilterDebounced = useRef(
-    debounce((query: string, resultCount: number, totalCount: number) => {
+    debounce((query: string, resultCount: number, totalCount: number, bbl: string) => {
       trackEvent(EventType.CONDO_UNIT_SEARCH, {
         query,
         resultCount,
         totalCount,
         source: 'desktop',
-        currentBbl,
+        currentBbl: bbl,
       });
     }, 1500)
   ).current;
@@ -57,10 +57,10 @@ export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps
       const unitFilter = filterModel?.unit;
       const query = unitFilter?.filter as string | undefined;
       if (query && query.length >= 2) {
-        trackFilterDebounced(query, event.api.getDisplayedRowCount(), condoUnits.length);
+        trackFilterDebounced(query, event.api.getDisplayedRowCount(), condoUnits.length, currentBbl);
       }
     },
-    [trackFilterDebounced, condoUnits.length]
+    [trackFilterDebounced, condoUnits.length, currentBbl]
   );
 
   const handleUnitClick = useCallback(
@@ -88,16 +88,6 @@ export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps
 
       {/* Desktop: ag-Grid table */}
       <div className="hidden md:block w-full relative">
-        <style dangerouslySetInnerHTML={{
-          __html: `
-          .ag-theme-quartz-dark .current-condo-unit {
-            background-color: rgba(245, 158, 11, 0.15) !important;
-          }
-          .ag-theme-quartz-dark .ag-cell {
-            user-select: text !important;
-            -webkit-user-select: text !important;
-          }
-        `}} />
         <div className="ag-theme-quartz-dark" style={{ width: '100%', height: 500 }}>
           <AgGridReact<CondoUnitSummary>
             theme={myTheme}

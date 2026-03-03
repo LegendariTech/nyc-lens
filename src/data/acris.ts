@@ -113,8 +113,8 @@ export async function fetchCondoUnits(
         bool: {
           must: [
             { term: { borough } },
-            { term: { 'block.integer': parseInt(block) } },
-            { term: { 'billing_lot.keyword': parseInt(billingLot) } },
+            { term: { 'block.integer': parseInt(block, 10) } },
+            { term: { 'billing_lot.keyword': billingLot } },
           ],
         },
       },

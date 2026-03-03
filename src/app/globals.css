@@ -197,6 +197,11 @@ button {
   -moz-user-select: text !important;
 }
 
+/* Condo units table: highlight current unit row */
+.current-condo-unit {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
 /* Hide ag-Grid watermark */
 .ag-watermark {
   display: none !important;

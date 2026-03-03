@@ -23,13 +23,13 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobil
   const [showAll, setShowAll] = useState(false);
 
   const trackSearchDebounced = useRef(
-    debounce((q: string, resultCount: number, totalCount: number) => {
+    debounce((q: string, resultCount: number, totalCount: number, bbl: string) => {
       trackEvent(EventType.CONDO_UNIT_SEARCH, {
         query: q,
         resultCount,
         totalCount,
         source: 'mobile',
-        currentBbl,
+        currentBbl: bbl,
       });
     }, 1500)
   ).current;
@@ -48,6 +48,13 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobil
     );
   }, [condoUnits, query]);
 
+  // Track search queries after debounce (uses filtered result count to avoid duplicate computation)
+  useEffect(() => {
+    if (query.length >= 2) {
+      trackSearchDebounced(query, filtered.length, condoUnits.length, currentBbl);
+    }
+  }, [query, filtered.length, condoUnits.length, currentBbl, trackSearchDebounced]);
+
   const isSearching = query.length > 0;
   const displayedUnits = isSearching || showAll ? filtered : filtered.slice(0, INITIAL_DISPLAY_COUNT);
   const hiddenCount = filtered.length - INITIAL_DISPLAY_COUNT;
@@ -60,16 +67,8 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobil
         startIcon={<SearchIcon />}
         value={query}
         onChange={(e) => {
-          const val = e.target.value;
-          setQuery(val);
+          setQuery(e.target.value);
           setShowAll(false);
-          if (val.length >= 2) {
-            const q = val.toLowerCase();
-            const matchCount = condoUnits.filter(
-              (u) => u.unit?.toLowerCase().includes(q) || u.owner?.toLowerCase().includes(q)
-            ).length;
-            trackSearchDebounced(val, matchCount, condoUnits.length);
-          }
         }}
       />
 
