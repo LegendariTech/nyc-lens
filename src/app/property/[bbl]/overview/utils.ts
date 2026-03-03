@@ -10,6 +10,29 @@ import { getTaxableAssessedValue, formatTaxYear, transformValuationToTaxRows } f
 const EM_DASH = '—';
 
 // ---------------------------------------------------------------------------
+// Condo Context
+// ---------------------------------------------------------------------------
+
+export interface CondoUnitSummary {
+  bbl: string;
+  unit: string | null;
+  buildingClass: string | null;
+  owner: string | null;
+  saleAmount: number | null;
+  saleDate: string | null;
+  mortgageAmount: number | null;
+  lender: string | null;
+}
+
+export interface CondoContext {
+  isCondoUnit: boolean;
+  billingLot: string | null;
+  billingLotBbl: string | null;
+  billingLotPluto: PlutoData | null;
+  condoUnits: CondoUnitSummary[];
+}
+
+// ---------------------------------------------------------------------------
 // Building Section
 // ---------------------------------------------------------------------------
 

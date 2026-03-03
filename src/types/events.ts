@@ -4,6 +4,10 @@
 export enum EventType {
   /** Autocomplete search query */
   AUTOCOMPLETE_SEARCH = 'autocomplete_search',
+  /** Condo units filter/search query */
+  CONDO_UNIT_SEARCH = 'condo_unit_search',
+  /** Click on a condo unit link */
+  CONDO_UNIT_CLICK = 'condo_unit_click',
 }
 
 /**

@@ -82,7 +82,7 @@ function makeValuation(overrides: Partial<PropertyValuation> = {}): PropertyValu
 
 function makeAcris(overrides: Partial<AcrisRecord> = {}): AcrisRecord {
   return {
-    borough: '1', block: '100', lot: '1', street_name: '', street_number: '',
+    borough: '1', block: '100', lot: '1', billing_lot: null, street_name: '', street_number: '',
     unit: null, lender_name: '', borrower_name: '', buyer_name: '',
     mortgage_document_id: '', mortgage_document_date: '', mortgage_recorded_date: '',
     mortgage_document_amount: 0, sale_document_date: '', sale_recorded_date: '',
