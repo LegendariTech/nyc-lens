@@ -1,18 +1,26 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useRef, useState, useMemo, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/utils/cn";
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { MenuIcon } from "@/components/icons";
 import { PropertyAutocomplete } from "@/components/search/PropertyAutocomplete";
+import { slugToAddress } from "@/utils/urlSlug";
 
-/** Mobile property search - extracted to wrap with Suspense for useSearchParams */
+/** Mobile property search - extracts address from URL path segments */
 function MobilePropertySearch() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isPropertyPage = pathname?.startsWith('/property/');
-  const address = searchParams?.get('address') || '';
+
+  // Extract address from URL: /property/[bbl]/[tab]/[address-slug]
+  const address = useMemo(() => {
+    if (!pathname) return '';
+    const parts = pathname.split('/');
+    // parts: ['', 'property', bbl, tab, ...addressSlug]
+    if (parts.length < 5) return '';
+    return slugToAddress(parts.slice(4).join('-'));
+  }, [pathname]);
 
   if (!isPropertyPage) return null;
 
