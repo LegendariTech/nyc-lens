@@ -58,7 +58,7 @@ export default async function PlutoPage({ params }: PlutoPageProps) {
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="pluto" address={streetAddress || undefined}>
-      <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} />
+      <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} billingLotBbl={useBillingLot ? billingLotBbl! : undefined} />
     </PropertyPageLayout>
   );
 }
