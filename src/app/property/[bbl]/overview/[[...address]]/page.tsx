@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { OverviewTab } from '../OverviewTab';
-import { getPropertyData } from '../../utils/getPropertyData';
+import { getPropertyData, getCondoInfo } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
 import { fetchCondoUnits } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
@@ -100,20 +100,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
   // Note: getPropertyData fetches PLUTO & ACRIS from cache (warmed by layout.tsx)
   const { plutoData, propertyData, error: propertyError } = await getPropertyData(bbl);
 
-  // Detect condo unit: if billing_lot is present, this is a condo unit
-  const billingLot = propertyData?.billing_lot || null;
-  const isCondoUnit = billingLot != null;
-  const billingLotBbl = isCondoUnit
-    ? `${bblParts[0]}-${bblParts[1]}-${billingLot}`
-    : null;
-
-  // Detect billing lot (the building-level record for a condo):
-  // - NYC assigns lot numbers >= 7500 to condo billing lots (DOF convention)
-  // - Building class codes starting with "R" are condo-specific (R0-R9, RA-RW)
-  // - Must not itself have a billing_lot (which would make it a unit, not the billing lot)
-  const lotNum = parseInt(bblParts[2], 10);
-  const bldgClass = propertyData?.avroll_building_class || '';
-  const isBillingLot = !isCondoUnit && lotNum >= 7500 && bldgClass.startsWith('R');
+  const { isCondoUnit, isBillingLot, billingLot, billingLotBbl } = getCondoInfo(propertyData, bblParts);
 
   // Fetch additional data needed for overview page
   let contactsData = null;
@@ -130,7 +117,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         fetchPropertyValuation(bbl),
         billingLotBbl ? fetchPlutoData(billingLotBbl) : Promise.resolve(null),
         isCondoUnit
-          ? fetchCondoUnits(bblParts[0], bblParts[1], billingLot)
+          ? fetchCondoUnits(bblParts[0], bblParts[1], billingLot!)
           : isBillingLot
             ? fetchCondoUnits(bblParts[0], bblParts[1], bblParts[2])
             : Promise.resolve(null),

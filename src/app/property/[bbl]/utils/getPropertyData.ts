@@ -9,6 +9,34 @@ export interface PropertyDataResult {
   error?: string;
 }
 
+export interface CondoInfo {
+  isCondoUnit: boolean;
+  isBillingLot: boolean;
+  billingLot: string | null;
+  billingLotBbl: string | null;
+}
+
+/**
+ * Detect condo status from ACRIS property data and BBL parts.
+ *
+ * - **Condo unit**: has a `billing_lot` field pointing to the building-level record
+ * - **Billing lot**: the building-level record itself — NYC assigns lot numbers >= 7500
+ *   to condo billing lots (DOF convention), with "R"-prefix building class codes (R0-R9, RA-RW)
+ */
+export function getCondoInfo(propertyData: AcrisRecord | null, bblParts: string[]): CondoInfo {
+  const billingLot = propertyData?.billing_lot || null;
+  const isCondoUnit = billingLot != null;
+  const billingLotBbl = isCondoUnit
+    ? `${bblParts[0]}-${bblParts[1]}-${billingLot}`
+    : null;
+
+  const lotNum = parseInt(bblParts[2], 10);
+  const bldgClass = propertyData?.avroll_building_class || '';
+  const isBillingLot = !isCondoUnit && lotNum >= 7500 && bldgClass.startsWith('R');
+
+  return { isCondoUnit, isBillingLot, billingLot, billingLotBbl };
+}
+
 /**
  * Fetch shared property data (PLUTO & ACRIS) for a given BBL.
  *
