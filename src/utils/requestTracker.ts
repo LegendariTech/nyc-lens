@@ -217,5 +217,5 @@ export interface RequestLogDocument {
   host: string | null;
   protocol: string;
   vercel_deployment_id: string | null;
-  blocked: boolean;
+  blocked?: boolean;
 }

@@ -53,7 +53,6 @@ export function middleware(request: NextRequest) {
     host: request.headers.get('host') || null,
     protocol: url.protocol.replace(':', ''),
     vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
-    blocked: false,
   };
 
   // Fire-and-forget: write directly to ES REST API (no internal HTTP round-trip)
