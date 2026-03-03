@@ -48,3 +48,6 @@ storybook-static
 
 # playwright mcp
 .playwright-mcp
+
+# clerk configuration (can include secrets)
+/.clerk/

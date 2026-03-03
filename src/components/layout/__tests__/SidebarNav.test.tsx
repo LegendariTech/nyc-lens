@@ -13,6 +13,14 @@ vi.mock("next/navigation", () => ({
   usePathname: () => currentPathname,
 }));
 
+vi.mock("@clerk/nextjs", () => ({
+  SignInButton: ({ children }: { children: React.ReactNode }) => children,
+  SignUpButton: ({ children }: { children: React.ReactNode }) => children,
+  SignedIn: ({ children }: { children: React.ReactNode }) => children,
+  SignedOut: ({ children }: { children: React.ReactNode }) => children,
+  UserButton: () => <div data-testid="user-button" />,
+}));
+
 // Helper to render with SidebarProvider and ViewportProvider
 function renderWithProvider(ui: React.ReactElement) {
   return render(
@@ -119,8 +127,8 @@ describe("SidebarNav", () => {
       await user.click(collapseButton);
       expect(screen.queryByText("Search")).not.toBeInTheDocument();
 
-      // Find the expand button (it might have a different label or be the same button)
-      const expandButton = screen.getByRole("button");
+      // Find the expand button
+      const expandButton = screen.getByRole("button", { name: /Expand sidebar/i });
 
       // Expand
       await user.click(expandButton);

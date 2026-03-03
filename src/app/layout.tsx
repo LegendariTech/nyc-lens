@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
@@ -87,19 +88,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <GoogleTagManager />
-      </head>
-      <body className={cn("font-sans antialiased")}>
-        <GoogleTagManagerNoScript />
-        <ViewportProvider>
-          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
-            {children}
-          </ResizableSidebarLayout>
-        </ViewportProvider>
-        <Analytics />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <GoogleTagManager />
+        </head>
+        <body className={cn("font-sans antialiased")}>
+          <GoogleTagManagerNoScript />
+          <ViewportProvider>
+            <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
+              {children}
+            </ResizableSidebarLayout>
+          </ViewportProvider>
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   parseUserAgent,
@@ -8,18 +9,16 @@ import {
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-
+function trackRequest(request: NextRequest) {
   // Only track in production
   if (process.env.VERCEL_ENV !== 'production') {
-    return response;
+    return;
   }
 
   const esNode = process.env.ELASTICSEARCH_NODE?.trim();
   const esIndex = process.env.ELASTICSEARCH_REQUESTS_INDEX_NAME?.trim();
   if (!esNode || !esIndex) {
-    return response;
+    return;
   }
 
   const url = request.nextUrl;
@@ -75,19 +74,18 @@ export function middleware(request: NextRequest) {
   } catch {
     // Silently ignore
   }
-
-  return response;
 }
+
+export default clerkMiddleware(async (_auth, request) => {
+  trackRequest(request);
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico, sitemap.xml, robots.txt
-     * - Common static asset extensions
-     */
-    '/((?!_next/static|_next/image|favicon\\.ico|sitemap.*\\.xml|robots\\.txt|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot)).*)',
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 };
