@@ -117,12 +117,12 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobil
 
               <div className="mt-0.5 text-xs text-foreground/60">
                 {getCondoClassLabel(unit.buildingClass)}
-                {unit.saleDate ? ` · ${formatDate(unit.saleDate)}` : ''}
+                {unit.saleDate ? ` · Sold ${formatDate(unit.saleDate)}` : ''}
               </div>
 
               {unit.owner && (
                 <div className="mt-0.5 truncate text-xs text-foreground/50">
-                  {unit.owner}
+                  Owner: {unit.owner}
                 </div>
               )}
             </li>
