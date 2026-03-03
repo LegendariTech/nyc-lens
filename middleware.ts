@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import {
   parseUserAgent,
   extractClientIp,
@@ -9,25 +8,8 @@ import {
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
-export async function middleware(request: NextRequest) {
-  // Bot protection on API routes — checkBotId() validates client-side challenge
-  // headers that initBotId() attaches to fetch requests. Page navigations don't
-  // carry these headers, so only check API routes.
-  let blocked = false;
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    try {
-      const { isBot, isVerifiedBot } = await checkBotId();
-      if (isBot && !isVerifiedBot) {
-        blocked = true;
-      }
-    } catch {
-      // BotID unavailable — fail open to preserve availability
-    }
-  }
-
-  const response = blocked
-    ? NextResponse.json({ error: 'Access denied' }, { status: 403 })
-    : NextResponse.next();
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
 
   // Only track in production
   if (process.env.VERCEL_ENV !== 'production') {
@@ -71,7 +53,7 @@ export async function middleware(request: NextRequest) {
     host: request.headers.get('host') || null,
     protocol: url.protocol.replace(':', ''),
     vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
-    blocked,
+    blocked: false,
   };
 
   // Fire-and-forget: write directly to ES REST API (no internal HTTP round-trip)
