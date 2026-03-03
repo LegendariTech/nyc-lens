@@ -15,7 +15,6 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@clerk/nextjs", () => ({
   SignInButton: ({ children }: { children: React.ReactNode }) => children,
-  SignUpButton: ({ children }: { children: React.ReactNode }) => children,
   SignedIn: ({ children }: { children: React.ReactNode }) => children,
   SignedOut: ({ children }: { children: React.ReactNode }) => children,
   UserButton: () => <div data-testid="user-button" />,

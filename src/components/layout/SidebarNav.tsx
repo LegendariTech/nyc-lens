@@ -8,7 +8,6 @@ import { cn } from "@/utils/cn";
 import { useSidebar } from "./SidebarContext";
 import {
   SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
@@ -262,6 +261,7 @@ export default function SidebarNav() {
             <SignInButton mode="modal">
               <button
                 type="button"
+                aria-label={isCollapsed ? "Sign in" : undefined}
                 className={cn(
                   "flex items-center justify-center rounded-md text-sm font-medium",
                   "hover:bg-foreground/10 transition-colors",
