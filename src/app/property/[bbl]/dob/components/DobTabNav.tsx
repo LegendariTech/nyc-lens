@@ -7,9 +7,10 @@ import { cn } from '@/utils/cn';
 interface DobTabNavProps {
   bbl: string;
   activeSubTab?: string;
+  addressSegment?: string;
 }
 
-export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
+export function DobTabNav({ bbl, activeSubTab, addressSegment }: DobTabNavProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -29,7 +30,10 @@ export function DobTabNav({ bbl, activeSubTab }: DobTabNavProps) {
     // Immediately update visual state
     setSelectedTab(tabValue);
 
-    const path = `/property/${bbl}/dob/${tabValue}`;
+    let path = `/property/${bbl}/dob/${tabValue}`;
+    if (addressSegment) {
+      path = `${path}/${addressSegment}`;
+    }
     const params = searchParams.toString();
     const fullPath = params ? `${path}?${params}` : path;
 

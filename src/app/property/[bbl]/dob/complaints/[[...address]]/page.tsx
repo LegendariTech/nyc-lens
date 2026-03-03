@@ -32,7 +32,7 @@ export default async function DobComplaintsPage({ params, searchParams }: DobCom
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
-      <DobTabNav bbl={bbl} activeSubTab="complaints" />
+      <DobTabNav bbl={bbl} activeSubTab="complaints" addressSegment={addressSegments?.[0]} />
       <ComplaintsDisplay bbl={bbl} data={data} metadata={metadata} error={error} />
     </PropertyPageLayout>
   );

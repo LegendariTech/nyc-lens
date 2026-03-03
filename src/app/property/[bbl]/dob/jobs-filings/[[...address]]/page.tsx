@@ -35,7 +35,7 @@ export default async function DobJobsFilingsPage({ params, searchParams }: DobJo
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
-      <DobTabNav bbl={bbl} activeSubTab="jobs-filings" />
+      <DobTabNav bbl={bbl} activeSubTab="jobs-filings" addressSegment={addressSegments?.[0]} />
       <DobJobApplicationsDisplay
         bbl={bbl}
         jobApplications={jobApplicationsResult}

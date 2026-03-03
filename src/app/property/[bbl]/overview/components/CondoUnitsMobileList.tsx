@@ -16,9 +16,10 @@ const INITIAL_DISPLAY_COUNT = 10;
 interface CondoUnitsMobileListProps {
   condoUnits: CondoUnitSummary[];
   currentBbl: string;
+  addressSegment?: string;
 }
 
-export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobileListProps) {
+export function CondoUnitsMobileList({ condoUnits, currentBbl, addressSegment }: CondoUnitsMobileListProps) {
   const [query, setQuery] = useState('');
   const [showAll, setShowAll] = useState(false);
 
@@ -95,7 +96,7 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl }: CondoUnitsMobil
             >
               <div className="flex items-baseline justify-between gap-2">
                 <Link
-                  href={`/property/${unit.bbl}/overview`}
+                  href={`/property/${unit.bbl}/overview${addressSegment ? `/${addressSegment}` : ''}`}
                   className="font-medium text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
                   onClick={() => {
                     trackEvent(EventType.CONDO_UNIT_CLICK, {

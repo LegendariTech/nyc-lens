@@ -10,10 +10,11 @@ function UnitCell(params: ICellRendererParams<CondoUnitSummary>) {
   if (!data || !value) return <span>{value || ''}</span>;
 
   const onUnitClick = context?.onUnitClick as ((unit: CondoUnitSummary) => void) | undefined;
+  const addressSegment = context?.addressSegment as string | undefined;
 
   return (
     <Link
-      href={`/property/${data.bbl}/overview`}
+      href={`/property/${data.bbl}/overview${addressSegment ? `/${addressSegment}` : ''}`}
       className="text-blue-800 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
       onClick={() => onUnitClick?.(data)}
     >

@@ -447,7 +447,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
       {/* Condo Units Table - shown for condo unit properties */}
       {condoContext && condoContext.condoUnits.length > 0 && bbl && (
-        <CondoUnitsPanel condoUnits={condoContext.condoUnits} currentBbl={bbl} />
+        <CondoUnitsPanel condoUnits={condoContext.condoUnits} currentBbl={bbl} addressSegment={addressSegment} />
       )}
 
       {/* SEO-friendly FAQ section */}
