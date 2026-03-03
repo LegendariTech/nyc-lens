@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkBotId } from 'botid/server';
 import {
   parseUserAgent,
   extractClientIp,
@@ -8,7 +9,17 @@ import {
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  // Bot protection — block unverified bots, allow verified bots and humans
+  try {
+    const { isBot, isVerifiedBot } = await checkBotId();
+    if (isBot && !isVerifiedBot) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+  } catch {
+    // BotID unavailable — fail open to preserve availability
+  }
+
   const response = NextResponse.next();
 
   // Only track in production

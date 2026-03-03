@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { search } from '@/data/elasticsearch';
 import { buildEsQueryFromAgGrid, ServerSideGetRowsRequest } from '@/utils/agGrid';
-import { verifyNotBot } from '@/utils/botProtection';
 import type { AcrisPropertiesRequest, AcrisPropertiesResponse } from '@/types/api';
 import type { AcrisRecord } from '@/types/acris';
 
@@ -12,11 +11,6 @@ type AcrisSortItem = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { blocked } = await verifyNotBot();
-    if (blocked) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-    }
-
     const body = await req.json();
     const { request } = body as AcrisPropertiesRequest;
 

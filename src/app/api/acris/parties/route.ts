@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { search } from '@/data/elasticsearch';
 import { buildEsQueryFromAgGrid, ServerSideGetRowsRequest } from '@/utils/agGrid';
-import { verifyNotBot } from '@/utils/botProtection';
 import type { AcrisPartiesRequest, AcrisPartiesResponse } from '@/types/api';
 import type { AcrisParty } from '@/types/acris';
 
 export async function POST(req: NextRequest) {
   try {
-    const { blocked } = await verifyNotBot();
-    if (blocked) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-    }
-
     const body = await req.json();
     const { request, documentId } = body as AcrisPartiesRequest;
 
