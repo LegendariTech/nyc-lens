@@ -1,11 +1,24 @@
-# BBL Club - Robots.txt
-# Allow all crawlers to index all content
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 2
 
 User-agent: *
-Allow: /
+Disallow: /
 
-# Sitemap location
 Sitemap: https://bblclub.com/sitemap.xml
-
-# Crawl delay (optional - be nice to Google)
-Crawl-delay: 1

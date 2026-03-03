@@ -33,6 +33,7 @@
     "ag-grid-react": "^34.2.0",
     "axios": "^1.13.4",
     "bodybuilder": "^2.5.1",
+    "botid": "^1.5.10",
     "chokidar": "^5.0.0",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
