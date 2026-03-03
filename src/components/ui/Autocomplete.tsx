@@ -138,6 +138,7 @@ export function Autocomplete<TItem extends BaseAutocompleteItem>({
     createAutocomplete<TItem>({
       id,
       autoFocus,
+      defaultActiveItemId: 0,
       initialState: {
         query: initialValue,
       },

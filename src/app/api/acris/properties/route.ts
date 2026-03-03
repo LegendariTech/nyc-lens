@@ -47,6 +47,18 @@ export async function POST(req: NextRequest) {
       sortModel: effectiveSortModel,
     };
 
+    // Sanitize address filters: strip city/state/zip after first comma
+    // (ES index stores addresses without them, but users often paste full addresses)
+    const filterModel = fullRequest.filterModel as Record<string, Record<string, unknown>> | null;
+    if (filterModel) {
+      for (const field of ['address', 'address_with_unit']) {
+        const entry = filterModel[field];
+        if (entry && typeof entry.filter === 'string') {
+          entry.filter = entry.filter.split(',')[0].trim();
+        }
+      }
+    }
+
     const index = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || '';
     const base = buildEsQueryFromAgGrid(fullRequest);
     (base as Record<string, unknown>).track_total_hits = true;

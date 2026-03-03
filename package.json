@@ -21,6 +21,7 @@
     "@algolia/autocomplete-core": "1.19.4",
     "@anthropic-ai/sdk": "^0.74.0",
     "@azure/storage-blob": "^12.30.0",
+    "@clerk/nextjs": "^6.39.0",
     "@elastic/elasticsearch": "^9.1.1",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",

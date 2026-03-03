@@ -7,6 +7,12 @@ import { useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 import { useSidebar } from "./SidebarContext";
 import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import {
   HomeIcon,
   ChevronRightIcon,
   SearchIcon,
@@ -14,7 +20,8 @@ import {
   PanelLeftIcon,
   PanelRightIcon,
   SettingsIcon,
-  TableIcon
+  TableIcon,
+  UserIcon,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
@@ -244,6 +251,46 @@ export default function SidebarNav() {
           );
         })}
       </ul>
+
+      {/* Auth controls pinned to bottom (only when Clerk is configured) */}
+      {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && <div className="mt-auto pt-2 border-t border-foreground/10">
+        <SignedOut>
+          <div className={cn(
+            "flex items-center gap-2",
+            isCollapsed ? "justify-center" : "px-3 py-2"
+          )}>
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                aria-label={isCollapsed ? "Sign in" : undefined}
+                className={cn(
+                  "flex items-center justify-center rounded-md text-sm font-medium",
+                  "hover:bg-foreground/10 transition-colors",
+                  isCollapsed ? "h-12 w-12" : "h-9 w-full px-3 py-2"
+                )}
+              >
+                {isCollapsed ? (
+                  <UserIcon aria-hidden="true" className="h-5 w-5" />
+                ) : "Sign in"}
+              </button>
+            </SignInButton>
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <div className={cn(
+            "flex items-center",
+            isCollapsed ? "justify-center py-2" : "gap-2 px-3 py-2"
+          )}>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-8 w-8",
+                },
+              }}
+            />
+          </div>
+        </SignedIn>
+      </div>}
     </nav>
   );
 }

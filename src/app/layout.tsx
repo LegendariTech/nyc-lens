@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import ResizableSidebarLayout from "@/components/layout/ResizableSidebarLayout";
 import { cn } from "@/utils/cn";
@@ -81,11 +82,15 @@ export const metadata: Metadata = {
   },
 };
 
+const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const sidebar = <Suspense fallback={null}><SidebarNav /></Suspense>;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -94,9 +99,17 @@ export default function RootLayout({
       <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
         <ViewportProvider>
-          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
-            {children}
-          </ResizableSidebarLayout>
+          {clerkPubKey ? (
+            <ClerkProvider>
+              <ResizableSidebarLayout sidebar={sidebar}>
+                {children}
+              </ResizableSidebarLayout>
+            </ClerkProvider>
+          ) : (
+            <ResizableSidebarLayout sidebar={sidebar}>
+              {children}
+            </ResizableSidebarLayout>
+          )}
         </ViewportProvider>
         <Analytics />
       </body>
