@@ -1,11 +1,35 @@
-# BBL Club - Robots.txt
-# Allow all crawlers to index all content
-
-User-agent: *
+User-agent: Googlebot
 Allow: /
 
-# Sitemap location
-Sitemap: https://bblclub.com/sitemap.xml
-
-# Crawl delay (optional - be nice to Google)
+User-agent: Bingbot
+Allow: /
 Crawl-delay: 1
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 2
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://bblclub.com/sitemap.xml
