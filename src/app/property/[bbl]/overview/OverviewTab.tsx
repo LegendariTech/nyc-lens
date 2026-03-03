@@ -17,6 +17,8 @@ import {
   getTaxSectionData,
   getContactsSectionData,
 } from './utils';
+import type { CondoContext } from './utils';
+import { CondoUnitsPanel } from './components/CondoUnitsPanel';
 
 const ParcelMap = dynamic(() => import('@/components/map/ParcelMap').then(mod => ({ default: mod.ParcelMap })), {
   loading: () => (
@@ -32,6 +34,7 @@ interface OverviewTabProps {
   propertyData: AcrisRecord | null;
   contactsData: OwnerContact[] | null;
   valuationData: PropertyValuation[] | null;
+  condoContext?: CondoContext | null;
   error?: string;
   bbl?: string;
   fullFormattedAddress?: string;
@@ -56,7 +59,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
   );
 }
 
-export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, error, bbl, fullFormattedAddress, addressSegment }: OverviewTabProps) {
+export function OverviewTab({ plutoData, propertyData, contactsData, valuationData, condoContext, error, bbl, fullFormattedAddress, addressSegment }: OverviewTabProps) {
   const getTabUrl = (tab: string) => {
     if (!bbl) return '#';
     const basePath = `/property/${bbl}/${tab}`;
@@ -111,11 +114,22 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   // Prepare all section data via utils
   const latestValuation = valuationData && valuationData.length > 0 ? valuationData[0] : null;
 
+  // For condo units, use billing lot PLUTO for building-level data
+  const buildingPluto = condoContext?.isCondoUnit && condoContext.billingLotPluto
+    ? condoContext.billingLotPluto
+    : plutoData;
+
   const address = getAddressSectionData(propertyData, plutoData, bbl, fullFormattedAddress);
-  const building = getBuildingSectionData(plutoData, latestValuation);
+  const building = getBuildingSectionData(buildingPluto, latestValuation);
   const ownership = getOwnershipSectionData(propertyData, contactsData);
   const tax = getTaxSectionData(valuationData);
   const allContacts = getContactsSectionData(contactsData);
+
+  // For condo units, get unit-level size from valuation records (gross_sqft)
+  const isCondoWithBuildingData = condoContext?.isCondoUnit && condoContext.billingLotPluto != null;
+  const unitGrossSqft = isCondoWithBuildingData && latestValuation?.gross_sqft && latestValuation.gross_sqft > 0
+    ? formatValue(latestValuation.gross_sqft, undefined, 'number')
+    : null;
 
   // State-dependent slicing
   const displayedAddresses = showAllAddresses
@@ -130,9 +144,13 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     ? allContacts
     : allContacts.slice(0, 4);
 
-  // Map data
-  const latitude = plutoData?.latitude;
-  const longitude = plutoData?.longitude;
+  // Map data - for condo units, highlight the billing lot parcel and use its coordinates
+  const mapBbl = condoContext?.isCondoUnit && condoContext.billingLotBbl
+    ? condoContext.billingLotBbl : bbl;
+  const latitude = condoContext?.isCondoUnit && condoContext.billingLotPluto?.latitude
+    ? condoContext.billingLotPluto.latitude : plutoData?.latitude;
+  const longitude = condoContext?.isCondoUnit && condoContext.billingLotPluto?.longitude
+    ? condoContext.billingLotPluto.longitude : plutoData?.longitude;
   const hasCoordinates = latitude != null && longitude != null;
   const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
@@ -170,10 +188,10 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         {/* Map Section */}
         <SectionCard title="Location">
           <div ref={mapContainerRef} className="relative w-full aspect-[4/3] bg-foreground/10 rounded-md overflow-hidden">
-            {hasCoordinates && bbl ? (
+            {hasCoordinates && mapBbl ? (
               shouldLoadMap ? (
                 <ParcelMap
-                  bbl={bbl}
+                  bbl={mapBbl}
                   latitude={latitude}
                   longitude={longitude}
                   accessToken={MAPBOX_ACCESS_TOKEN}
@@ -251,8 +269,11 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
             <h2 className="mb-4 text-lg font-semibold text-foreground">Building</h2>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
               <InfoItem label="Building class" value={building.buildingClass} />
-              <InfoItem label="Square feet" value={building.squareFeet} />
-              <InfoItem label="Dimensions" value={building.buildingDimensions} />
+              <InfoItem label={unitGrossSqft ? "Building sq ft" : "Square feet"} value={building.squareFeet} />
+              {unitGrossSqft && (
+                <InfoItem label="Unit sq ft" value={unitGrossSqft} />
+              )}
+              <InfoItem label={isCondoWithBuildingData ? "Building dimensions" : "Dimensions"} value={building.buildingDimensions} />
               <InfoItem label="Buildings on lot" value={building.buildingsOnLot} />
               <InfoItem label="Stories" value={building.stories} />
               <InfoItem label="Total Units" value={building.totalUnits} />
@@ -424,6 +445,11 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         </div>
       </div>
 
+      {/* Condo Units Table - shown for condo unit properties */}
+      {condoContext && condoContext.condoUnits.length > 0 && bbl && (
+        <CondoUnitsPanel condoUnits={condoContext.condoUnits} currentBbl={bbl} />
+      )}
+
       {/* SEO-friendly FAQ section */}
       <div className="mt-8 space-y-6">
         <h2 className="text-xl font-semibold text-foreground mb-4">
@@ -431,12 +457,15 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
         </h2>
 
         <div className="space-y-4 text-sm text-foreground/80 leading-relaxed max-w-4xl">
-          {building.squareFeet !== '—' && (
+          {(unitGrossSqft || building.squareFeet !== '—') && (
             <p>
               <strong className="text-foreground">How many sq. ft. does {address.fullAddress} have?</strong>
               {' '}
               {building.buildingClass !== '—' && `This ${building.buildingClass.toLowerCase()} located at `}
-              {address.fullAddress} has a total of {building.squareFeet} square feet
+              {address.fullAddress}
+              {unitGrossSqft
+                ? ` has ${unitGrossSqft} square feet (the building has a total of ${building.squareFeet} square feet)`
+                : ` has a total of ${building.squareFeet} square feet`}
               {plutoData?.yearbuilt && ` and was built in ${plutoData.yearbuilt}`}.
             </p>
           )}

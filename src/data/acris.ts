@@ -94,6 +94,43 @@ export async function fetchDocumentsByBBL(bbl: string): Promise<AcrisDoc[]> {
 }
 
 /**
+ * Fetch all condo units sharing the same billing lot (i.e. sibling units in the same building).
+ * @param borough - Borough code (e.g., "1")
+ * @param block - Block number (e.g., "13")
+ * @param billingLot - The billing lot that identifies the building-level record (e.g., "7501")
+ * @returns Array of ACRIS records for all condo units in the building, sorted by lot ascending
+ */
+export async function fetchCondoUnits(
+  borough: string,
+  block: string,
+  billingLot: string,
+): Promise<AcrisRecord[]> {
+  try {
+    const indexName = process.env.ELASTICSEARCH_ACRIS_INDEX_NAME || 'acris';
+
+    const result = await search(indexName, {
+      query: {
+        bool: {
+          must: [
+            { term: { borough } },
+            { term: { 'block.integer': parseInt(block, 10) } },
+            { term: { 'billing_lot.keyword': billingLot } },
+          ],
+        },
+      },
+      sort: [{ 'lot.integer': { order: 'asc' } }],
+      size: 10000,
+    });
+
+    const hits = (result as { hits: { hits: Array<{ _source: AcrisRecord }> } }).hits.hits;
+    return hits.map(hit => hit._source);
+  } catch (error) {
+    console.error('Error fetching condo units from Elasticsearch:', error);
+    throw error;
+  }
+}
+
+/**
  * Party detail with address information
  */
 export interface PartyDetail {

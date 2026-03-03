@@ -11,6 +11,7 @@ export type AcrisRecord = {
   borough: string;
   block: string;
   lot: string;
+  billing_lot: string | null;
   street_name: string;
   street_number: string;
   unit: string | null;

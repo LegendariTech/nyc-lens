@@ -4,12 +4,14 @@ import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { OverviewTab } from '../OverviewTab';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
+import { fetchCondoUnits } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { getBoroughDisplayName } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
 import { formatFullAddress } from '@/utils/formatters';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import type { CondoContext } from '../utils';
 
 // Revalidate property data every hour
 export const revalidate = 3600;
@@ -98,18 +100,68 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
   // Note: getPropertyData fetches PLUTO & ACRIS from cache (warmed by layout.tsx)
   const { plutoData, propertyData, error: propertyError } = await getPropertyData(bbl);
 
+  // Detect condo unit: if billing_lot is present, this is a condo unit
+  const billingLot = propertyData?.billing_lot || null;
+  const isCondoUnit = billingLot != null;
+  const billingLotBbl = isCondoUnit
+    ? `${bblParts[0]}-${bblParts[1]}-${billingLot}`
+    : null;
+
+  // Detect billing lot (the building-level record for a condo):
+  // - NYC assigns lot numbers >= 7500 to condo billing lots (DOF convention)
+  // - Building class codes starting with "R" are condo-specific (R0-R9, RA-RW)
+  // - Must not itself have a billing_lot (which would make it a unit, not the billing lot)
+  const lotNum = parseInt(bblParts[2], 10);
+  const bldgClass = propertyData?.avroll_building_class || '';
+  const isBillingLot = !isCondoUnit && lotNum >= 7500 && bldgClass.startsWith('R');
+
   // Fetch additional data needed for overview page
   let contactsData = null;
   let valuationData = null;
+  let condoContext: CondoContext | null = null;
   let error: string | undefined = propertyError;
 
   try {
-    const [contactsResult, valuationResult] = await Promise.all([
-      fetchOwnerContacts(bbl),
-      fetchPropertyValuation(bbl),
-    ]);
+    // Build parallel fetch array: always fetch contacts + valuation,
+    // and conditionally fetch condo-specific data
+    const [contactsResult, valuationResult, billingLotPlutoResult, condoUnitsResult] =
+      await Promise.all([
+        fetchOwnerContacts(bbl),
+        fetchPropertyValuation(bbl),
+        billingLotBbl ? fetchPlutoData(billingLotBbl) : Promise.resolve(null),
+        isCondoUnit
+          ? fetchCondoUnits(bblParts[0], bblParts[1], billingLot)
+          : isBillingLot
+            ? fetchCondoUnits(bblParts[0], bblParts[1], bblParts[2])
+            : Promise.resolve(null),
+      ]);
+
     contactsData = contactsResult.data;
     valuationData = valuationResult.data;
+
+    if (isCondoUnit || isBillingLot) {
+      const billingLotPluto = isCondoUnit
+        ? (billingLotPlutoResult?.data ?? null)
+        : null;
+      const units = (condoUnitsResult ?? []).map((record) => ({
+        bbl: `${record.borough}-${record.block}-${record.lot}`,
+        unit: record.unit,
+        buildingClass: record.avroll_building_class || null,
+        owner: record.buyer_name || null,
+        saleAmount: record.sale_document_amount ?? null,
+        saleDate: record.sale_document_date || null,
+        mortgageAmount: record.mortgage_document_amount ?? null,
+        lender: record.lender_name || null,
+      }));
+
+      condoContext = {
+        isCondoUnit,
+        billingLot: isCondoUnit ? billingLot : bblParts[2],
+        billingLotBbl: isCondoUnit ? billingLotBbl : bbl,
+        billingLotPluto,
+        condoUnits: units,
+      };
+    }
   } catch (e) {
     console.error('Error fetching additional property data:', e);
     error = e instanceof Error ? e.message : 'Failed to load property data';
@@ -271,6 +323,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
           propertyData={propertyData}
           contactsData={contactsData}
           valuationData={valuationData}
+          condoContext={condoContext}
           error={error}
           bbl={bbl}
           fullFormattedAddress={fullFormattedAddress}
