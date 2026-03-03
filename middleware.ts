@@ -11,16 +11,19 @@ import {
 
 export async function middleware(request: NextRequest) {
   // Bot protection — block unverified bots, allow verified bots and humans
+  let blocked = false;
   try {
     const { isBot, isVerifiedBot } = await checkBotId();
     if (isBot && !isVerifiedBot) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      blocked = true;
     }
   } catch {
     // BotID unavailable — fail open to preserve availability
   }
 
-  const response = NextResponse.next();
+  const response = blocked
+    ? NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    : NextResponse.next();
 
   // Only track in production
   if (process.env.VERCEL_ENV !== 'production') {
@@ -64,6 +67,7 @@ export async function middleware(request: NextRequest) {
     host: request.headers.get('host') || null,
     protocol: url.protocol.replace(':', ''),
     vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
+    blocked,
   };
 
   // Fire-and-forget: write directly to ES REST API (no internal HTTP round-trip)
