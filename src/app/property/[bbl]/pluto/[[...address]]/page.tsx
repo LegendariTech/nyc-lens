@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
-import { getPropertyData } from '../../utils/getPropertyData';
+import { getPropertyData, getCondoInfo } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
 import { getFormattedAddressForMetadata } from '../../utils/metadata';
 
@@ -36,18 +36,29 @@ export default async function PlutoPage({ params }: PlutoPageProps) {
     notFound();
   }
 
-  // Fetch PLUTO data with metadata (returns instantly from cache warmed by layout)
-  const { data, metadata, error } = await fetchPlutoData(bbl);
-
-  // Get propertyData for address extraction (returns instantly from cache)
+  // Get propertyData for address extraction and condo detection (returns instantly from cache)
   const { propertyData } = await getPropertyData(bbl);
+  const { isCondoUnit, billingLotBbl } = getCondoInfo(propertyData, bblParts);
+
+  // Fetch PLUTO data — for condo units, also fetch the billing lot's PLUTO (building-level data)
+  const [unitPluto, billingLotPluto] = await Promise.all([
+    fetchPlutoData(bbl),
+    billingLotBbl ? fetchPlutoData(billingLotBbl) : Promise.resolve(null),
+  ]);
+
+  // For condo units, display the billing lot's PLUTO data (building info)
+  // Fall back to unit's own PLUTO if billing lot fetch fails
+  const useBillingLot = isCondoUnit && billingLotPluto?.data != null;
+  const data = useBillingLot ? billingLotPluto!.data : unitPluto.data;
+  const metadata = useBillingLot ? billingLotPluto!.metadata : unitPluto.metadata;
+  const error = useBillingLot ? billingLotPluto!.error : unitPluto.error;
 
   // Extract street address from shared data
-  const streetAddress = propertyData?.address_with_unit || data?.address;
+  const streetAddress = propertyData?.address_with_unit || unitPluto.data?.address;
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="pluto" address={streetAddress || undefined}>
-      <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} />
+      <PlutoTabDisplay data={data} metadata={metadata} error={error} bbl={bbl} billingLotBbl={useBillingLot ? billingLotBbl! : undefined} />
     </PropertyPageLayout>
   );
 }

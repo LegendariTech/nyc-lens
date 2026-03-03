@@ -14,9 +14,11 @@ interface PlutoTabDisplayProps {
   error?: string;
   showEmptyFields?: boolean;
   bbl?: string;
+  /** When set, indicates data is from the billing lot (building-level), not the individual unit */
+  billingLotBbl?: string;
 }
 
-export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true }: PlutoTabDisplayProps) {
+export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true, billingLotBbl }: PlutoTabDisplayProps) {
   // State for controlling empty field display
   const [hideEmptyFields, setHideEmptyFields] = useState(!showEmptyFields);
 
@@ -54,6 +56,12 @@ export function PlutoTabDisplay({ data, metadata, error, showEmptyFields = true 
 
   return (
     <DataTabLayout sections={sidebarSections}>
+      {billingLotBbl && (
+        <div className="rounded-md border border-blue-500/20 bg-blue-500/5 px-4 py-3 text-sm text-foreground/80">
+          This is a condo unit. Showing building-level PLUTO data from billing lot {billingLotBbl}.
+        </div>
+      )}
+
       {/* Dataset Attribution */}
       {metadata && (
         <DatasetInfoCard
