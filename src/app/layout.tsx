@@ -82,27 +82,31 @@ export const metadata: Metadata = {
   },
 };
 
+const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <GoogleTagManager />
-        </head>
-        <body className={cn("font-sans antialiased")}>
-          <GoogleTagManagerNoScript />
-          <ViewportProvider>
-            <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
-              {children}
-            </ResizableSidebarLayout>
-          </ViewportProvider>
-          <Analytics />
-        </body>
-      </html>
-    </ClerkProvider>
+  const content = (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <GoogleTagManager />
+      </head>
+      <body className={cn("font-sans antialiased")}>
+        <GoogleTagManagerNoScript />
+        <ViewportProvider>
+          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
+            {children}
+          </ResizableSidebarLayout>
+        </ViewportProvider>
+        <Analytics />
+      </body>
+    </html>
   );
+
+  if (!clerkPubKey) return content;
+
+  return <ClerkProvider>{content}</ClerkProvider>;
 }
