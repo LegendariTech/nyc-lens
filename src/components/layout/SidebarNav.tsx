@@ -20,7 +20,8 @@ import {
   PanelLeftIcon,
   PanelRightIcon,
   SettingsIcon,
-  TableIcon
+  TableIcon,
+  UserIcon,
 } from "@/components/icons";
 import { Button } from "@/components/ui";
 
@@ -269,9 +270,7 @@ export default function SidebarNav() {
                 )}
               >
                 {isCollapsed ? (
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+                  <UserIcon aria-hidden="true" className="h-5 w-5" />
                 ) : "Sign in"}
               </button>
             </SignInButton>

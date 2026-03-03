@@ -154,6 +154,10 @@ DB_DATABASE=...
 
 # Mapbox (Parcel Map)
 NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ1Ijoi...
+
+# Clerk (Authentication) — optional, app works without these
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+CLERK_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
 ## Important Implementation Notes

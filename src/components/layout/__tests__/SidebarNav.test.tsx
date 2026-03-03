@@ -13,10 +13,14 @@ vi.mock("next/navigation", () => ({
   usePathname: () => currentPathname,
 }));
 
+let mockSignedIn = false;
+
 vi.mock("@clerk/nextjs", () => ({
   SignInButton: ({ children }: { children: React.ReactNode }) => children,
-  SignedIn: ({ children }: { children: React.ReactNode }) => children,
-  SignedOut: ({ children }: { children: React.ReactNode }) => children,
+  SignedIn: ({ children }: { children: React.ReactNode }) =>
+    mockSignedIn ? children : null,
+  SignedOut: ({ children }: { children: React.ReactNode }) =>
+    mockSignedIn ? null : children,
   UserButton: () => <div data-testid="user-button" />,
 }));
 
@@ -30,6 +34,10 @@ function renderWithProvider(ui: React.ReactElement) {
 }
 
 describe("SidebarNav", () => {
+  beforeEach(() => {
+    mockSignedIn = false;
+  });
+
   it("renders top-level links and groups", () => {
     currentPathname = "/";
     renderWithProvider(<SidebarNav />);
@@ -202,6 +210,47 @@ describe("SidebarNav", () => {
       expect(bulkSearchLink).toHaveAttribute("href", "/bulk-search");
     });
   });
+
+  describe("Auth UI", () => {
+    const originalEnv = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+    beforeEach(() => {
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_placeholder";
+    });
+
+    afterEach(() => {
+      if (originalEnv === undefined) {
+        delete process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+      } else {
+        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = originalEnv;
+      }
+    });
+
+    it("shows sign-in button when signed out", () => {
+      currentPathname = "/";
+      mockSignedIn = false;
+      renderWithProvider(<SidebarNav />);
+
+      expect(screen.getByRole("button", { name: /Sign in/i })).toBeInTheDocument();
+      expect(screen.queryByTestId("user-button")).not.toBeInTheDocument();
+    });
+
+    it("shows user button when signed in", () => {
+      currentPathname = "/";
+      mockSignedIn = true;
+      renderWithProvider(<SidebarNav />);
+
+      expect(screen.getByTestId("user-button")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /Sign in/i })).not.toBeInTheDocument();
+    });
+
+    it("hides auth controls when Clerk is not configured", () => {
+      delete process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+      currentPathname = "/";
+      renderWithProvider(<SidebarNav />);
+
+      expect(screen.queryByRole("button", { name: /Sign in/i })).not.toBeInTheDocument();
+      expect(screen.queryByTestId("user-button")).not.toBeInTheDocument();
+    });
+  });
 });
-
-
