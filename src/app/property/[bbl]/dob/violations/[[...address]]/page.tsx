@@ -35,7 +35,7 @@ export default async function DobViolationsPage({ params, searchParams }: DobVio
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
-      <DobTabNav bbl={bbl} activeSubTab="violations" />
+      <DobTabNav bbl={bbl} activeSubTab="violations" addressSegment={addressSegments?.[0]} />
       <DobViolationsDisplay
         bbl={bbl}
         safetyViolations={safetyViolationsResult}

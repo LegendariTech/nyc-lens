@@ -32,7 +32,7 @@ export default async function DobPermitIssuancePage({ params, searchParams }: Do
 
   return (
     <PropertyPageLayout bbl={bbl} activeTab="dob" address={address} maxWidth="full">
-      <DobTabNav bbl={bbl} activeSubTab="permit-issuance" />
+      <DobTabNav bbl={bbl} activeSubTab="permit-issuance" addressSegment={addressSegments?.[0]} />
       <PermitIssuanceDisplay bbl={bbl} data={data} metadata={metadata} error={error} />
     </PropertyPageLayout>
   );

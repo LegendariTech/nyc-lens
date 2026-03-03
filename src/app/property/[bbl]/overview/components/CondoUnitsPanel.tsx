@@ -18,9 +18,11 @@ ModuleRegistry.registerModules([AllCommunityModule, SideBarModule, ColumnsToolPa
 interface CondoUnitsPanelProps {
   condoUnits: CondoUnitSummary[];
   currentBbl: string;
+  addressSegment?: string;
 }
 
-export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps) {
+export function CondoUnitsPanel({ condoUnits, currentBbl, addressSegment }: CondoUnitsPanelProps) {
+
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -76,8 +78,8 @@ export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps
   );
 
   const gridContext = useMemo(
-    () => ({ onUnitClick: handleUnitClick }),
-    [handleUnitClick]
+    () => ({ onUnitClick: handleUnitClick, addressSegment }),
+    [handleUnitClick, addressSegment]
   );
 
   return (
@@ -123,7 +125,7 @@ export function CondoUnitsPanel({ condoUnits, currentBbl }: CondoUnitsPanelProps
 
       {/* Mobile: searchable list */}
       <div className="md:hidden">
-        <CondoUnitsMobileList condoUnits={condoUnits} currentBbl={currentBbl} />
+        <CondoUnitsMobileList condoUnits={condoUnits} currentBbl={currentBbl} addressSegment={addressSegment} />
       </div>
     </div>
   );
