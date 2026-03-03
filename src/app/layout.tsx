@@ -89,7 +89,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const content = (
+  const sidebar = <Suspense fallback={null}><SidebarNav /></Suspense>;
+
+  return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <GoogleTagManager />
@@ -97,16 +99,20 @@ export default function RootLayout({
       <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
         <ViewportProvider>
-          <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
-            {children}
-          </ResizableSidebarLayout>
+          {clerkPubKey ? (
+            <ClerkProvider>
+              <ResizableSidebarLayout sidebar={sidebar}>
+                {children}
+              </ResizableSidebarLayout>
+            </ClerkProvider>
+          ) : (
+            <ResizableSidebarLayout sidebar={sidebar}>
+              {children}
+            </ResizableSidebarLayout>
+          )}
         </ViewportProvider>
         <Analytics />
       </body>
     </html>
   );
-
-  if (!clerkPubKey) return content;
-
-  return <ClerkProvider>{content}</ClerkProvider>;
 }
