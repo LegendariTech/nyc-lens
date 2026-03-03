@@ -10,15 +10,19 @@ import {
 } from '@/utils/requestTracker';
 
 export async function middleware(request: NextRequest) {
-  // Bot protection — block unverified bots, allow verified bots and humans
+  // Bot protection on API routes — checkBotId() validates client-side challenge
+  // headers that initBotId() attaches to fetch requests. Page navigations don't
+  // carry these headers, so only check API routes.
   let blocked = false;
-  try {
-    const { isBot, isVerifiedBot } = await checkBotId();
-    if (isBot && !isVerifiedBot) {
-      blocked = true;
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    try {
+      const { isBot, isVerifiedBot } = await checkBotId();
+      if (isBot && !isVerifiedBot) {
+        blocked = true;
+      }
+    } catch {
+      // BotID unavailable — fail open to preserve availability
     }
-  } catch {
-    // BotID unavailable — fail open to preserve availability
   }
 
   const response = blocked
