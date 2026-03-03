@@ -48,15 +48,10 @@ export default async function PlutoPage({ params }: PlutoPageProps) {
 
   // For condo units, display the billing lot's PLUTO data (building info)
   // Fall back to unit's own PLUTO if billing lot fetch fails
-  const data = isCondoUnit && billingLotPluto?.data
-    ? billingLotPluto.data
-    : unitPluto.data;
-  const metadata = isCondoUnit && billingLotPluto?.metadata
-    ? billingLotPluto.metadata
-    : unitPluto.metadata;
-  const error = isCondoUnit && billingLotPluto?.data
-    ? billingLotPluto.error
-    : unitPluto.error;
+  const useBillingLot = isCondoUnit && billingLotPluto?.data != null;
+  const data = useBillingLot ? billingLotPluto!.data : unitPluto.data;
+  const metadata = useBillingLot ? billingLotPluto!.metadata : unitPluto.metadata;
+  const error = useBillingLot ? billingLotPluto!.error : unitPluto.error;
 
   // Extract street address from shared data
   const streetAddress = propertyData?.address_with_unit || unitPluto.data?.address;
