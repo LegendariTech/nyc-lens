@@ -1,4 +1,3 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   parseUserAgent,
@@ -76,10 +75,10 @@ function trackRequest(request: NextRequest) {
   }
 }
 
-export default clerkMiddleware(async (_auth, request) => {
+export default function middleware(request: NextRequest) {
   trackRequest(request);
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
