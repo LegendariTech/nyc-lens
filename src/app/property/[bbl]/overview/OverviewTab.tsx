@@ -405,7 +405,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                     onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'overview_ownership', bbl })}
                     className="px-5 py-2.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-lg"
                   >
-                    Sign in for free to view
+                    Sign up for free to view
                   </button>
                 </SignUpButton>
               </div>
@@ -489,7 +489,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
                     onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'overview_contacts', bbl })}
                     className="px-5 py-2.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-lg"
                   >
-                    Sign in for free to view
+                    Sign up for free to view
                   </button>
                 </SignUpButton>
               </div>

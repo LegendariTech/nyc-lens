@@ -6,6 +6,7 @@ import { formatDate } from '@/utils/formatters';
 import { ExpandableList } from './ExpandableList';
 import { trackEvent } from '@/utils/trackEvent';
 import { EventType } from '@/types/events';
+import { EyeIcon } from '@/components/icons';
 import type { OwnerContact } from '@/types/contacts';
 import {
   SOURCE_TO_CATEGORY,
@@ -19,26 +20,6 @@ interface ContactCardProps {
   visibleSources?: Set<SourceCategory>;
   isSignedIn?: boolean;
   bbl?: string;
-}
-
-function LockIcon() {
-  return (
-    <span className="flex items-center justify-center w-11 h-11 rounded-full bg-foreground/10 group-hover/lock:bg-foreground/20 transition-colors">
-      <svg
-        className="w-6 h-6 text-foreground/40 group-hover/lock:text-foreground/70 transition-colors"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-label="Sign in to view"
-      >
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
-    </span>
-  );
 }
 
 // Module-level cooldown to prevent re-opening sign-in when dismissing modal
@@ -123,8 +104,11 @@ export function ContactCard({ contact, visibleSources, isSignedIn, bbl }: Contac
         {/* Contact details */}
         {!isSignedIn ? (
           <div
-            className="relative cursor-pointer group/lock pt-1 border-t border-foreground/10"
+            role="button"
+            tabIndex={0}
+            className="relative w-full text-left cursor-pointer group/lock pt-1 border-t border-foreground/10"
             onClick={() => handleUnlock()}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleUnlock(); } }}
           >
             <div className="blur-[5px] select-none pointer-events-none space-y-2 text-sm" aria-hidden="true">
               {titles.length > 0 && (
@@ -141,7 +125,9 @@ export function ContactCard({ contact, visibleSources, isSignedIn, bbl }: Contac
               )}
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <LockIcon />
+              <span className="flex items-center justify-center w-11 h-11 rounded-full bg-foreground/10 group-hover/lock:bg-foreground/20 transition-colors">
+                <EyeIcon className="w-6 h-6 text-foreground/40 group-hover/lock:text-foreground/70 transition-colors" />
+              </span>
             </div>
           </div>
         ) : (

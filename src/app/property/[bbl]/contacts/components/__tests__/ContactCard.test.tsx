@@ -1,11 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { ContactCard } from '../ContactCard/ContactCard';
 import type { OwnerContact } from '@/types/contacts';
 
+const mockOpenSignUp = vi.fn();
+
 // Mock Clerk hooks used by ContactCard
 vi.mock('@clerk/nextjs', () => ({
-  useClerk: () => ({ openSignUp: vi.fn() }),
+  useClerk: () => ({ openSignUp: mockOpenSignUp }),
 }));
 
 describe('ContactCard', () => {
@@ -117,6 +120,18 @@ describe('ContactCard', () => {
     // Name should still be visible
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     // Eye icon should be present
-    expect(screen.getByLabelText('Sign in to view')).toBeInTheDocument();
+    expect(screen.getByTitle('Sign up to view')).toBeInTheDocument();
+  });
+
+  it('triggers sign-up when blurred card is activated via keyboard', async () => {
+    mockOpenSignUp.mockClear();
+    const user = userEvent.setup();
+    render(<ContactCard contact={mockContact} isSignedIn={false} />);
+
+    const button = screen.getByRole('button');
+    await user.tab();
+    expect(button).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(mockOpenSignUp).toHaveBeenCalledTimes(1);
   });
 });

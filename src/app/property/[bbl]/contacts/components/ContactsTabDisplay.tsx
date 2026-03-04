@@ -51,7 +51,7 @@ const STATUS_METADATA: Record<ContactStatus, {
 };
 
 export function ContactsTabDisplay({ contactsData, bbl, tableView, onTableViewChange }: ContactsTabDisplayProps) {
-    const { isSignedIn } = useAuth();
+    const { isLoaded, isSignedIn } = useAuth();
     // Convert to table format (join arrays to strings) for desktop table
     const tableContacts = useMemo(() => {
         return contactsData.map(contact => {
@@ -340,7 +340,7 @@ export function ContactsTabDisplay({ contactsData, bbl, tableView, onTableViewCh
                         </div>
                     ) : (
                         <div className="rounded-lg border border-foreground/10 bg-card">
-                            <ContactsTable data={filteredTableContacts} visibleSources={visibleSources} isSignedIn={isSignedIn} />
+                            <ContactsTable data={filteredTableContacts} visibleSources={visibleSources} isSignedIn={isLoaded && !!isSignedIn} />
                         </div>
                     )}
                 </div>
@@ -358,7 +358,7 @@ export function ContactsTabDisplay({ contactsData, bbl, tableView, onTableViewCh
                         </p>
                     </div>
                 ) : (
-                    <ContactCardList contacts={filteredCardContacts} visibleSources={visibleSources} isSignedIn={isSignedIn} bbl={bbl} />
+                    <ContactCardList contacts={filteredCardContacts} visibleSources={visibleSources} isSignedIn={isLoaded && !!isSignedIn} bbl={bbl} />
                 )}
             </div>
         </div>

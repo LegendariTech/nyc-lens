@@ -4,6 +4,7 @@ import { useClerk } from '@clerk/nextjs';
 import type { ICellRendererParams } from 'ag-grid-community';
 import { trackEvent } from '@/utils/trackEvent';
 import { EventType } from '@/types/events';
+import { EyeIcon } from '@/components/icons';
 
 // Module-level cooldown to prevent re-opening sign-in when dismissing modal
 let lastSignInTime = 0;
@@ -40,19 +41,7 @@ export function ProtectedCell(params: ICellRendererParams) {
             </span>
             <div className="absolute inset-0 flex items-center justify-center">
                 <span className="flex items-center justify-center w-9 h-9 rounded-full bg-foreground/10 group-hover:bg-foreground/20 transition-colors">
-                <svg
-                    className="w-5 h-5 text-foreground/40 group-hover:text-foreground/70 transition-colors"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-label="Sign in to view"
-                >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
+                    <EyeIcon className="w-5 h-5 text-foreground/40 group-hover:text-foreground/70 transition-colors" />
                 </span>
             </div>
         </div>

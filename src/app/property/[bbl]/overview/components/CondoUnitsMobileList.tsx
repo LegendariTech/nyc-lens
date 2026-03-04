@@ -17,9 +17,14 @@ interface CondoUnitsMobileListProps {
   condoUnits: CondoUnitSummary[];
   currentBbl: string;
   addressSegment?: string;
+  isSignedIn: boolean;
 }
 
-export function CondoUnitsMobileList({ condoUnits, currentBbl, addressSegment }: CondoUnitsMobileListProps) {
+function Blurred({ children }: { children: React.ReactNode }) {
+  return <span className="blur-[5px] select-none">{children}</span>;
+}
+
+export function CondoUnitsMobileList({ condoUnits, currentBbl, addressSegment, isSignedIn }: CondoUnitsMobileListProps) {
   const [query, setQuery] = useState('');
   const [showAll, setShowAll] = useState(false);
 
@@ -111,19 +116,24 @@ export function CondoUnitsMobileList({ condoUnits, currentBbl, addressSegment }:
                 </Link>
                 {unit.saleAmount ? (
                   <span className="shrink-0 text-sm tabular-nums text-foreground/80">
-                    {formatCurrency(unit.saleAmount)}
+                    {isSignedIn ? formatCurrency(unit.saleAmount) : <Blurred>{formatCurrency(unit.saleAmount)}</Blurred>}
                   </span>
                 ) : null}
               </div>
 
               <div className="mt-0.5 text-xs text-foreground/60">
                 {getCondoClassLabel(unit.buildingClass)}
-                {unit.saleDate ? ` · Sold ${formatDate(unit.saleDate)}` : ''}
+                {unit.saleDate ? (
+                  <>
+                    {' · Sold '}
+                    {isSignedIn ? formatDate(unit.saleDate) : <Blurred>{formatDate(unit.saleDate)}</Blurred>}
+                  </>
+                ) : ''}
               </div>
 
               {unit.owner && (
                 <div className="mt-0.5 truncate text-xs text-foreground/50">
-                  Owner: {unit.owner}
+                  Owner: {isSignedIn ? unit.owner : <Blurred>{unit.owner}</Blurred>}
                 </div>
               )}
             </li>
