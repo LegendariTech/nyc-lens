@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui';
-import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
+import { formatBuildingClassForProse } from '@/constants/building';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
@@ -154,10 +154,8 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
   const hasCoordinates = latitude != null && longitude != null;
   const MAPBOX_ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
-  // SEO intro
-  const buildingTypeDesc = plutoData?.bldgclass && BUILDING_CLASS_CODE_MAP[plutoData.bldgclass]
-    ? BUILDING_CLASS_CODE_MAP[plutoData.bldgclass].toLowerCase()
-    : 'property';
+  // SEO intro — convert DOF building class to readable description for prose
+  const buildingTypeDesc = formatBuildingClassForProse(plutoData?.bldgclass);
 
   return (
     <div className="space-y-6">

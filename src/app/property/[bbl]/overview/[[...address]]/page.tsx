@@ -8,7 +8,7 @@ import { fetchCondoUnits } from '@/data/acris';
 import { fetchOwnerContacts } from '@/data/contacts';
 import { fetchPropertyValuation } from '@/data/valuation';
 import { getBoroughDisplayName } from '@/constants/nyc';
-import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
+import { formatBuildingClassForProse } from '@/constants/building';
 import { formatFullAddress } from '@/utils/formatters';
 import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 import type { CondoContext } from '../utils';
@@ -37,9 +37,11 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
       const { bldgclass, yearbuilt, unitstotal, bldgarea } = plutoResult.data;
       const parts: string[] = [];
 
-      if (bldgclass && BUILDING_CLASS_CODE_MAP[bldgclass]) {
-        const buildingType = BUILDING_CLASS_CODE_MAP[bldgclass];
-        parts.push(buildingType);
+      if (bldgclass) {
+        const buildingType = formatBuildingClassForProse(bldgclass);
+        if (buildingType !== 'property') {
+          parts.push(buildingType.charAt(0).toUpperCase() + buildingType.slice(1));
+        }
       }
 
       if (yearbuilt) {

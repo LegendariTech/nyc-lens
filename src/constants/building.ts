@@ -338,3 +338,117 @@ export function getBuildingClassDescription(buildingClass: string | null): strin
   if (!buildingClass) return 'N/A';
   return BUILDING_CLASS_CODE_MAP[buildingClass.toUpperCase()] || buildingClass;
 }
+
+/**
+ * Prose-friendly building class descriptions for use in sentences like
+ * "This [description] was constructed in [year]".
+ *
+ * Only codes that need overrides — everything else falls through to generic formatting.
+ */
+const PROSE_OVERRIDES: Record<string, string> = {
+  // Residential — families
+  A: 'one-family dwelling',
+  B: 'two-family dwelling',
+  C0: 'three-family building',
+  C1: 'walk-up apartment building',
+  C2: 'walk-up apartment building',
+  C3: 'four-family building',
+  C4: 'old law tenement',
+  C5: 'converted dwelling',
+  C6: 'walk-up cooperative',
+  C7: 'walk-up apartment building',
+  C8: 'walk-up co-op',
+  C9: 'garden apartment building',
+  C: 'walk-up apartment building',
+  CB: 'walk-up apartment building',
+  CC: 'walk-up co-op apartment building',
+  CM: 'mobile home',
+
+  // Elevator apartments
+  D: 'elevator apartment building',
+  D0: 'elevator co-op',
+  D1: 'elevator apartment building',
+  D2: 'elevator apartment building',
+  D3: 'elevator apartment building',
+  D4: 'elevator cooperative',
+  D5: 'elevator apartment building',
+  D6: 'elevator apartment building',
+  D7: 'elevator apartment building',
+  D8: 'luxury elevator apartment building',
+  D9: 'elevator apartment building',
+  DB: 'elevator apartment building',
+  DC: 'elevator co-op apartment building',
+
+  // Common non-residential
+  E: 'warehouse',
+  F: 'factory building',
+  G: 'garage',
+  H: 'hotel',
+  I: 'health facility',
+  J: 'theatre',
+  K: 'store building',
+  L: 'loft building',
+  M: 'religious facility',
+  N: 'residential care facility',
+  O: 'office building',
+  P: 'public assembly facility',
+  Q: 'outdoor recreational facility',
+  R: 'condominium',
+  S: 'mixed-use residential building',
+  T: 'transportation facility',
+  U: 'utility property',
+  V: 'vacant lot',
+  W: 'educational facility',
+  Y: 'government building',
+  Z: 'miscellaneous property',
+
+  // Specific residential mixed-use
+  S0: 'one-family home with commercial space',
+  S1: 'one-family home with commercial space',
+  S2: 'two-family home with commercial space',
+  S3: 'three-family home with commercial space',
+  S4: 'four-family home with commercial space',
+  S5: 'multi-family home with commercial space',
+
+  // Condos
+  R1: 'residential condominium',
+  R2: 'residential condominium',
+  R3: 'residential condominium',
+  R4: 'residential condominium',
+  R6: 'residential condominium',
+};
+
+/**
+ * Format a building class code into a prose-friendly description.
+ * Suitable for sentences like "This [result] was constructed in 1970."
+ *
+ * @param buildingClass - NYC DOF building class code (e.g., 'C0', 'D4')
+ * @returns Lowercase prose description (e.g., 'three-family building', 'elevator cooperative')
+ */
+export function formatBuildingClassForProse(buildingClass: string | null | undefined): string {
+  if (!buildingClass) return 'property';
+
+  const code = buildingClass.toUpperCase();
+
+  // Check explicit overrides first
+  if (PROSE_OVERRIDES[code]) return PROSE_OVERRIDES[code];
+
+  // Fall back to category letter override
+  const prefix = code.charAt(0);
+  if (PROSE_OVERRIDES[prefix]) return PROSE_OVERRIDES[prefix];
+
+  // Last resort: use the raw DOF description, cleaned up
+  const raw = BUILDING_CLASS_CODE_MAP[code];
+  if (!raw) return 'property';
+
+  return raw
+    .toLowerCase()
+    .replace(/;.*$/, '')         // drop everything after semicolons (technical details)
+    .replace(/\bapt\b/g, 'apartment')
+    .replace(/\bcomm\b/g, 'commercial')
+    .replace(/\bresid\.\b/g, 'residential')
+    .replace(/\bcomml\.\b/g, 'commercial')
+    .replace(/\bbldg\.?\b/g, 'building')
+    .replace(/\bmisc\.?\b/g, 'miscellaneous')
+    .trim();
+}
