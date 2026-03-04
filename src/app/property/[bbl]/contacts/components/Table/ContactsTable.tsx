@@ -15,12 +15,13 @@ ModuleRegistry.registerModules([AllCommunityModule, SideBarModule, ColumnsToolPa
 interface ContactsTableProps {
     data: OwnerContactRow[];
     visibleSources?: Set<SourceCategory>;
+    isSignedIn?: boolean;
 }
 
-export function ContactsTable({ data, visibleSources }: ContactsTableProps) {
+export function ContactsTable({ data, visibleSources, isSignedIn }: ContactsTableProps) {
     const columnDefs = useMemo(
-        () => getOwnerContactsColumnDefs(visibleSources),
-        [visibleSources]
+        () => getOwnerContactsColumnDefs(visibleSources, isSignedIn),
+        [visibleSources, isSignedIn]
     );
 
     const defaultColDef = useMemo(

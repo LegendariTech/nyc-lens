@@ -2,9 +2,12 @@ import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import type { OwnerContactRow } from './types';
 import { formatDate, formatUSPhone } from '@/utils/formatters';
 import { SourceChipsCell } from './SourceChipsCell';
+import { ProtectedCell } from './ProtectedCell';
 import type { SourceCategory } from '../../constants/sourceCategories';
 
-export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>): ColDef<OwnerContactRow>[] {
+export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>, isSignedIn?: boolean): ColDef<OwnerContactRow>[] {
+    const protectedRenderer = !isSignedIn ? { cellRenderer: ProtectedCell } : {};
+
     return [
         {
             field: 'date',
@@ -23,7 +26,7 @@ export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>)
         },
         {
             field: 'owner_master_full_name',
-            headerName: 'Master Name',
+            headerName: 'Name',
             width: 280,
             valueFormatter: (p: ValueFormatterParams<OwnerContactRow, string>) => p.value || '',
         },
@@ -47,6 +50,7 @@ export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>)
                 return formatUSPhone(phone);
             },
             cellClass: 'multiline-cell',
+            ...protectedRenderer,
         },
         {
             field: 'agency',
@@ -107,6 +111,7 @@ export function getOwnerContactsColumnDefs(visibleSources?: Set<SourceCategory>)
                 return p.value || '';
             },
             cellClass: 'multiline-cell',
+            ...protectedRenderer,
         },
         {
             field: 'owner_title',
