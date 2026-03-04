@@ -252,8 +252,8 @@ export default function SidebarNav() {
         })}
       </ul>
 
-      {/* Auth controls pinned to bottom (only when Clerk is configured) */}
-      {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && <div className="mt-auto pt-2 border-t border-foreground/10">
+      {/* Auth controls pinned to bottom */}
+      <div className="mt-auto pt-2 border-t border-foreground/10">
         <SignedOut>
           <div className={cn(
             "flex items-center gap-2",
@@ -290,7 +290,7 @@ export default function SidebarNav() {
             />
           </div>
         </SignedIn>
-      </div>}
+      </div>
     </nav>
   );
 }

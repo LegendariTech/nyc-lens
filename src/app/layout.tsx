@@ -82,15 +82,11 @@ export const metadata: Metadata = {
   },
 };
 
-const clerkPubKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sidebar = <Suspense fallback={null}><SidebarNav /></Suspense>;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -98,19 +94,13 @@ export default function RootLayout({
       </head>
       <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
-        <ViewportProvider>
-          {clerkPubKey ? (
-            <ClerkProvider>
-              <ResizableSidebarLayout sidebar={sidebar}>
-                {children}
-              </ResizableSidebarLayout>
-            </ClerkProvider>
-          ) : (
-            <ResizableSidebarLayout sidebar={sidebar}>
+        <ClerkProvider>
+          <ViewportProvider>
+            <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
               {children}
             </ResizableSidebarLayout>
-          )}
-        </ViewportProvider>
+          </ViewportProvider>
+        </ClerkProvider>
         <Analytics />
       </body>
     </html>
