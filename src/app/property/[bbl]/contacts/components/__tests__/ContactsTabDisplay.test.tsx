@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ContactsTabDisplay } from '../ContactsTabDisplay';
 import type { OwnerContact } from '@/types/contacts';
+
+// Mock Clerk hooks used by ContactsTabDisplay and child components
+vi.mock('@clerk/nextjs', () => ({
+  useAuth: () => ({ isSignedIn: true }),
+  useClerk: () => ({ openSignUp: vi.fn() }),
+}));
 
 describe('ContactsTabDisplay', () => {
   const mockContacts: OwnerContact[] = [

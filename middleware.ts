@@ -5,6 +5,7 @@ import {
   extractGeo,
   classifyRoute,
   parseQueryParams,
+  extractSessionUser,
   type RequestLogDocument,
 } from '@/utils/requestTracker';
 
@@ -26,6 +27,8 @@ function trackRequest(request: NextRequest) {
   const geo = extractGeo(request.headers);
   const ip = extractClientIp(request.headers);
   const routeType = classifyRoute(url.pathname);
+
+  const user = extractSessionUser(request.cookies);
 
   const doc: RequestLogDocument = {
     '@timestamp': new Date().toISOString(),
@@ -51,6 +54,7 @@ function trackRequest(request: NextRequest) {
     host: request.headers.get('host') || null,
     protocol: url.protocol.replace(':', ''),
     vercel_deployment_id: request.headers.get('x-vercel-deployment-id') || null,
+    ...user,
   };
 
   // Fire-and-forget: write directly to ES REST API (no internal HTTP round-trip)

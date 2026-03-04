@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackEvent } from '@/data/eventTracking';
 import { EventType } from '@/types/events';
+import { extractSessionUser } from '@/utils/requestTracker';
 
 /**
  * Request body for event tracking
@@ -15,30 +16,6 @@ interface TrackEventRequest {
  * This prevents malicious or invalid events from being tracked
  */
 const ALLOWED_EVENTS = new Set<string>(Object.values(EventType));
-
-/**
- * Extract user info from Clerk's __session JWT without verification.
- * This is safe for analytics — we just want to associate events with users,
- * not make auth decisions. Avoids any network calls to Clerk.
- */
-function getUserFromSessionCookie(req: NextRequest): { userId: string; email?: string; name?: string } | null {
-  const token = req.cookies.get('__session')?.value;
-  if (!token) return null;
-
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    const payload = JSON.parse(atob(parts[1]));
-    return {
-      userId: payload.sub || null,
-      // These require custom session claims configured in Clerk Dashboard
-      email: payload.email || payload.primary_email || undefined,
-      name: payload.name || payload.full_name || undefined,
-    };
-  } catch {
-    return null;
-  }
-}
 
 /**
  * POST /api/events/track
@@ -80,9 +57,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Enrich event data with user info from session cookie (no network calls)
-    const user = getUserFromSessionCookie(req);
+    const user = extractSessionUser(req.cookies);
     const enrichedData = user
-      ? { ...data, user_id: user.userId, user_email: user.email, user_name: user.name }
+      ? { ...data, ...user }
       : data;
 
     // Track the event (returns false if not configured or write failed)
