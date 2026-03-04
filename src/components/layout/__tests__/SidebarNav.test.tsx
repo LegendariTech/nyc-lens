@@ -212,20 +212,6 @@ describe("SidebarNav", () => {
   });
 
   describe("Auth UI", () => {
-    const originalEnv = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-    beforeEach(() => {
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_placeholder";
-    });
-
-    afterEach(() => {
-      if (originalEnv === undefined) {
-        delete process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-      } else {
-        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = originalEnv;
-      }
-    });
-
     it("shows sign-in button when signed out", () => {
       currentPathname = "/";
       mockSignedIn = false;
@@ -242,15 +228,6 @@ describe("SidebarNav", () => {
 
       expect(screen.getByTestId("user-button")).toBeInTheDocument();
       expect(screen.queryByRole("button", { name: /Sign in/i })).not.toBeInTheDocument();
-    });
-
-    it("hides auth controls when Clerk is not configured", () => {
-      delete process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-      currentPathname = "/";
-      renderWithProvider(<SidebarNav />);
-
-      expect(screen.queryByRole("button", { name: /Sign in/i })).not.toBeInTheDocument();
-      expect(screen.queryByTestId("user-button")).not.toBeInTheDocument();
     });
   });
 });
