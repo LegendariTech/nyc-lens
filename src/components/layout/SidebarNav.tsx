@@ -3,8 +3,10 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
+import { trackEvent } from "@/utils/trackEvent";
+import { EventType } from "@/types/events";
 import { useSidebar } from "./SidebarContext";
 import {
   SignInButton,
@@ -70,6 +72,10 @@ export default function SidebarNav() {
     DOB: initiallyOpen.DOB,
     HPD: initiallyOpen.HPD,
   });
+
+  // Defer auth UI rendering to avoid hydration mismatch (Clerk doesn't know auth state on server)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const toggleGroup = (group: string) => {
     setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
@@ -252,44 +258,49 @@ export default function SidebarNav() {
         })}
       </ul>
 
-      {/* Auth controls pinned to bottom */}
+      {/* Auth controls pinned to bottom — only render after mount to avoid hydration mismatch */}
       <div className="mt-auto pt-2 border-t border-foreground/10">
-        <SignedOut>
-          <div className={cn(
-            "flex items-center gap-2",
-            isCollapsed ? "justify-center" : "px-3 py-2"
-          )}>
-            <SignInButton mode="modal">
-              <button
-                type="button"
-                aria-label={isCollapsed ? "Sign in" : undefined}
-                className={cn(
-                  "flex items-center justify-center rounded-md text-sm font-medium",
-                  "hover:bg-foreground/10 transition-colors",
-                  isCollapsed ? "h-12 w-12" : "h-9 w-full px-3 py-2"
-                )}
-              >
-                {isCollapsed ? (
-                  <UserIcon aria-hidden="true" className="h-5 w-5" />
-                ) : "Sign in"}
-              </button>
-            </SignInButton>
-          </div>
-        </SignedOut>
-        <SignedIn>
-          <div className={cn(
-            "flex items-center",
-            isCollapsed ? "justify-center py-2" : "gap-2 px-3 py-2"
-          )}>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "h-8 w-8",
-                },
-              }}
-            />
-          </div>
-        </SignedIn>
+        {mounted && (
+          <>
+            <SignedOut>
+              <div className={cn(
+                "flex items-center gap-2",
+                isCollapsed ? "justify-center" : "px-3 py-2"
+              )}>
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    aria-label={isCollapsed ? "Sign in" : undefined}
+                    onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'sidebar' })}
+                    className={cn(
+                      "flex items-center justify-center rounded-md text-sm font-medium",
+                      "hover:bg-foreground/10 transition-colors",
+                      isCollapsed ? "h-12 w-12" : "h-9 w-full px-3 py-2"
+                    )}
+                  >
+                    {isCollapsed ? (
+                      <UserIcon aria-hidden="true" className="h-5 w-5" />
+                    ) : "Sign in"}
+                  </button>
+                </SignInButton>
+              </div>
+            </SignedOut>
+            <SignedIn>
+              <div className={cn(
+                "flex items-center",
+                isCollapsed ? "justify-center py-2" : "gap-2 px-3 py-2"
+              )}>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8",
+                    },
+                  }}
+                />
+              </div>
+            </SignedIn>
+          </>
+        )}
       </div>
     </nav>
   );

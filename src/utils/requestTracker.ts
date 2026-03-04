@@ -197,6 +197,37 @@ export function parseQueryParams(url: URL): Record<string, string> | null {
   return hasParams ? params : null;
 }
 
+export interface SessionUser {
+  user_id: string;
+  user_email?: string;
+  user_name?: string;
+}
+
+/**
+ * Extract basic user info from Clerk's __session JWT cookie without verification.
+ * Safe for analytics — avoids any network calls to Clerk.
+ * Edge-runtime compatible (no Node.js crypto needed).
+ */
+export function extractSessionUser(cookies: { get(name: string): { value: string } | undefined }): SessionUser | null {
+  const token = cookies.get('__session')?.value;
+  if (!token) return null;
+
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(atob(parts[1]));
+    const userId = payload.sub;
+    if (!userId) return null;
+    return {
+      user_id: userId,
+      user_email: payload.email || payload.primary_email || undefined,
+      user_name: payload.name || payload.full_name || undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export interface RequestLogDocument {
   '@timestamp': string;
   method: string;
@@ -221,5 +252,8 @@ export interface RequestLogDocument {
   host: string | null;
   protocol: string;
   vercel_deployment_id: string | null;
+  user_id?: string;
+  user_email?: string;
+  user_name?: string;
   blocked?: boolean;
 }

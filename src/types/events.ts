@@ -8,6 +8,8 @@ export enum EventType {
   CONDO_UNIT_SEARCH = 'condo_unit_search',
   /** Click on a condo unit link */
   CONDO_UNIT_CLICK = 'condo_unit_click',
+  /** Click on sign-in prompt (e.g., blurred ownership/contacts) */
+  SIGN_IN_PROMPT_CLICK = 'sign_in_prompt_click',
 }
 
 /**

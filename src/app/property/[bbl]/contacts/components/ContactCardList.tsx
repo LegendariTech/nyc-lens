@@ -7,12 +7,14 @@ import type { SourceCategory } from '../constants/sourceCategories';
 interface ContactCardListProps {
   contacts: OwnerContact[];
   visibleSources?: Set<SourceCategory>;
+  isSignedIn?: boolean;
+  bbl?: string;
 }
 
 /**
  * Mobile-friendly list of contact cards
  */
-export function ContactCardList({ contacts, visibleSources }: ContactCardListProps) {
+export function ContactCardList({ contacts, visibleSources, isSignedIn, bbl }: ContactCardListProps) {
   if (contacts.length === 0) {
     return (
       <div className="py-8 text-center space-y-2">
@@ -33,6 +35,8 @@ export function ContactCardList({ contacts, visibleSources }: ContactCardListPro
           key={`${contact.bucket_name}-${contact.status}-${index}`}
           contact={contact}
           visibleSources={visibleSources}
+          isSignedIn={isSignedIn}
+          bbl={bbl}
         />
       ))}
     </div>

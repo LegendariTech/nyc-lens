@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { trackEvent } from '@/data/eventTracking';
 import { EventType } from '@/types/events';
+import { extractSessionUser } from '@/utils/requestTracker';
 
 /**
  * Request body for event tracking
@@ -55,8 +56,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Enrich event data with user info from session cookie (no network calls)
+    const user = extractSessionUser(req.cookies);
+    const enrichedData = user
+      ? { ...data, ...user }
+      : data;
+
     // Track the event (returns false if not configured or write failed)
-    const success = await trackEvent(event, data);
+    const success = await trackEvent(event, enrichedData);
 
     return NextResponse.json({ success }, { status: 200 });
   } catch (error) {

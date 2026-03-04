@@ -3,8 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { SignedIn, SignedOut, SignUpButton } from '@clerk/nextjs';
 import { Card, CardContent } from '@/components/ui';
 import { formatBuildingClassForProse } from '@/constants/building';
+import { trackEvent } from '@/utils/trackEvent';
+import { EventType } from '@/types/events';
 import { PlutoData } from '@/data/pluto';
 import { AcrisRecord } from '@/types/acris';
 import { OwnerContact } from '@/types/contacts';
@@ -17,7 +20,7 @@ import {
   getTaxSectionData,
   getContactsSectionData,
 } from './utils';
-import type { CondoContext } from './utils';
+import type { CondoContext, OwnershipSectionData } from './utils';
 import { CondoUnitsPanel } from './components/CondoUnitsPanel';
 
 const ParcelMap = dynamic(() => import('@/components/map/ParcelMap').then(mod => ({ default: mod.ParcelMap })), {
@@ -55,6 +58,105 @@ function SectionCard({ title, children }: { title: string; children: React.React
     <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold text-foreground">{title}</h2>
       {children}
+    </div>
+  );
+}
+
+/** Ownership data content — rendered both blurred (signed out) and normal (signed in) */
+function OwnershipContent({ ownership, displayedUnmaskedPhones, showAllUnmaskedPhones, setShowAllUnmaskedPhones }: {
+  ownership: OwnershipSectionData;
+  displayedUnmaskedPhones: string[];
+  showAllUnmaskedPhones: boolean;
+  setShowAllUnmaskedPhones: (v: boolean) => void;
+}) {
+  return (
+    <>
+      <dl className="space-y-3">
+        {ownership.unmaskedOwner && (
+          <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
+            <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
+              Unmasked Owner
+            </dt>
+            <dd className="text-base font-bold text-foreground mb-2">{ownership.unmaskedOwner.name}</dd>
+            {ownership.unmaskedOwner.address && (
+              <dd className="text-sm text-foreground/90 mb-1">{ownership.unmaskedOwner.address}</dd>
+            )}
+            {ownership.unmaskedOwner.phones.length > 0 && (
+              <>
+                <dt className="sr-only">Phone Numbers</dt>
+                {displayedUnmaskedPhones.map((phone, idx) => (
+                  <dd key={idx} className="text-sm text-foreground/90">
+                    {formatUSPhone(phone)}
+                  </dd>
+                ))}
+                {ownership.unmaskedOwner.phones.length > 1 && (
+                  <dd className="mt-1">
+                    <button
+                      onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
+                      className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+                    >
+                      {showAllUnmaskedPhones
+                        ? 'Show less'
+                        : `Show ${ownership.unmaskedOwner.phones.length - 1} more phone${ownership.unmaskedOwner.phones.length > 2 ? 's' : ''}`}
+                    </button>
+                  </dd>
+                )}
+              </>
+            )}
+          </div>
+        )}
+        <InfoItem label="Recorded Owner" value={ownership.recordedOwnerName} />
+      </dl>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
+        <InfoItem label="Sale Date" value={ownership.saleDate} />
+        <InfoItem label="Sale Price" value={ownership.salePrice} />
+      </dl>
+      <div className="border-t border-border/30 pt-3 mt-3">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+          <InfoItem label="Mortgage Date" value={ownership.mortgageDate} />
+          <InfoItem label="Mortgage Amount" value={ownership.mortgageAmount} />
+        </dl>
+        <dl className="mt-2">
+          <InfoItem label="Lender" value={ownership.lenderName} />
+        </dl>
+      </div>
+    </>
+  );
+}
+
+/** Contacts list content — rendered both blurred (signed out) and normal (signed in) */
+function ContactsContent({ displayedContacts, allContacts, showAllContacts, setShowAllContacts }: {
+  displayedContacts: Array<{ owner_master_full_name: string; owner_phone: string[] }>;
+  allContacts: Array<{ owner_master_full_name: string; owner_phone: string[] }>;
+  showAllContacts: boolean;
+  setShowAllContacts: (v: boolean) => void;
+}) {
+  if (displayedContacts.length === 0) {
+    return <p className="text-sm text-foreground/80">No contact information available</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {displayedContacts.map((contact, index) => (
+        <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
+          <div className="text-sm font-medium text-foreground">{contact.owner_master_full_name}</div>
+          {contact.owner_phone.map((phone, phoneIdx) => (
+            <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
+              {formatUSPhone(phone)}
+            </div>
+          ))}
+        </div>
+      ))}
+      {allContacts.length > 4 && (
+        <button
+          onClick={() => setShowAllContacts(!showAllContacts)}
+          className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+        >
+          {showAllContacts
+            ? 'Show less'
+            : `Show ${allContacts.length - 4} more`}
+        </button>
+      )}
     </div>
   );
 }
@@ -292,69 +394,43 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
         {/* Ownership Section */}
         <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-          <div className="flex-1">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
-            <dl className="space-y-3">
-              {ownership.unmaskedOwner && (
-                <div className="pb-3 border-b-2 border-foreground/20 bg-foreground/10 -mx-2 px-2 py-2 rounded-md">
-                  <dt className="text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wide">
-                    Unmasked Owner
-                  </dt>
-                  <dd className="text-base font-bold text-foreground mb-2">{ownership.unmaskedOwner.name}</dd>
-                  {ownership.unmaskedOwner.address && (
-                    <dd className="text-sm text-foreground/90 mb-1">{ownership.unmaskedOwner.address}</dd>
-                  )}
-                  {ownership.unmaskedOwner.phones.length > 0 && (
-                    <>
-                      <dt className="sr-only">Phone Numbers</dt>
-                      {displayedUnmaskedPhones.map((phone, idx) => (
-                        <dd key={idx} className="text-sm text-foreground/90">
-                          {formatUSPhone(phone)}
-                        </dd>
-                      ))}
-                      {ownership.unmaskedOwner.phones.length > 1 && (
-                        <dd className="mt-1">
-                          <button
-                            onClick={() => setShowAllUnmaskedPhones(!showAllUnmaskedPhones)}
-                            className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
-                          >
-                            {showAllUnmaskedPhones
-                              ? 'Show less'
-                              : `Show ${ownership.unmaskedOwner.phones.length - 1} more phone${ownership.unmaskedOwner.phones.length > 2 ? 's' : ''}`}
-                          </button>
-                        </dd>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Ownership</h2>
 
-              <InfoItem label="Recorded Owner" value={ownership.recordedOwnerName} />
-            </dl>
+          <div className="relative flex-1">
+            <SignedOut>
+              <div className="absolute inset-0 z-10 flex items-center justify-center">
+                <SignUpButton mode="modal">
+                  <button
+                    type="button"
+                    onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'overview_ownership', bbl })}
+                    className="px-5 py-2.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-lg"
+                  >
+                    Sign up for free to view
+                  </button>
+                </SignUpButton>
+              </div>
+            </SignedOut>
 
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3">
-              <InfoItem label="Sale Date" value={ownership.saleDate} />
-              <InfoItem label="Sale Price" value={ownership.salePrice} />
-            </dl>
+            <SignedOut>
+              <div className="select-none pointer-events-none blur-[6px]" aria-hidden="true">
+                <OwnershipContent ownership={ownership} displayedUnmaskedPhones={displayedUnmaskedPhones} showAllUnmaskedPhones={showAllUnmaskedPhones} setShowAllUnmaskedPhones={setShowAllUnmaskedPhones} />
+              </div>
+            </SignedOut>
+            <SignedIn>
+              <OwnershipContent ownership={ownership} displayedUnmaskedPhones={displayedUnmaskedPhones} showAllUnmaskedPhones={showAllUnmaskedPhones} setShowAllUnmaskedPhones={setShowAllUnmaskedPhones} />
+            </SignedIn>
+          </div>
 
-            <div className="border-t border-border/30 pt-3 mt-3">
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <InfoItem label="Mortgage Date" value={ownership.mortgageDate} />
-                <InfoItem label="Mortgage Amount" value={ownership.mortgageAmount} />
-              </dl>
-              <dl className="mt-2">
-                <InfoItem label="Lender" value={ownership.lenderName} />
-              </dl>
+          <SignedIn>
+            <div className="flex justify-end mt-4">
+              <Link
+                href={getTabUrl('transactions')}
+                className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+              >
+                Show Transactions
+              </Link>
             </div>
-          </div>
-          <div className="flex justify-end mt-4">
-            <Link
-              href={getTabUrl('transactions')}
-              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-            >
-              Show Transactions
-            </Link>
-          </div>
+          </SignedIn>
         </div>
 
         {/* Tax Data Section */}
@@ -402,44 +478,44 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
         {/* Contacts Section */}
         <div className="rounded-lg border border-foreground/10 bg-foreground/5 p-6 shadow-sm flex flex-col h-full">
-          <div className="flex-1">
-            <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
-            {displayedContacts.length > 0 ? (
-              <div className="space-y-3">
-                {displayedContacts.map((contact, index) => (
-                  <div key={index} className={index > 0 ? "pt-2 border-t border-border/30" : ""}>
-                    <div className="text-sm font-medium text-foreground">{contact.owner_master_full_name}</div>
-                    {contact.owner_phone.map((phone, phoneIdx) => (
-                      <div key={phoneIdx} className="text-xs text-foreground/80 mt-0.5">
-                        {formatUSPhone(phone)}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                {allContacts.length > 4 && (
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Contacts</h2>
+
+          <div className="relative flex-1">
+            <SignedOut>
+              <div className="absolute inset-0 z-10 flex items-center justify-center">
+                <SignUpButton mode="modal">
                   <button
-                    onClick={() => setShowAllContacts(!showAllContacts)}
-                    className="text-xs text-foreground hover:text-foreground/80 font-semibold hover:underline"
+                    type="button"
+                    onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'overview_contacts', bbl })}
+                    className="px-5 py-2.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-lg"
                   >
-                    {showAllContacts
-                      ? 'Show less'
-                      : `Show ${allContacts.length - 4} more`}
+                    Sign up for free to view
                   </button>
-                )}
+                </SignUpButton>
               </div>
-            ) : (
-              <p className="text-sm text-foreground/80">No contact information available</p>
-            )}
+            </SignedOut>
+
+            <SignedOut>
+              <div className="select-none pointer-events-none blur-[6px]" aria-hidden="true">
+                <ContactsContent displayedContacts={displayedContacts} allContacts={allContacts} showAllContacts={showAllContacts} setShowAllContacts={setShowAllContacts} />
+              </div>
+            </SignedOut>
+            <SignedIn>
+              <ContactsContent displayedContacts={displayedContacts} allContacts={allContacts} showAllContacts={showAllContacts} setShowAllContacts={setShowAllContacts} />
+            </SignedIn>
           </div>
-          <div className="flex justify-end mt-4">
-            <Link
-              href={getTabUrl('contacts')}
-              aria-label="View more contact information"
-              className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
-            >
-              Show More
-            </Link>
-          </div>
+
+          <SignedIn>
+            <div className="flex justify-end mt-4">
+              <Link
+                href={getTabUrl('contacts')}
+                aria-label="View more contact information"
+                className="inline-flex items-center justify-center px-4 py-3 min-h-[48px] text-xs font-medium text-foreground/90 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 rounded-md transition-colors"
+              >
+                Show More
+              </Link>
+            </div>
+          </SignedIn>
         </div>
       </div>
 

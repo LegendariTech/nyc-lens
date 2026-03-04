@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import { ContactsTable } from './Table';
 import { ContactCardList } from './ContactCardList';
 import { FilterLegend } from '@/components/FilterLegend';
@@ -49,7 +50,8 @@ const STATUS_METADATA: Record<ContactStatus, {
     },
 };
 
-export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange }: ContactsTabDisplayProps) {
+export function ContactsTabDisplay({ contactsData, bbl, tableView, onTableViewChange }: ContactsTabDisplayProps) {
+    const { isLoaded, isSignedIn } = useAuth();
     // Convert to table format (join arrays to strings) for desktop table
     const tableContacts = useMemo(() => {
         return contactsData.map(contact => {
@@ -89,9 +91,9 @@ export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange 
         new Set(['current'])
     );
 
-    // Source filter state - by default show all source categories
+    // Source filter state - DOB Permits off by default (less relevant contacts)
     const [visibleSources, setVisibleSources] = useState<Set<SourceCategory>>(
-        new Set(['dob_permits', 'recorded_owner', 'recorded_borrower', 'hpd', 'unmasked_owner', 'tax_owner'])
+        new Set(['recorded_owner', 'recorded_borrower', 'hpd', 'unmasked_owner', 'tax_owner'])
     );
 
     // Toggle status visibility
@@ -245,13 +247,19 @@ export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange 
                                 aria-label={`${isVisible ? 'Hide' : 'Show'} ${metadata.pluralLabel.toLowerCase()}`}
                             >
                                 <span
-                                    className={`w-3 h-3 rounded-full border-2 ${
+                                    className={`flex items-center justify-center w-4 h-4 rounded-[3px] border-[1.5px] transition-colors ${
                                         isVisible
                                             ? `${metadata.borderColor} ${metadata.bgColor}`
                                             : 'border-foreground/30 bg-transparent'
                                     }`}
                                     aria-hidden="true"
-                                />
+                                >
+                                    {isVisible && (
+                                        <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M2.5 6l2.5 2.5 4.5-5" />
+                                        </svg>
+                                    )}
+                                </span>
                                 <span>{metadata.pluralLabel}</span>
                                 <span
                                     className={`text-xs px-1.5 py-0.5 rounded ${
@@ -282,13 +290,19 @@ export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange 
                                 aria-label={`${isVisible ? 'Hide' : 'Show'} ${metadata.pluralLabel.toLowerCase()}`}
                             >
                                 <span
-                                    className={`w-3 h-3 rounded-full border-2 ${
+                                    className={`flex items-center justify-center w-4 h-4 rounded-[3px] border-[1.5px] transition-colors ${
                                         isVisible
                                             ? `${metadata.borderColor} ${metadata.bgColor}`
                                             : 'border-foreground/30 bg-transparent'
                                     }`}
                                     aria-hidden="true"
-                                />
+                                >
+                                    {isVisible && (
+                                        <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M2.5 6l2.5 2.5 4.5-5" />
+                                        </svg>
+                                    )}
+                                </span>
                                 <span>{metadata.pluralLabel}</span>
                                 <span
                                     className={`text-xs px-1.5 py-0.5 rounded ${
@@ -326,7 +340,7 @@ export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange 
                         </div>
                     ) : (
                         <div className="rounded-lg border border-foreground/10 bg-card">
-                            <ContactsTable data={filteredTableContacts} visibleSources={visibleSources} />
+                            <ContactsTable data={filteredTableContacts} visibleSources={visibleSources} isSignedIn={isLoaded && !!isSignedIn} />
                         </div>
                     )}
                 </div>
@@ -344,7 +358,7 @@ export function ContactsTabDisplay({ contactsData, tableView, onTableViewChange 
                         </p>
                     </div>
                 ) : (
-                    <ContactCardList contacts={filteredCardContacts} visibleSources={visibleSources} />
+                    <ContactCardList contacts={filteredCardContacts} visibleSources={visibleSources} isSignedIn={isLoaded && !!isSignedIn} bbl={bbl} />
                 )}
             </div>
         </div>

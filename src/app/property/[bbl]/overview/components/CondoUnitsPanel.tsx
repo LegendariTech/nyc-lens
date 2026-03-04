@@ -5,11 +5,12 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import type { RowClassParams, FilterChangedEvent } from 'ag-grid-community';
 import { SideBarModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { SignedOut, SignUpButton, useAuth } from '@clerk/nextjs';
 import '@/components/AgGridRegistry';
 import { myTheme } from '@/components/table/theme';
 import { trackEvent, debounce } from '@/utils/trackEvent';
 import { EventType } from '@/types/events';
-import { condoUnitColumnDefs } from './condoColumnDefs';
+import { getCondoUnitColumnDefs } from './condoColumnDefs';
 import { CondoUnitsMobileList } from './CondoUnitsMobileList';
 import type { CondoUnitSummary } from '../utils';
 
@@ -22,6 +23,18 @@ interface CondoUnitsPanelProps {
 }
 
 export function CondoUnitsPanel({ condoUnits, currentBbl, addressSegment }: CondoUnitsPanelProps) {
+  // isLoaded is false during SSR and initial hydration, true once Clerk
+  // initialises on the client.  Using it as a gate means the first render
+  // always produces the "signed-out" (blurred) markup on both server and
+  // client, avoiding hydration mismatches.  Once Clerk loads, the columns
+  // and mobile list update to the real auth state in a single re-render.
+  const { isLoaded, isSignedIn } = useAuth();
+  const isAuthed = isLoaded && !!isSignedIn;
+
+  const columnDefs = useMemo(
+    () => getCondoUnitColumnDefs(isAuthed),
+    [isAuthed]
+  );
 
   const defaultColDef = useMemo(
     () => ({
@@ -88,13 +101,27 @@ export function CondoUnitsPanel({ condoUnits, currentBbl, addressSegment }: Cond
         Condo Units ({condoUnits.length})
       </h2>
 
+      <SignedOut>
+        <div className="flex items-center justify-center rounded-md border border-foreground/10 bg-foreground/5 py-3">
+          <SignUpButton mode="modal">
+            <button
+              type="button"
+              onClick={() => trackEvent(EventType.SIGN_IN_PROMPT_CLICK, { location: 'condo_units', bbl: currentBbl })}
+              className="px-5 py-2.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 transition-colors shadow-lg cursor-pointer"
+            >
+              Sign up for free to view
+            </button>
+          </SignUpButton>
+        </div>
+      </SignedOut>
+
       {/* Desktop: ag-Grid table */}
       <div className="hidden md:block w-full relative">
         <div className="ag-theme-quartz-dark" style={{ width: '100%', height: 500 }}>
           <AgGridReact<CondoUnitSummary>
             theme={myTheme}
             defaultColDef={defaultColDef}
-            columnDefs={condoUnitColumnDefs}
+            columnDefs={columnDefs}
             rowData={condoUnits}
             getRowClass={getRowClass}
             context={gridContext}
@@ -125,7 +152,7 @@ export function CondoUnitsPanel({ condoUnits, currentBbl, addressSegment }: Cond
 
       {/* Mobile: searchable list */}
       <div className="md:hidden">
-        <CondoUnitsMobileList condoUnits={condoUnits} currentBbl={currentBbl} addressSegment={addressSegment} />
+        <CondoUnitsMobileList condoUnits={condoUnits} currentBbl={currentBbl} addressSegment={addressSegment} isSignedIn={isAuthed} />
       </div>
     </div>
   );
