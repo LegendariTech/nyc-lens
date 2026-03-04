@@ -5,7 +5,7 @@ import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchTransactionsWithParties, DocumentWithParties } from '@/data/acris';
 import { TransactionsView } from '../components/TransactionsView';
 import { mapDocumentToTransaction } from '../components/TransactionTimeline/utils';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 
 interface TransactionsPageProps {
   params: Promise<{
@@ -16,11 +16,15 @@ interface TransactionsPageProps {
 
 export async function generateMetadata({ params }: TransactionsPageProps): Promise<Metadata> {
   const { bbl } = await params;
-  const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
+  const [fullFormattedAddress, canonical] = await Promise.all([
+    getFormattedAddressForMetadata(bbl),
+    getCanonicalUrl(bbl, 'transactions'),
+  ]);
 
   return {
     title: `${fullFormattedAddress} - Property Transactions`,
     description: `View all ACRIS property transactions, sales, mortgages, and deeds for ${fullFormattedAddress}. Complete transaction history from NYC Department of Finance records.`,
+    alternates: { canonical },
     openGraph: {
       title: `${fullFormattedAddress} - Property Transactions`,
       description: `ACRIS transaction history for ${fullFormattedAddress}`,

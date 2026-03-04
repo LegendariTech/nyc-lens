@@ -4,7 +4,7 @@ import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { PlutoTabDisplay } from '../components/PlutoTabDisplay';
 import { getPropertyData, getCondoInfo } from '../../utils/getPropertyData';
 import { fetchPlutoData } from '@/data/pluto';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 
 interface PlutoPageProps {
   params: Promise<{
@@ -17,9 +17,12 @@ export async function generateMetadata({ params }: PlutoPageProps): Promise<Meta
   const { bbl } = await params;
   const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
+  const canonical = await getCanonicalUrl(bbl, 'pluto');
+
   return {
     title: `${fullFormattedAddress} - Building Information`,
     description: `View PLUTO building data for ${fullFormattedAddress}. Property characteristics, lot size, zoning, building class, units, square footage, and construction details from NYC Department of City Planning.`,
+    alternates: { canonical },
     openGraph: {
       title: `${fullFormattedAddress} - Building Information`,
       description: `PLUTO property data for ${fullFormattedAddress}`,

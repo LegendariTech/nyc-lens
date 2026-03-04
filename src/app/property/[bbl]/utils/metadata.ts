@@ -2,6 +2,7 @@ import { fetchPlutoData } from '@/data/pluto';
 import { fetchPropertyByBBL } from '@/data/acris';
 import { getBoroughDisplayName } from '@/constants/nyc';
 import { formatFullAddress } from '@/utils/formatters';
+import { buildPropertyUrl } from '@/utils/urlSlug';
 
 /**
  * Fetch and format property address for metadata generation
@@ -43,4 +44,31 @@ export async function getFormattedAddressForMetadata(bbl: string): Promise<strin
   }
 
   return fullFormattedAddress;
+}
+
+/**
+ * Build canonical URL for a property tab page (with address slug).
+ * Ensures Google indexes the address-rich version, not the bare BBL-only URL.
+ */
+export async function getCanonicalUrl(bbl: string, tab: string): Promise<string> {
+  const bblParts = bbl.split('-');
+  const borough = getBoroughDisplayName(bblParts[0]);
+
+  try {
+    const [plutoResult, propertyResult] = await Promise.all([
+      fetchPlutoData(bbl),
+      fetchPropertyByBBL(bbl),
+    ]);
+
+    const street = propertyResult?.address_with_unit || propertyResult?.address || plutoResult.data?.address;
+    const zip = propertyResult?.zip_code || (plutoResult.data?.zipcode ? String(plutoResult.data.zipcode) : undefined);
+
+    if (street) {
+      return buildPropertyUrl(bbl, tab, { street, borough, state: 'NY', zip });
+    }
+  } catch {
+    // Fall through to default
+  }
+
+  return `/property/${bbl}/${tab}`;
 }

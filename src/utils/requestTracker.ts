@@ -36,6 +36,7 @@ const BOT_PATTERNS: Array<{ pattern: RegExp; name: string }> = [
   { pattern: /HeadlessChrome/i, name: 'HeadlessChrome' },
   { pattern: /Bytespider/i, name: 'Bytespider' },
   { pattern: /DataForSeoBot/i, name: 'DataForSeoBot' },
+  { pattern: /ShapBot/i, name: 'ShapBot' },
 ];
 
 export interface ParsedUserAgent {

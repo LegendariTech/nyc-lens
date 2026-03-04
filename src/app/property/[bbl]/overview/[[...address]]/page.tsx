@@ -10,7 +10,7 @@ import { fetchPropertyValuation } from '@/data/valuation';
 import { getBoroughDisplayName } from '@/constants/nyc';
 import { BUILDING_CLASS_CODE_MAP } from '@/constants/building';
 import { formatFullAddress } from '@/utils/formatters';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 import type { CondoContext } from '../utils';
 
 // Revalidate property data every hour
@@ -66,16 +66,19 @@ export async function generateMetadata({ params }: OverviewPageProps): Promise<M
   const title = `${fullFormattedAddress} - NYC Property Records`;
   const description = `${fullFormattedAddress}: View ownership, sales history, tax assessments, building details & contacts from official NYC databases.${buildingInfo ? ` ${buildingInfo}` : ''}`;
 
+  const canonical = await getCanonicalUrl(bbl, 'overview');
+
   return {
     title,
     description,
     // Add applicationName for site branding in search results
     applicationName: 'BBL Club',
+    alternates: { canonical },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `/property/${bbl}/overview`,
+      url: canonical,
       siteName: 'BBL Club',
     },
     twitter: {

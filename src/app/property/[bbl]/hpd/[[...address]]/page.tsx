@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { PropertyPageLayout } from '../../PropertyPageLayout';
 import { HpdTab } from '../HpdTab';
 import { getPropertyData } from '../../utils/getPropertyData';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 
 interface HpdPageProps {
   params: Promise<{
@@ -16,9 +16,12 @@ export async function generateMetadata({ params }: HpdPageProps): Promise<Metada
   const { bbl } = await params;
   const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
+  const canonical = await getCanonicalUrl(bbl, 'hpd');
+
   return {
     title: `${fullFormattedAddress} - HPD Violations & Registration`,
     description: `View NYC Housing Preservation & Development records for ${fullFormattedAddress}. Housing violations, registrations, complaints, and responsible parties from HPD database.`,
+    alternates: { canonical },
     openGraph: {
       title: `${fullFormattedAddress} - HPD Violations & Registration`,
       description: `HPD violations and housing data for ${fullFormattedAddress}`,

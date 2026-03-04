@@ -6,7 +6,7 @@ import { DatasetInfoCard, Card, CardContent } from '@/components/ui';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchPropertyValuation } from '@/data/valuation';
 import type { DatasourceMetadata } from '../../utils/datasourceDisplay';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 
 interface TaxPageProps {
   params: Promise<{
@@ -19,9 +19,12 @@ export async function generateMetadata({ params }: TaxPageProps): Promise<Metada
   const { bbl } = await params;
   const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
+  const canonical = await getCanonicalUrl(bbl, 'tax');
+
   return {
     title: `${fullFormattedAddress} - Tax Assessment & Valuation`,
     description: `View property tax assessment history for ${fullFormattedAddress}. Market value, assessed value, exemptions, and annual property tax from NYC Department of Finance records.`,
+    alternates: { canonical },
     openGraph: {
       title: `${fullFormattedAddress} - Tax Assessment & Valuation`,
       description: `Property tax and valuation history for ${fullFormattedAddress}`,

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { ContactsPageClient } from '../components/ContactsPageClient';
 import { getPropertyData } from '../../utils/getPropertyData';
 import { fetchOwnerContacts } from '@/data/contacts';
-import { getFormattedAddressForMetadata } from '../../utils/metadata';
+import { getFormattedAddressForMetadata, getCanonicalUrl } from '../../utils/metadata';
 
 interface ContactsPageProps {
     params: Promise<{
@@ -16,9 +16,12 @@ export async function generateMetadata({ params }: ContactsPageProps): Promise<M
     const { bbl } = await params;
     const fullFormattedAddress = await getFormattedAddressForMetadata(bbl);
 
+    const canonical = await getCanonicalUrl(bbl, 'contacts');
+
     return {
         title: `${fullFormattedAddress} - Property Contacts`,
         description: `Find owner contact information for ${fullFormattedAddress}. Phone numbers, mailing addresses, and responsible parties from NYC HPD and public records.`,
+        alternates: { canonical },
         openGraph: {
             title: `${fullFormattedAddress} - Property Contacts`,
             description: `Owner contact information for ${fullFormattedAddress}`,
