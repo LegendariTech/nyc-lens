@@ -33,8 +33,11 @@ export function ProtectedCell(params: ICellRendererParams) {
 
     return (
         <div
+            role="button"
+            tabIndex={0}
             className="relative w-full h-full cursor-pointer group"
             onClick={handleClick}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
         >
             <span className="blur-[5px] select-none pointer-events-none whitespace-pre-line">
                 {displayValue}

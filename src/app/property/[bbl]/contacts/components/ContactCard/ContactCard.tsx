@@ -102,15 +102,9 @@ export function ContactCard({ contact, visibleSources, isSignedIn, bbl }: Contac
         </div>
 
         {/* Contact details */}
-        {!isSignedIn ? (
-          <div
-            role="button"
-            tabIndex={0}
-            className="relative w-full text-left cursor-pointer group/lock pt-1 border-t border-foreground/10"
-            onClick={() => handleUnlock()}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleUnlock(); } }}
-          >
-            <div className="blur-[5px] select-none pointer-events-none space-y-2 text-sm" aria-hidden="true">
+        {(() => {
+          const contactDetails = (
+            <div className="space-y-2 text-sm">
               {titles.length > 0 && (
                 <ExpandableList items={titles} label={titles.length > 1 ? 'Titles' : 'Title'} />
               )}
@@ -124,28 +118,31 @@ export function ContactCard({ contact, visibleSources, isSignedIn, bbl }: Contac
                 <ExpandableList items={addresses} label={addresses.length > 1 ? 'Addresses' : 'Address'} />
               )}
             </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="flex items-center justify-center w-11 h-11 rounded-full bg-foreground/10 group-hover/lock:bg-foreground/20 transition-colors">
-                <EyeIcon className="w-6 h-6 text-foreground/40 group-hover/lock:text-foreground/70 transition-colors" />
-              </span>
+          );
+
+          return !isSignedIn ? (
+            <div
+              role="button"
+              tabIndex={0}
+              className="relative w-full text-left cursor-pointer group/lock pt-1 border-t border-foreground/10"
+              onClick={() => handleUnlock()}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleUnlock(); } }}
+            >
+              <div className="blur-[5px] select-none pointer-events-none" aria-hidden="true">
+                {contactDetails}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="flex items-center justify-center w-11 h-11 rounded-full bg-foreground/10 group-hover/lock:bg-foreground/20 transition-colors">
+                  <EyeIcon className="w-6 h-6 text-foreground/40 group-hover/lock:text-foreground/70 transition-colors" />
+                </span>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="space-y-2 text-sm pt-1 border-t border-foreground/10">
-            {titles.length > 0 && (
-              <ExpandableList items={titles} label={titles.length > 1 ? 'Titles' : 'Title'} />
-            )}
-            {phones.length > 0 && (
-              <ExpandableList items={phones} label={phones.length > 1 ? 'Phones' : 'Phone'} />
-            )}
-            {businessNames.length > 0 && (
-              <ExpandableList items={businessNames} label={businessNames.length > 1 ? 'Business Names' : 'Business Name'} />
-            )}
-            {addresses.length > 0 && (
-              <ExpandableList items={addresses} label={addresses.length > 1 ? 'Addresses' : 'Address'} />
-            )}
-          </div>
-        )}
+          ) : (
+            <div className="pt-1 border-t border-foreground/10">
+              {contactDetails}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
