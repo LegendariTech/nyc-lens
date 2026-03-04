@@ -93,7 +93,7 @@ const Table = forwardRef<PropertyTableRef>((_, ref) => {
               },
             }, 'filters',
           ],
-          defaultToolPanel: 'columns',
+          defaultToolPanel: '',
         }}
       />
     </div>

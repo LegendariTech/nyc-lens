@@ -8,6 +8,7 @@ import SidebarNav from "@/components/layout/SidebarNav";
 import { ViewportProvider } from "@/components/layout/ViewportContext";
 import { Analytics } from "@vercel/analytics/next";
 import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/analytics/GoogleTagManager";
+import { AuthEventTracker } from "@/components/analytics/AuthEventTracker";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -97,6 +98,7 @@ export default function RootLayout({
       <body className={cn("font-sans antialiased")}>
         <GoogleTagManagerNoScript />
         <ClerkProvider>
+          <AuthEventTracker />
           <ViewportProvider>
             <ResizableSidebarLayout sidebar={<Suspense fallback={null}><SidebarNav /></Suspense>}>
               {children}

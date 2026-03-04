@@ -28,7 +28,7 @@ function BlurredCell(params: ICellRendererParams<CondoUnitSummary>) {
   if (!displayValue) return null;
 
   return (
-    <span className="blur-[5px] select-none">{displayValue}</span>
+    <span className="blur-[5px] select-none block overflow-hidden text-ellipsis pl-1">{displayValue}</span>
   );
 }
 
