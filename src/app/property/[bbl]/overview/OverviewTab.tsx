@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { SignedIn, SignedOut, SignUpButton } from '@clerk/nextjs';
@@ -242,6 +242,19 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
     ? (ownership.unmaskedOwner?.phones ?? [])
     : (ownership.unmaskedOwner?.phones ?? []).slice(0, 1);
 
+  // Masked ownership for signed-out users — preserves layout but hides real data from crawlers
+  const maskedOwnership = useMemo(() => ({
+    ...ownership,
+    unmaskedOwner: ownership.unmaskedOwner
+      ? {
+          ...ownership.unmaskedOwner,
+          name: '********** **********',
+          phones: ownership.unmaskedOwner.phones.map(() => '(***) ***-****'),
+        }
+      : null,
+  }), [ownership]);
+  const maskedUnmaskedPhones = maskedOwnership.unmaskedOwner?.phones.slice(0, 1) ?? [];
+
   const displayedContacts = showAllContacts
     ? allContacts
     : allContacts.slice(0, 4);
@@ -413,7 +426,7 @@ export function OverviewTab({ plutoData, propertyData, contactsData, valuationDa
 
             <SignedOut>
               <div className="select-none pointer-events-none blur-[6px]" aria-hidden="true">
-                <OwnershipContent ownership={ownership} displayedUnmaskedPhones={displayedUnmaskedPhones} showAllUnmaskedPhones={showAllUnmaskedPhones} setShowAllUnmaskedPhones={setShowAllUnmaskedPhones} />
+                <OwnershipContent ownership={maskedOwnership} displayedUnmaskedPhones={maskedUnmaskedPhones} showAllUnmaskedPhones={false} setShowAllUnmaskedPhones={() => {}} />
               </div>
             </SignedOut>
             <SignedIn>
