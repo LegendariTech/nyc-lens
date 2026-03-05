@@ -177,13 +177,14 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
 
   const baseUrl = 'https://bblclub.com';
   const propertyUrl = `${baseUrl}/property/${bbl}`;
+  const addrSuffix = addressSegments?.[0] ? `/${addressSegments[0]}` : '';
 
   // Place structured data
   const placeData = {
     "@context": "https://schema.org",
     "@type": "Place",
     "name": fullFormattedAddress,
-    "url": `${propertyUrl}/overview`,
+    "url": `${propertyUrl}/overview${addrSuffix}`,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": unit ? `${streetAddress} ${unit}` : streetAddress,
@@ -223,7 +224,7 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         "@type": "ListItem",
         "position": 3,
         "name": fullFormattedAddress,
-        "item": `${propertyUrl}/overview`
+        "item": `${propertyUrl}/overview${addrSuffix}`
       }
     ]
   };
@@ -248,42 +249,42 @@ export default async function OverviewPage({ params }: OverviewPageProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Overview",
-        "url": `${propertyUrl}/overview`,
+        "url": `${propertyUrl}/overview${addrSuffix}`,
         "description": "Property overview with building details and ownership"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Owner Contacts",
-        "url": `${propertyUrl}/contacts`,
+        "url": `${propertyUrl}/contacts${addrSuffix}`,
         "description": "Contact information for property owners"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": "Transactions History",
-        "url": `${propertyUrl}/transactions`,
+        "url": `${propertyUrl}/transactions${addrSuffix}`,
         "description": "Sales history, mortgages, and deeds"
       },
       {
         "@type": "ListItem",
         "position": 4,
         "name": "Tax Assessment",
-        "url": `${propertyUrl}/tax`,
+        "url": `${propertyUrl}/tax${addrSuffix}`,
         "description": "Property tax records and assessments"
       },
       {
         "@type": "ListItem",
         "position": 5,
         "name": "Building Information",
-        "url": `${propertyUrl}/pluto`,
+        "url": `${propertyUrl}/pluto${addrSuffix}`,
         "description": "PLUTO building characteristics and zoning"
       },
       {
         "@type": "ListItem",
         "position": 6,
         "name": "DOB Violations",
-        "url": `${propertyUrl}/dob/violations`,
+        "url": `${propertyUrl}/dob/violations${addrSuffix}`,
         "description": "Department of Buildings violations and permits"
       }
     ]
