@@ -258,8 +258,8 @@ function generatePropertySitemap(
       ? `${BASE_URL}/property/${bbl}/overview/${addressSlug}`
       : `${BASE_URL}/property/${bbl}/overview`;
 
-    // Use mortgage date as last modified, or current date
-    const lastmod = property.mortgage_document_date || new Date().toISOString();
+    // Use current date for all properties
+    const lastmod = new Date().toISOString();
 
     // Determine priority based on mortgage date
     const priority = getPriorityForProperty(property.mortgage_document_date);
